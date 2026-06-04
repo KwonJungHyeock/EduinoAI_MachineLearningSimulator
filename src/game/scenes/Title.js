@@ -73,7 +73,7 @@ export default class Title extends Phaser.Scene {
       .setOrigin(0.5);
 
     // 시작 버튼(고급 컴포넌트)
-    const btn = new Button(this, cx, 676, {
+    const btn = new Button(this, cx, 646, {
       label: '시작하기',
       icon: '▶',
       width: 264,
@@ -84,6 +84,16 @@ export default class Title extends Phaser.Scene {
     btn.on('pointerover', () => this.eddie.setMood('ok'));
     btn.on('pointerout', () => this.eddie.setMood('idle'));
 
+    this.add
+      .text(cx, 720 - 22, 'Space 또는 클릭으로 시작', {
+        fontFamily: FONT.body,
+        fontSize: '13px',
+        color: CSS.muted,
+      })
+      .setOrigin(0.5);
+
+    // 시작: 스페이스바 / 엔터 / 클릭
+    this.input.keyboard?.on('keydown-SPACE', () => this._start());
     this.input.keyboard?.on('keydown-ENTER', () => this._start());
 
     addDust(this, 44);

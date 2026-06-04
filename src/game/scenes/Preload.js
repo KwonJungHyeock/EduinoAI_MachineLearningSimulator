@@ -1,11 +1,16 @@
 import Phaser from 'phaser';
 import { SCENE, CSS, FONT, BASE } from '../../shared/theme.js';
+import { queueAssets } from '../assets.js';
 
-// 로딩 화면 — 현재는 절차적 생성이라 외부 에셋이 적지만,
-// 추후 에셋/사운드가 늘어나면 이 씬에서 로드 + 진행바 표시.
+// 로딩 화면 — 에셋 슬롯(있으면)을 로드하고 진행바 표시.
 export default class Preload extends Phaser.Scene {
   constructor() {
     super(SCENE.PRELOAD);
+  }
+
+  preload() {
+    // public/assets/ 의 슬롯 이미지 로드(없으면 절차적 폴백)
+    queueAssets(this);
   }
 
   create() {
