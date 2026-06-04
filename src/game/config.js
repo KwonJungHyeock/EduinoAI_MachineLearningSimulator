@@ -5,6 +5,7 @@ import Boot from './scenes/Boot.js';
 import Preload from './scenes/Preload.js';
 import Splash from './scenes/Splash.js';
 import Title from './scenes/Title.js';
+import Login from './scenes/Login.js';
 import ComingSoon from './scenes/ComingSoon.js';
 
 export function startGame(parent) {
@@ -19,6 +20,6 @@ export function startGame(parent) {
       height: BASE.h,
     },
     render: { antialias: true, roundPixels: false },
-    scene: [Boot, Preload, Splash, Title, ComingSoon],
+    scene: [Boot, Preload, Splash, Title, Login, ComingSoon],
   });
 }

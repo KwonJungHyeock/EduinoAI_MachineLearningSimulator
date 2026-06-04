@@ -46,3 +46,186 @@ body::before {
   background: radial-gradient(120% 120% at 50% 35%, #0c1322 0%, #04060b 100%);
   z-index: -1;
 }
+
+/* ────────────────────────────────────────────────
+   로그인 오버레이 (오른쪽 접속코드 카드)
+   ──────────────────────────────────────────────── */
+.login {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 clamp(20px, 7vw, 110px);
+}
+
+.login__card {
+  width: min(380px, 90vw);
+  padding: 30px 30px 24px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(16, 22, 36, 0.92), rgba(9, 12, 20, 0.95));
+  border: 1px solid rgba(111, 183, 255, 0.14);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    inset 0 0 40px rgba(111, 255, 214, 0.04);
+  backdrop-filter: blur(6px);
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s, transform 0.5s, border-color 0.3s;
+}
+/* 공포 톤: 깜빡이며 켜지는 등장 */
+.login__card.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  animation: login-flicker 1.1s steps(1) 1;
+}
+@keyframes login-flicker {
+  0% { opacity: 0; }
+  10% { opacity: 0.6; }
+  14% { opacity: 0.1; }
+  22% { opacity: 0.9; }
+  28% { opacity: 0.3; }
+  40%, 100% { opacity: 1; }
+}
+
+.login__eyebrow {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--amber);
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+.login__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  margin: 0 0 6px;
+  color: #fff;
+}
+.login__desc {
+  margin: 0 0 22px;
+  font-size: 13px;
+  color: #8b97ad;
+  line-height: 1.5;
+}
+
+.login__label {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #6fb7ff;
+  margin-bottom: 8px;
+}
+.login__input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #1d2740;
+  background: #070b14;
+  color: #e6edf7;
+  font-family: ui-monospace, monospace;
+  font-size: 18px;
+  letter-spacing: 4px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login__input::placeholder {
+  color: #33405c;
+  letter-spacing: 6px;
+}
+.login__input:focus {
+  border-color: #6fb7ff;
+  box-shadow: 0 0 0 3px rgba(111, 183, 255, 0.12);
+}
+
+.login__err {
+  min-height: 18px;
+  margin: 10px 2px 4px;
+  font-size: 12px;
+  color: var(--red, #ff5a3c);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+}
+.login__card.is-error .login__input {
+  border-color: #ff5a3c;
+  box-shadow: 0 0 0 3px rgba(255, 90, 60, 0.14);
+}
+
+.login__submit {
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #46e6a0, #2bbf81);
+  color: #04130d;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.1s;
+}
+.login__submit:hover { filter: brightness(1.08); }
+.login__submit:active { transform: translateY(1px); }
+.login__submit:disabled { opacity: 0.6; cursor: default; }
+
+.login__remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 2px 0;
+  font-size: 12px;
+  color: #8b97ad;
+  cursor: pointer;
+  user-select: none;
+}
+.login__remember input { accent-color: #3ddc91; }
+
+.login__guest {
+  width: 100%;
+  margin-top: 14px;
+  padding: 9px;
+  border: 1px solid #1d2740;
+  border-radius: 9px;
+  background: transparent;
+  color: #8b97ad;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.login__guest:hover { border-color: #6fb7ff; color: #cdd6e6; }
+
+.login__hint {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 11px;
+  color: #4a566e;
+}
+
+/* 코드 통과 시 초록 확정 */
+.login__card.is-granted {
+  border-color: rgba(61, 220, 145, 0.6);
+  box-shadow: 0 0 50px rgba(61, 220, 145, 0.25);
+}
+
+/* 오류 흔들림 */
+.shake { animation: login-shake 0.4s; }
+@keyframes login-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+
+/* 좁은 화면: 카드 가운데로 */
+@media (max-width: 720px) {
+  .login { justify-content: center; padding: 0 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login__card.is-in { animation: none; }
+  .shake { animation: none; }
+}

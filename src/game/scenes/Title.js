@@ -109,6 +109,6 @@ export default class Title extends Phaser.Scene {
     this.eddie.setMood('ok');
     this.eddie.talk();
     this.cameras.main.fadeOut(450, 4, 6, 11);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.COMING_SOON));
+    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.LOGIN));
   }
 }

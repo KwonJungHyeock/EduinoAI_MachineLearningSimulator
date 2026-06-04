@@ -40,5 +40,6 @@ export const SCENE = {
   PRELOAD: 'Preload',
   SPLASH: 'Splash',
   TITLE: 'Title',
+  LOGIN: 'Login',
   COMING_SOON: 'ComingSoon',
 };
