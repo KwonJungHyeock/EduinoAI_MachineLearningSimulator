@@ -58,6 +58,10 @@ body::before {
   justify-content: flex-end;
   padding: 0 clamp(24px, 5vw, 80px);
 }
+/* 배경 아트 구도에 맞춰 폼을 왼쪽에 */
+.login.login--left {
+  justify-content: flex-start;
+}
 
 .login__card {
   width: min(500px, 92vw);

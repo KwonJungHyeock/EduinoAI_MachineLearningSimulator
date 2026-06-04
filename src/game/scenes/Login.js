@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
-import { addVignette, addDust, glowBehind } from '../fx/textures.js';
+import { addVignette, addDust, glowBehind, addCover } from '../fx/textures.js';
 import { fadeIn, goTo } from '../fx/transition.js';
+import { hasAsset } from '../assets.js';
 import Eddie from '../objects/Eddie.js';
 import { mountLogin } from '../../ui/login.js';
 
@@ -17,66 +18,50 @@ export default class Login extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#04060b');
     fadeIn(this, 500);
 
-    // 왼쪽 바닥 빛 풀
-    this.add
-      .image(lx, 600, 'glow')
-      .setTint(COLORS.eddieGlow)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(0.1)
-      .setScale(4.5, 2);
+    // 배경 아트가 있으면 깔고 폼은 왼쪽, 없으면 절차적(브랜드 왼쪽 + 폼 오른쪽).
+    this.artBg = hasAsset(this, 'bgLogin');
+    if (this.artBg) {
+      addCover(this, 'bgLogin');
+    } else {
+      this.add
+        .image(lx, 600, 'glow')
+        .setTint(COLORS.eddieGlow)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0.1)
+        .setScale(4.5, 2);
 
-    // 깜빡이는 비상등(앰버) — 으스스함
-    const beacon = this.add
-      .image(lx, 110, 'glow')
-      .setTint(COLORS.amber)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(0)
-      .setScale(2);
-    this.tweens.add({
-      targets: beacon,
-      alpha: 0.42,
-      duration: 120,
-      yoyo: true,
-      repeatDelay: 2000,
-      repeat: -1,
-      ease: 'Quad.in',
-    });
+      const beacon = this.add
+        .image(lx, 110, 'glow')
+        .setTint(COLORS.amber)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0)
+        .setScale(2);
+      this.tweens.add({
+        targets: beacon, alpha: 0.42, duration: 120, yoyo: true, repeatDelay: 2000, repeat: -1, ease: 'Quad.in',
+      });
 
-    // 브랜드(상품명 + 테마명)
-    this.add
-      .text(lx, 200, 'PLAYINO', {
-        fontFamily: FONT.display,
-        fontSize: '40px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.85);
-    glowBehind(this, lx, 256, COLORS.eddieGlow, 4.5, 1.5, 0.16);
-    this.add
-      .text(lx, 256, 'ESCAPE ROOM', {
-        fontFamily: FONT.display,
-        fontSize: '60px',
-        fontStyle: '900',
-        color: CSS.text,
-      })
-      .setOrigin(0.5);
-    this.add
-      .text(lx, 304, '어둠 속 폐연구소 — 시스템에 접속하라', {
-        fontFamily: FONT.body,
-        fontSize: '15px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5);
+      this.add
+        .text(lx, 200, 'PLAYINO', { fontFamily: FONT.display, fontSize: '40px', color: CSS.muted })
+        .setOrigin(0.5)
+        .setAlpha(0.85);
+      glowBehind(this, lx, 256, COLORS.eddieGlow, 4.5, 1.5, 0.16);
+      this.add
+        .text(lx, 256, 'ESCAPE ROOM', { fontFamily: FONT.display, fontSize: '60px', fontStyle: '900', color: CSS.text })
+        .setOrigin(0.5);
+      this.add
+        .text(lx, 304, '어둠 속 폐연구소 — 시스템에 접속하라', { fontFamily: FONT.body, fontSize: '15px', color: CSS.muted })
+        .setOrigin(0.5);
 
-    // EDDIE
-    this.eddie = new Eddie(this, lx, 470, 0.6);
-    this.time.delayedCall(600, () => this.eddie.talk());
+      this.eddie = new Eddie(this, lx, 470, 0.6);
+      this.time.delayedCall(600, () => this.eddie.talk());
 
-    addDust(this, 36);
-    addVignette(this);
+      addDust(this, 36);
+      addVignette(this);
+    }
 
-    // 오른쪽 DOM 로그인 카드
+    // DOM 로그인 카드 — 배경 아트가 있으면 왼쪽(아트 구도에 맞춤), 없으면 오른쪽.
     this.loginUi = mountLogin({
+      align: this.artBg ? 'left' : 'right',
       onSuccess: () => this._proceed('ok'),
       onGuest: () => this._proceed('idle'),
     });
@@ -92,8 +77,8 @@ export default class Login extends Phaser.Scene {
   _proceed(mood) {
     if (this._left) return;
     this._left = true;
-    this.eddie.setMood(mood);
-    this.eddie.talk();
+    this.eddie?.setMood(mood);
+    this.eddie?.talk();
     goTo(this, SCENE.COMING_SOON, 450);
   }
 

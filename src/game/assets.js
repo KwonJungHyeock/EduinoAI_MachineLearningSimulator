@@ -7,10 +7,10 @@
 // path 는 public/ 기준(웹 루트). 예) 'assets/characters/eddie.png'
 // ─────────────────────────────────────────────────────────────────────────
 export const ASSET_SLOTS = [
-  // 채워질 때마다 주석 해제/추가. 지금은 비어 있어 모두 절차적 폴백으로 동작.
+  // 파일을 넣으면 자동 사용, 없으면 절차적 폴백.
+  { key: 'bgTitle', path: 'assets/title/bg.png' },
+  { key: 'bgLogin', path: 'assets/login/bg.png' },
   // { key: 'eddieArt', path: 'assets/characters/eddie.png' },
-  // { key: 'bgTitle',  path: 'assets/backgrounds/title.png' },
-  // { key: 'bgLogin',  path: 'assets/backgrounds/login.png' },
 ];
 
 // Preload에서 호출 — 슬롯 이미지를 로드하되, 없으면(404) 조용히 폴백.

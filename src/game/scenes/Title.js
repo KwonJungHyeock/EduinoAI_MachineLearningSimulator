@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
-import { addVignette, addDust, glowBehind } from '../fx/textures.js';
+import { addVignette, addDust, glowBehind, addCover } from '../fx/textures.js';
 import { fadeIn, goTo } from '../fx/transition.js';
+import { hasAsset } from '../assets.js';
 import Eddie from '../objects/Eddie.js';
 import Button from '../objects/Button.js';
 
@@ -16,61 +17,46 @@ export default class Title extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#04060b');
     fadeIn(this, 600);
 
-    // 바닥 그림자/빛 풀(EDDIE 발치)
-    this.add
-      .image(cx, 600, 'glow')
-      .setTint(COLORS.eddieGlow)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(0.12)
-      .setScale(5, 2);
+    // 배경 아트가 있으면 그것을 깔고, 없으면 절차적 EDDIE/브랜드로 폴백.
+    this.artBg = hasAsset(this, 'bgTitle');
+    if (this.artBg) {
+      addCover(this, 'bgTitle');
+    } else {
+      // 바닥 빛 풀
+      this.add
+        .image(cx, 600, 'glow')
+        .setTint(COLORS.eddieGlow)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0.12)
+        .setScale(5, 2);
 
-    // 깜빡이는 비상등(앰버) — 위협은 추상 장치로만(K-12)
-    const beacon = this.add
-      .image(cx, 70, 'glow')
-      .setTint(COLORS.amber)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(0.0)
-      .setScale(2.2);
-    this.tweens.add({
-      targets: beacon,
-      alpha: 0.5,
-      duration: 140,
-      yoyo: true,
-      repeatDelay: 1600,
-      repeat: -1,
-      ease: 'Quad.in',
-    });
+      // 깜빡이는 비상등(앰버)
+      const beacon = this.add
+        .image(cx, 70, 'glow')
+        .setTint(COLORS.amber)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0.0)
+        .setScale(2.2);
+      this.tweens.add({
+        targets: beacon, alpha: 0.5, duration: 140, yoyo: true, repeatDelay: 1600, repeat: -1, ease: 'Quad.in',
+      });
 
-    // EDDIE
-    this.eddie = new Eddie(this, cx, 412, 0.64);
+      // EDDIE
+      this.eddie = new Eddie(this, cx, 412, 0.64);
 
-    // 타이틀 카드
-    this.add
-      .text(cx, 96, 'PLAYINO', {
-        fontFamily: FONT.display,
-        fontSize: '34px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.85);
-
-    glowBehind(this, cx, 156, COLORS.eddieGlow, 5, 1.6, 0.16);
-    this.add
-      .text(cx, 156, 'ESCAPE  ROOM', {
-        fontFamily: FONT.display,
-        fontSize: '72px',
-        fontStyle: '900',
-        color: CSS.text,
-      })
-      .setOrigin(0.5);
-
-    this.add
-      .text(cx, 202, '어둠 속 폐연구소 — 미션을 풀어 탈출하라', {
-        fontFamily: FONT.body,
-        fontSize: '16px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5);
+      // 타이틀 카드
+      this.add
+        .text(cx, 96, 'PLAYINO', { fontFamily: FONT.display, fontSize: '34px', color: CSS.muted })
+        .setOrigin(0.5)
+        .setAlpha(0.85);
+      glowBehind(this, cx, 156, COLORS.eddieGlow, 5, 1.6, 0.16);
+      this.add
+        .text(cx, 156, 'ESCAPE  ROOM', { fontFamily: FONT.display, fontSize: '72px', fontStyle: '900', color: CSS.text })
+        .setOrigin(0.5);
+      this.add
+        .text(cx, 202, '어둠 속 폐연구소 — 미션을 풀어 탈출하라', { fontFamily: FONT.body, fontSize: '16px', color: CSS.muted })
+        .setOrigin(0.5);
+    }
 
     // 시작 버튼(고급 컴포넌트)
     const btn = new Button(this, cx, 646, {
@@ -81,8 +67,8 @@ export default class Title extends Phaser.Scene {
       color: COLORS.green,
       onClick: () => this._start(),
     });
-    btn.on('pointerover', () => this.eddie.setMood('ok'));
-    btn.on('pointerout', () => this.eddie.setMood('idle'));
+    btn.on('pointerover', () => this.eddie?.setMood('ok'));
+    btn.on('pointerout', () => this.eddie?.setMood('idle'));
 
     this.add
       .text(cx, 720 - 22, 'Space 또는 클릭으로 시작', {
@@ -96,17 +82,19 @@ export default class Title extends Phaser.Scene {
     this.input.keyboard?.on('keydown-SPACE', () => this._start());
     this.input.keyboard?.on('keydown-ENTER', () => this._start());
 
-    addDust(this, 44);
-    addVignette(this);
+    if (!this.artBg) {
+      addDust(this, 44);
+      addVignette(this);
+    }
 
-    this.time.delayedCall(700, () => this.eddie.talk());
+    if (this.eddie) this.time.delayedCall(700, () => this.eddie.talk());
   }
 
   _start() {
     if (this._left) return;
     this._left = true;
-    this.eddie.setMood('ok');
-    this.eddie.talk();
+    this.eddie?.setMood('ok');
+    this.eddie?.talk();
     goTo(this, SCENE.LOGIN, 450);
   }
 }

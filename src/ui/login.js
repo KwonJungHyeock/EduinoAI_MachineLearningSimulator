@@ -4,10 +4,10 @@
 const AUTH_KEY = 'eduino.auth.v1';
 const LEN = 6;
 
-export function mountLogin({ onSuccess, onGuest } = {}) {
+export function mountLogin({ onSuccess, onGuest, align = 'right' } = {}) {
   const root = document.getElementById('overlay');
   const wrap = document.createElement('div');
-  wrap.className = 'login';
+  wrap.className = 'login' + (align === 'left' ? ' login--left' : '');
   wrap.innerHTML = `
     <form class="login__card" autocomplete="off" novalidate>
       <div class="login__eyebrow">▢ SYSTEM ACCESS</div>

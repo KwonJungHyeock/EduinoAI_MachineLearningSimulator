@@ -51,6 +51,15 @@ export function addVignette(scene, depth = 1000) {
     .setScrollFactor(0);
 }
 
+// 배경 이미지를 화면에 꽉 차게(cover) 배치.
+export function addCover(scene, key, depth = -10) {
+  const { width, height } = scene.scale;
+  const img = scene.add.image(width / 2, height / 2, key).setScrollFactor(0).setDepth(depth);
+  const s = Math.max(width / img.width, height / img.height);
+  img.setScale(s);
+  return img;
+}
+
 // 텍스트/요소 뒤에 부드러운 글로우(WebGL/Canvas 모두 동작 — postFX 대체).
 export function glowBehind(scene, x, y, color, sx = 3.4, sy = 1.3, alpha = 0.2) {
   return scene.add
