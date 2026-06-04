@@ -56,7 +56,7 @@ export function glowBehind(scene, x, y, color, sx = 3.4, sy = 1.3, alpha = 0.2) 
   return scene.add
     .image(x, y, 'glow')
     .setTint(color)
-    .setBlendMode(Phaser.BlendMode.ADD)
+    .setBlendMode(Phaser.BlendModes.ADD)
     .setScale(sx, sy)
     .setAlpha(alpha);
 }

@@ -21,7 +21,7 @@ export default class Login extends Phaser.Scene {
     this.add
       .image(lx, 520, 'glow')
       .setTint(COLORS.eddieGlow)
-      .setBlendMode(Phaser.BlendMode.ADD)
+      .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.1)
       .setScale(4.5, 2);
 
@@ -29,7 +29,7 @@ export default class Login extends Phaser.Scene {
     const beacon = this.add
       .image(lx, 110, 'glow')
       .setTint(COLORS.amber)
-      .setBlendMode(Phaser.BlendMode.ADD)
+      .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0)
       .setScale(2);
     this.tweens.add({

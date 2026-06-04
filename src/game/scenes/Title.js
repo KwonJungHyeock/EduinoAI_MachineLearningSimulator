@@ -19,7 +19,7 @@ export default class Title extends Phaser.Scene {
     this.add
       .image(cx, 470, 'glow')
       .setTint(COLORS.eddieGlow)
-      .setBlendMode(Phaser.BlendMode.ADD)
+      .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.12)
       .setScale(5, 2);
 
@@ -27,7 +27,7 @@ export default class Title extends Phaser.Scene {
     const beacon = this.add
       .image(cx, 70, 'glow')
       .setTint(COLORS.amber)
-      .setBlendMode(Phaser.BlendMode.ADD)
+      .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.0)
       .setScale(2.2);
     this.tweens.add({

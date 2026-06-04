@@ -19,7 +19,7 @@ export default class Eddie extends Phaser.GameObjects.Container {
     this.lightPool = scene.add
       .image(0, -6, 'glow')
       .setTint(this._eyeColor)
-      .setBlendMode(Phaser.BlendMode.ADD)
+      .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.5)
       .setScale(3.2);
     this.add(this.lightPool);
@@ -42,8 +42,8 @@ export default class Eddie extends Phaser.GameObjects.Container {
     this.body2 = body;
 
     // 눈(밝은 글로우) — 깜빡임 대상
-    this.eyeL = scene.add.ellipse(-24, -28, 26, 30, this._eyeColor).setBlendMode(Phaser.BlendMode.ADD);
-    this.eyeR = scene.add.ellipse(24, -28, 26, 30, this._eyeColor).setBlendMode(Phaser.BlendMode.ADD);
+    this.eyeL = scene.add.ellipse(-24, -28, 26, 30, this._eyeColor).setBlendMode(Phaser.BlendModes.ADD);
+    this.eyeR = scene.add.ellipse(24, -28, 26, 30, this._eyeColor).setBlendMode(Phaser.BlendModes.ADD);
     // 눈 하이라이트(코어)
     this.coreL = scene.add.ellipse(-24, -28, 10, 12, 0xffffff).setAlpha(0.9);
     this.coreR = scene.add.ellipse(24, -28, 10, 12, 0xffffff).setAlpha(0.9);
