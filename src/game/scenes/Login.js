@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
-import { addVignette, addDust } from '../fx/textures.js';
+import { addVignette, addDust, glowBehind } from '../fx/textures.js';
+import { fadeIn, goTo } from '../fx/transition.js';
 import Eddie from '../objects/Eddie.js';
 import { mountLogin } from '../../ui/login.js';
 
@@ -14,7 +15,7 @@ export default class Login extends Phaser.Scene {
   create() {
     const lx = 360; // 왼쪽 브랜드 기준 x
     this.cameras.main.setBackgroundColor('#04060b');
-    this.cameras.main.fadeIn(500, 4, 6, 11);
+    fadeIn(this, 500);
 
     // 왼쪽 바닥 빛 풀
     this.add
@@ -50,7 +51,8 @@ export default class Login extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setAlpha(0.85);
-    const big = this.add
+    glowBehind(this, lx, 256, COLORS.eddieGlow, 4.5, 1.5, 0.16);
+    this.add
       .text(lx, 256, 'ESCAPE ROOM', {
         fontFamily: FONT.display,
         fontSize: '60px',
@@ -58,7 +60,6 @@ export default class Login extends Phaser.Scene {
         color: CSS.text,
       })
       .setOrigin(0.5);
-    big.postFX?.addGlow?.(COLORS.eddieGlow, 0.5, 0, false, 0.1, 8);
     this.add
       .text(lx, 304, '어둠 속 폐연구소 — 시스템에 접속하라', {
         fontFamily: FONT.body,
@@ -93,15 +94,13 @@ export default class Login extends Phaser.Scene {
     this._left = true;
     this.eddie.setMood(mood);
     this.eddie.talk();
-    this.cameras.main.fadeOut(450, 4, 6, 11);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.COMING_SOON));
+    goTo(this, SCENE.COMING_SOON, 450);
   }
 
   _back() {
     if (this._left) return;
     this._left = true;
-    this.cameras.main.fadeOut(350, 4, 6, 11);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.TITLE));
+    goTo(this, SCENE.TITLE, 350);
   }
 
   _cleanup() {

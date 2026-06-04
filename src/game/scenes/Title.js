@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
-import { addVignette, addDust } from '../fx/textures.js';
+import { addVignette, addDust, glowBehind } from '../fx/textures.js';
+import { fadeIn, goTo } from '../fx/transition.js';
 import Eddie from '../objects/Eddie.js';
 
 // 타이틀 — 어둠 속 EDDIE(눈빛만 빛). 폐연구소 톤. 시작 버튼(클릭/Enter).
@@ -12,7 +13,7 @@ export default class Title extends Phaser.Scene {
   create() {
     const cx = BASE.w / 2;
     this.cameras.main.setBackgroundColor('#04060b');
-    this.cameras.main.fadeIn(600, 4, 6, 11);
+    fadeIn(this, 600);
 
     // 바닥 그림자/빛 풀(EDDIE 발치)
     this.add
@@ -52,7 +53,8 @@ export default class Title extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.85);
 
-    const big = this.add
+    glowBehind(this, cx, 200, COLORS.eddieGlow, 5, 1.6, 0.16);
+    this.add
       .text(cx, 200, 'ESCAPE  ROOM', {
         fontFamily: FONT.display,
         fontSize: '72px',
@@ -60,7 +62,6 @@ export default class Title extends Phaser.Scene {
         color: CSS.text,
       })
       .setOrigin(0.5);
-    big.postFX?.addGlow?.(COLORS.eddieGlow, 0.6, 0, false, 0.1, 8);
 
     this.add
       .text(cx, 250, '어둠 속 폐연구소 — 미션을 풀어 탈출하라', {
@@ -108,7 +109,6 @@ export default class Title extends Phaser.Scene {
     this._left = true;
     this.eddie.setMood('ok');
     this.eddie.talk();
-    this.cameras.main.fadeOut(450, 4, 6, 11);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.LOGIN));
+    goTo(this, SCENE.LOGIN, 450);
   }
 }

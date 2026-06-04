@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 // 절차적으로 생성하는 공용 텍스처(외부 에셋 없이 분위기 연출).
 // - glow  : 부드러운 방사형 그라데이션(눈빛/조명 풀/먼지에 틴트해서 재사용)
 // - dust  : 작은 먼지 입자
@@ -49,19 +51,31 @@ export function addVignette(scene, depth = 1000) {
     .setScrollFactor(0);
 }
 
+// 텍스트/요소 뒤에 부드러운 글로우(WebGL/Canvas 모두 동작 — postFX 대체).
+export function glowBehind(scene, x, y, color, sx = 3.4, sy = 1.3, alpha = 0.2) {
+  return scene.add
+    .image(x, y, 'glow')
+    .setTint(color)
+    .setBlendMode(Phaser.BlendMode.ADD)
+    .setScale(sx, sy)
+    .setAlpha(alpha);
+}
+
 // 떠다니는 먼지 입자 — 정적·폐허감.
 export function addDust(scene, count = 40, depth = 5) {
   const { width, height } = scene.scale;
-  return scene.add.particles(0, 0, 'dust', {
-    x: { min: 0, max: width },
-    y: { min: 0, max: height },
-    quantity: count,
-    lifespan: 9000,
-    speedY: { min: -6, max: 6 },
-    speedX: { min: -8, max: 8 },
-    scale: { min: 0.15, max: 0.5 },
-    alpha: { start: 0.18, end: 0 },
-    frequency: 220,
-    blendMode: 'ADD',
-  }).setDepth(depth);
+  return scene.add
+    .particles(0, 0, 'dust', {
+      x: { min: 0, max: width },
+      y: { min: 0, max: height },
+      lifespan: 9000,
+      speedY: { min: -6, max: 6 },
+      speedX: { min: -8, max: 8 },
+      scale: { min: 0.15, max: 0.5 },
+      alpha: { start: 0.18, end: 0 },
+      frequency: 9000 / count, // 화면에 대략 count개 유지
+      quantity: 1,
+      blendMode: 'ADD',
+    })
+    .setDepth(depth);
 }

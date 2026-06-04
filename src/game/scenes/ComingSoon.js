@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SCENE, CSS, FONT, BASE } from '../../shared/theme.js';
 import { addVignette } from '../fx/textures.js';
+import { fadeIn } from '../fx/transition.js';
 
 // 정직한 임시 화면 — 다음 단계(로그인 → 복도 → 방)를 안내.
 // 기존 셸 소스 포팅 후 실제 씬으로 교체된다.
@@ -13,7 +14,7 @@ export default class ComingSoon extends Phaser.Scene {
     const cx = BASE.w / 2;
     const cy = BASE.h / 2;
     this.cameras.main.setBackgroundColor('#04060b');
-    this.cameras.main.fadeIn(400, 4, 6, 11);
+    fadeIn(this, 400);
 
     this.add
       .text(cx, cy - 60, '시스템 복구 준비 완료', {

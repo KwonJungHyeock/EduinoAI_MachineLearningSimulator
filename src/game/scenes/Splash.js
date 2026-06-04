@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SCENE, CSS, FONT, BASE } from '../../shared/theme.js';
 import { addVignette } from '../fx/textures.js';
+import { fadeIn, goTo } from '../fx/transition.js';
 
 // EDUINO AI 부팅 스플래시 → 타이핑되는 부팅 로그 → 타이틀로.
 export default class Splash extends Phaser.Scene {
@@ -12,7 +13,7 @@ export default class Splash extends Phaser.Scene {
     const cx = BASE.w / 2;
     const cy = BASE.h / 2;
     this.cameras.main.setBackgroundColor('#04060b');
-    this.cameras.main.fadeIn(500, 4, 6, 11);
+    fadeIn(this, 500);
 
     // 로고
     const logo = this.add
@@ -78,7 +79,6 @@ export default class Splash extends Phaser.Scene {
   _toTitle() {
     if (this._left) return;
     this._left = true;
-    this.cameras.main.fadeOut(450, 4, 6, 11);
-    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(SCENE.TITLE));
+    goTo(this, SCENE.TITLE, 450);
   }
 }
