@@ -1,8 +1,8 @@
-// 로그인 DOM 오버레이 — 접속코드 입력 카드(오른쪽).
-// 폼/입력은 네이티브 HTML이 정확·접근성↑ → Phaser 위에 오버레이로 띄운다.
-// 백엔드 없음(서버리스): 검증은 자리표시자이며, 실제 코드 검증 로직은
-// 기존 셸(KwonJungHyeock/Playino) 포팅 시 교체한다.
+// 로그인 DOM 오버레이 — 콘솔 단말기 느낌의 접속코드 입력(6칸 분리형).
+// 폼/입력은 네이티브 HTML이 정확·접근성↑ → Phaser 위에 오버레이.
+// 백엔드 없음(서버리스): 검증은 자리표시자, 실제 검증은 기존 셸 포팅 시 교체.
 const AUTH_KEY = 'eduino.auth.v1';
+const LEN = 6;
 
 export function mountLogin({ onSuccess, onGuest } = {}) {
   const root = document.getElementById('overlay');
@@ -10,13 +10,16 @@ export function mountLogin({ onSuccess, onGuest } = {}) {
   wrap.className = 'login';
   wrap.innerHTML = `
     <form class="login__card" autocomplete="off" novalidate>
-      <div class="login__eyebrow">SYSTEM ACCESS</div>
+      <div class="login__eyebrow">▢ SYSTEM ACCESS</div>
       <h2 class="login__title">접속 코드 입력</h2>
-      <p class="login__desc">시설에 연결하려면 접속 코드를 입력하세요.</p>
+      <p class="login__desc">시설 단말에 연결하려면 6자리 접속 코드를 입력하세요.</p>
 
-      <label class="login__label" for="login-code">ACCESS CODE</label>
-      <input id="login-code" class="login__input" type="text" inputmode="latin"
-             maxlength="20" placeholder="● ● ● ● ● ●" aria-describedby="login-err" />
+      <div class="login__label">ACCESS CODE</div>
+      <div class="login__code" role="group" aria-label="접속 코드 6자리">
+        ${Array.from({ length: LEN })
+          .map((_, i) => `<input class="login__cell" inputmode="latin" maxlength="1" data-i="${i}" aria-label="${i + 1}번째 자리" />`)
+          .join('')}
+      </div>
 
       <div class="login__err" id="login-err" role="alert"></div>
 
@@ -34,72 +37,115 @@ export function mountLogin({ onSuccess, onGuest } = {}) {
   root.appendChild(wrap);
 
   const card = wrap.querySelector('.login__card');
-  const input = wrap.querySelector('#login-code');
+  const cells = [...wrap.querySelectorAll('.login__cell')];
   const err = wrap.querySelector('#login-err');
   const remember = wrap.querySelector('#login-remember');
   const submitBtn = wrap.querySelector('.login__submit');
+
+  const value = () => cells.map((c) => c.value).join('');
+  const norm = (s) => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
   // 기억된 코드 자동 채움
   try {
     const saved = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
     if (saved?.code) {
-      input.value = saved.code;
-      remember.checked = true;
+      norm(saved.code)
+        .slice(0, LEN)
+        .split('')
+        .forEach((ch, i) => {
+          cells[i].value = ch;
+          cells[i].classList.add('is-filled');
+        });
     }
   } catch {}
 
-  // 살짝 등장(공포 톤: 깜빡이며 켜짐)
   requestAnimationFrame(() => card.classList.add('is-in'));
-  setTimeout(() => input.focus(), 420);
+  setTimeout(() => cells[0].focus(), 440);
 
   function setError(msg) {
     err.textContent = msg || '';
     card.classList.toggle('is-error', !!msg);
     if (msg) {
       card.classList.remove('shake');
-      void card.offsetWidth; // 리플로우로 애니 리셋
+      void card.offsetWidth;
       card.classList.add('shake');
     }
   }
 
+  // 입력: 한 칸 채우면 다음으로, 백스페이스는 이전으로, 붙여넣기 분배
+  function onInput(e) {
+    const cell = e.target;
+    cell.value = norm(cell.value).slice(-1);
+    cell.classList.toggle('is-filled', !!cell.value);
+    setError('');
+    const i = +cell.dataset.i;
+    if (cell.value && i < LEN - 1) cells[i + 1].focus();
+  }
+  function onKeydown(e) {
+    const cell = e.target;
+    const i = +cell.dataset.i;
+    if (e.key === 'Backspace' && !cell.value && i > 0) {
+      cells[i - 1].focus();
+      cells[i - 1].value = '';
+      cells[i - 1].classList.remove('is-filled');
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft' && i > 0) {
+      cells[i - 1].focus();
+    } else if (e.key === 'ArrowRight' && i < LEN - 1) {
+      cells[i + 1].focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      onSubmit();
+    }
+  }
+  function onPaste(e) {
+    e.preventDefault();
+    const t = norm(e.clipboardData.getData('text')).slice(0, LEN);
+    t.split('').forEach((ch, k) => (cells[k].value = ch));
+    cells[Math.min(t.length, LEN - 1)].focus();
+  }
+  cells.forEach((c) => {
+    c.addEventListener('input', onInput);
+    c.addEventListener('keydown', onKeydown);
+    c.addEventListener('paste', onPaste);
+    c.addEventListener('focus', () => c.select());
+  });
+
   function validate(code) {
-    const c = code.trim();
-    if (!c) return '코드를 입력하세요.';
-    if (c.length < 4) return 'ACCESS DENIED — 코드가 너무 짧습니다.';
-    return null; // 자리표시자: 추후 실제 검증 로직으로 교체
+    if (code.length === 0) return '코드를 입력하세요.';
+    if (code.length < LEN) return 'ACCESS DENIED — 6자리를 모두 입력하세요.';
+    return null; // 자리표시자
   }
 
   function enter(code, guest = false) {
     if (!guest && remember.checked) {
-      localStorage.setItem(AUTH_KEY, JSON.stringify({ code: code.trim(), ts: Date.now() }));
+      localStorage.setItem(AUTH_KEY, JSON.stringify({ code, ts: Date.now() }));
     } else if (!remember.checked) {
       localStorage.removeItem(AUTH_KEY);
     }
     submitBtn.disabled = true;
     card.classList.add('is-granted');
     setError('');
-    setTimeout(() => (guest ? onGuest?.() : onSuccess?.(code.trim())), 520);
+    setTimeout(() => (guest ? onGuest?.() : onSuccess?.(code)), 560);
   }
 
   function onSubmit(e) {
     e?.preventDefault();
-    const code = input.value;
+    const code = value();
     const problem = validate(code);
     if (problem) {
       setError(problem);
-      input.focus();
+      (cells.find((c) => !c.value) || cells[0]).focus();
       return;
     }
     enter(code);
   }
 
   card.addEventListener('submit', onSubmit);
-  input.addEventListener('input', () => setError(''));
   wrap.querySelector('.login__guest').addEventListener('click', () => enter('GUEST', true));
 
   return {
     el: wrap,
-    focus: () => input.focus(),
     destroy() {
       card.removeEventListener('submit', onSubmit);
       wrap.remove();

@@ -13,13 +13,13 @@ export default class Login extends Phaser.Scene {
   }
 
   create() {
-    const lx = 360; // 왼쪽 브랜드 기준 x
+    const lx = 330; // 왼쪽 브랜드 기준 x
     this.cameras.main.setBackgroundColor('#04060b');
     fadeIn(this, 500);
 
     // 왼쪽 바닥 빛 풀
     this.add
-      .image(lx, 520, 'glow')
+      .image(lx, 600, 'glow')
       .setTint(COLORS.eddieGlow)
       .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.1)
@@ -69,7 +69,7 @@ export default class Login extends Phaser.Scene {
       .setOrigin(0.5);
 
     // EDDIE
-    this.eddie = new Eddie(this, lx, 480, 0.92);
+    this.eddie = new Eddie(this, lx, 470, 0.6);
     this.time.delayedCall(600, () => this.eddie.talk());
 
     addDust(this, 36);
