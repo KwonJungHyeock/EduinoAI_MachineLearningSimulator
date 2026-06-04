@@ -1,0 +1,18 @@
+{
+  "name": "playino-engine",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Playino : Escape Room — Phaser 3 mini-game modules (mountGame contract) + standalone dev harness",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
+  }
+}

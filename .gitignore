@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vite/
+*.log
+
+# package-lock는 크로스 OS 충돌 회피를 위해 추적하지 않음(지침서 §11)
+package-lock.json
