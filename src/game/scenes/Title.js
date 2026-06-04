@@ -3,6 +3,7 @@ import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
 import { addVignette, addDust, glowBehind } from '../fx/textures.js';
 import { fadeIn, goTo } from '../fx/transition.js';
 import Eddie from '../objects/Eddie.js';
+import Button from '../objects/Button.js';
 
 // 타이틀 — 어둠 속 EDDIE(눈빛만 빛). 폐연구소 톤. 시작 버튼(클릭/Enter).
 export default class Title extends Phaser.Scene {
@@ -17,7 +18,7 @@ export default class Title extends Phaser.Scene {
 
     // 바닥 그림자/빛 풀(EDDIE 발치)
     this.add
-      .image(cx, 470, 'glow')
+      .image(cx, 540, 'glow')
       .setTint(COLORS.eddieGlow)
       .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.12)
@@ -41,11 +42,11 @@ export default class Title extends Phaser.Scene {
     });
 
     // EDDIE
-    this.eddie = new Eddie(this, cx, 430, 1.1);
+    this.eddie = new Eddie(this, cx, 408, 0.9);
 
     // 타이틀 카드
     this.add
-      .text(cx, 150, 'PLAYINO', {
+      .text(cx, 116, 'PLAYINO', {
         fontFamily: FONT.display,
         fontSize: '34px',
         color: CSS.muted,
@@ -53,9 +54,9 @@ export default class Title extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.85);
 
-    glowBehind(this, cx, 200, COLORS.eddieGlow, 5, 1.6, 0.16);
+    glowBehind(this, cx, 168, COLORS.eddieGlow, 5, 1.6, 0.16);
     this.add
-      .text(cx, 200, 'ESCAPE  ROOM', {
+      .text(cx, 168, 'ESCAPE  ROOM', {
         fontFamily: FONT.display,
         fontSize: '72px',
         fontStyle: '900',
@@ -64,39 +65,34 @@ export default class Title extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 250, '어둠 속 폐연구소 — 미션을 풀어 탈출하라', {
+      .text(cx, 216, '어둠 속 폐연구소 — 미션을 풀어 탈출하라', {
         fontFamily: FONT.body,
         fontSize: '16px',
         color: CSS.muted,
       })
       .setOrigin(0.5);
 
-    // 시작 버튼
-    const btn = this.add
-      .text(cx, 600, '▶  시작하기', {
-        fontFamily: FONT.display,
-        fontSize: '24px',
-        color: CSS.bg,
-        backgroundColor: CSS.green,
-        padding: { x: 26, y: 12 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    this.tweens.add({ targets: btn, alpha: 0.7, duration: 900, yoyo: true, repeat: -1 });
+    // 시작 버튼(고급 컴포넌트)
+    const btn = new Button(this, cx, 638, {
+      label: '시작하기',
+      icon: '▶',
+      width: 248,
+      height: 64,
+      color: COLORS.green,
+      onClick: () => this._start(),
+    });
+    btn.on('pointerover', () => this.eddie.setMood('ok'));
+    btn.on('pointerout', () => this.eddie.setMood('idle'));
 
     this.add
-      .text(cx, 648, 'Enter / 클릭으로 시작', {
+      .text(cx, 690, 'Enter / 클릭으로 시작', {
         fontFamily: FONT.body,
         fontSize: '12px',
         color: CSS.muted,
       })
       .setOrigin(0.5);
 
-    const start = () => this._start();
-    btn.on('pointerover', () => this.eddie.setMood('ok'));
-    btn.on('pointerout', () => this.eddie.setMood('idle'));
-    btn.on('pointerup', start);
-    this.input.keyboard?.on('keydown-ENTER', start);
+    this.input.keyboard?.on('keydown-ENTER', () => this._start());
 
     addDust(this, 44);
     addVignette(this);

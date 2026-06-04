@@ -31,8 +31,12 @@ async function boot() {
       Promise.all([
         document.fonts.load('700 64px Orbitron'),
         document.fonts.load('500 16px "Space Grotesk"'),
+        // Pretendard(한글) — Phaser 캔버스는 1회 렌더라 부팅 전 로드 필수
+        document.fonts.load('400 16px Pretendard'),
+        document.fonts.load('700 32px Pretendard'),
+        document.fonts.load('900 32px Pretendard'),
       ]).catch(() => {}),
-      new Promise((r) => setTimeout(r, 2000)),
+      new Promise((r) => setTimeout(r, 2500)),
     ]);
   } catch {
     /* 무시하고 기본 폰트로 진행 */

@@ -26,9 +26,11 @@ export const CSS = {
   muted: '#8b97ad',
 };
 
+// 영문은 Orbitron/Space Grotesk, 한글은 Pretendard로 자동 폴백(글자 단위).
 export const FONT = {
-  display: 'Orbitron, sans-serif',
-  body: '"Space Grotesk", sans-serif',
+  display: 'Orbitron, Pretendard, sans-serif',
+  body: '"Space Grotesk", Pretendard, sans-serif',
+  kr: 'Pretendard, sans-serif',
 };
 
 // 기준 해상도(16:9). 모든 씬은 이 좌표계로 그리고 Scale.FIT로 화면에 맞춘다.
