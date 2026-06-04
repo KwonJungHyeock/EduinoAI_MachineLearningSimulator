@@ -1,0 +1,48 @@
+:root {
+  --bg: #07090f;
+  --text: #e6edf7;
+  --amber: #ffb020;
+  --green: #3ddc91;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #04060b;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+#app canvas {
+  display: block;
+}
+
+/* 폼/에디터용 DOM 오버레이(로그인 등에서 사용 예정) */
+#overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+#overlay > * {
+  pointer-events: auto;
+}
+
+/* 첫 페인트 전 깜빡임 방지용 부팅 배경 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(120% 120% at 50% 35%, #0c1322 0%, #04060b 100%);
+  z-index: -1;
+}

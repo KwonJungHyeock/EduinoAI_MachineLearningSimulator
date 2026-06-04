@@ -1,0 +1,67 @@
+// 절차적으로 생성하는 공용 텍스처(외부 에셋 없이 분위기 연출).
+// - glow  : 부드러운 방사형 그라데이션(눈빛/조명 풀/먼지에 틴트해서 재사용)
+// - dust  : 작은 먼지 입자
+export function ensureFxTextures(scene) {
+  if (!scene.textures.exists('glow')) {
+    const size = 256;
+    const c = scene.textures.createCanvas('glow', size, size);
+    const ctx = c.getContext();
+    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.4, 'rgba(255,255,255,0.55)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+    c.refresh();
+  }
+
+  if (!scene.textures.exists('dust')) {
+    const size = 16;
+    const c = scene.textures.createCanvas('dust', size, size);
+    const ctx = c.getContext();
+    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    g.addColorStop(0, 'rgba(255,255,255,0.9)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+    c.refresh();
+  }
+}
+
+// 비네팅(가장자리 어둡게) — 폐연구소 톤. 화면 위에 덮는 이미지.
+export function addVignette(scene, depth = 1000) {
+  const { width, height } = scene.scale;
+  if (!scene.textures.exists('vignette')) {
+    const c = scene.textures.createCanvas('vignette', 512, 288);
+    const ctx = c.getContext();
+    const g = ctx.createRadialGradient(256, 144, 60, 256, 144, 300);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.7, 'rgba(0,0,0,0.25)');
+    g.addColorStop(1, 'rgba(4,6,11,0.92)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 512, 288);
+    c.refresh();
+  }
+  return scene.add
+    .image(width / 2, height / 2, 'vignette')
+    .setDisplaySize(width, height)
+    .setDepth(depth)
+    .setScrollFactor(0);
+}
+
+// 떠다니는 먼지 입자 — 정적·폐허감.
+export function addDust(scene, count = 40, depth = 5) {
+  const { width, height } = scene.scale;
+  return scene.add.particles(0, 0, 'dust', {
+    x: { min: 0, max: width },
+    y: { min: 0, max: height },
+    quantity: count,
+    lifespan: 9000,
+    speedY: { min: -6, max: 6 },
+    speedX: { min: -8, max: 8 },
+    scale: { min: 0.15, max: 0.5 },
+    alpha: { start: 0.18, end: 0 },
+    frequency: 220,
+    blendMode: 'ADD',
+  }).setDepth(depth);
+}

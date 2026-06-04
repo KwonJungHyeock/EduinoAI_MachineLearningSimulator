@@ -30,3 +30,15 @@ export const FONT = {
   display: 'Orbitron, sans-serif',
   body: '"Space Grotesk", sans-serif',
 };
+
+// 기준 해상도(16:9). 모든 씬은 이 좌표계로 그리고 Scale.FIT로 화면에 맞춘다.
+export const BASE = { w: 1280, h: 720 };
+
+// 씬 키(중앙 관리 — 오타로 인한 전환 버그 방지)
+export const SCENE = {
+  BOOT: 'Boot',
+  PRELOAD: 'Preload',
+  SPLASH: 'Splash',
+  TITLE: 'Title',
+  COMING_SOON: 'ComingSoon',
+};
