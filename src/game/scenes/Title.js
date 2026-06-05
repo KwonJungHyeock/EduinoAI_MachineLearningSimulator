@@ -20,6 +20,7 @@ export default class Title extends Phaser.Scene {
   }
 
   create() {
+    this._left = false;
     const cx = BASE.w / 2;
     this.cameras.main.setBackgroundColor('#04060b');
     fadeIn(this, 600);

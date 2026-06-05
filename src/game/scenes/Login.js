@@ -29,6 +29,7 @@ export default class Login extends Phaser.Scene {
     const lx = 330; // 왼쪽 브랜드 기준 x
     this.cameras.main.setBackgroundColor('#04060b');
     fadeIn(this, 500);
+    this._left = false;
 
     // 배경 아트가 있으면 깔고 폼은 왼쪽, 없으면 절차적(브랜드 왼쪽 + 폼 오른쪽).
     this.artBg = hasAsset(this, 'bgLogin');

@@ -15,6 +15,7 @@ export default class Room extends Phaser.Scene {
   }
 
   create() {
+    this._left = false;
     const cx = BASE.w / 2;
     const cy = BASE.h / 2;
     this.cameras.main.setBackgroundColor('#04060b');
