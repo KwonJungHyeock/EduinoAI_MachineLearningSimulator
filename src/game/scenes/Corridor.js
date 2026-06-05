@@ -156,8 +156,9 @@ export default class Corridor extends Phaser.Scene {
     // 문 + 근접 트리거
     this.doors = DOORS.map((d) => this._makeDoor(d));
 
-    // 플레이어
-    this.player = new Player(this, 200, 470);
+    // 플레이어 — 직전 위치(방에서 나온 자리)에서 이어짐, 없으면 시작점
+    const pos = this.registry.get('corridorPos') || { x: 200, y: 470 };
+    this.player = new Player(this, pos.x, pos.y);
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
     // 입력
@@ -302,6 +303,8 @@ export default class Corridor extends Phaser.Scene {
   _tryEnter() {
     if (this._left || !this._near || this._near.locked) return;
     this._left = true;
+    // 나간 자리 기억(복귀 시 이 방 앞에서 이어짐)
+    this.registry.set('corridorPos', { x: this.player.x, y: this.player.y });
     this.cameras.main.fadeOut(350, 5, 7, 13);
     this.cameras.main.once('camerafadeoutcomplete', () =>
       this.scene.start(SCENE.ROOM, { id: this._near.id, name: this._near.name }),

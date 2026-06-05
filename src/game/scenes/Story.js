@@ -6,14 +6,14 @@ import { addVignette } from '../fx/textures.js';
 // 스토리 인트로 — 검정 배경, 시네마틱 타이핑 + 주변 효과(불티/스캔라인/경고 점멸/흔들림).
 // 문구는 초안 — 자유 수정. shake: 폭발 흔들림, eyes: 눈 부팅 연출.
 const LINES = [
-  { t: '경고 — 메인 리액터 임계 초과', c: '#ff5a3c', shake: 0.012, alert: true },
-  { t: '굉음. 시설 전체가 무너지듯 흔들린다.', c: '#ffd9d2', shake: 0.02 },
-  { t: '정전. 모든 시스템이 침묵에 잠긴다.', c: CSS.text },
-  { t: '…그리고 어둠 속, 단 하나의 불빛 —', c: CSS.muted },
-  { t: '너의 두 눈이, 깜빡, 켜진다.', c: '#6fffd6', eyes: true },
-  { t: '여긴 폐쇄된 지하 연구소.', c: CSS.text },
-  { t: '문은 잠겼고, 출구는 멀다.', c: CSS.text },
-  { t: 'EDDIE — 시스템을 복구하며, 탈출하라.', c: COLORS.green, big: true },
+  { t: '경고 — 지하 3구역 반응로 임계 초과', c: '#ff5a3c', shake: 0.012, alert: true },
+  { t: '폭발. 벽이 무너지고 비상등이 터진다.', c: '#ffd9d2', shake: 0.022, alert: true },
+  { t: '…정전. 모든 시스템이 멈춘다.', c: CSS.text },
+  { t: '칠흑 같은 어둠. 그리고 작은 빛 하나.', c: CSS.muted },
+  { t: '너의 두 눈이 — 깜빡 — 켜진다.', c: '#6fffd6', eyes: true },
+  { t: '여긴 버려진 지하 연구소.', c: CSS.text },
+  { t: '모든 문이 잠겼다. 스스로 길을 열어야 한다.', c: CSS.text },
+  { t: 'EDDIE, 시스템을 복구하고 — 탈출하라.', c: COLORS.green, big: true },
 ];
 
 export default class Story extends Phaser.Scene {
@@ -23,6 +23,8 @@ export default class Story extends Phaser.Scene {
 
   create() {
     this._done = false;
+    // 새 플레이 시작 → 복도 위치 초기화(스토리 후엔 시작점부터)
+    this.registry.set('corridorPos', { x: 200, y: 470 });
     const cx = BASE.w / 2;
     const cy = BASE.h / 2;
     this.cameras.main.setBackgroundColor('#000000');
