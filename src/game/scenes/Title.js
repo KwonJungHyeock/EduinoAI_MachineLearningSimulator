@@ -1,10 +1,17 @@
 import Phaser from 'phaser';
 import { SCENE, COLORS, CSS, FONT, BASE } from '../../shared/theme.js';
-import { addVignette, addDust, glowBehind, addCover } from '../fx/textures.js';
+import { addVignette, addDust, glowBehind, addCover, pulsingGlow } from '../fx/textures.js';
 import { fadeIn, goTo } from '../fx/transition.js';
 import { hasAsset } from '../assets.js';
 import Eddie from '../objects/Eddie.js';
 import Button from '../objects/Button.js';
+
+// 배경 아트(title/bg.png) 위 작동 영역 좌표(1280×720 기준). 그림에 맞춰 미세조정 가능.
+const ART = {
+  start: { x: 640, y: 636, w: 430, h: 58 }, // 베이크된 "시작하기" 버튼
+  eyeL: { x: 614, y: 322 },
+  eyeR: { x: 666, y: 322 },
+};
 
 // 타이틀 — 어둠 속 EDDIE(눈빛만 빛). 폐연구소 톤. 시작 버튼(클릭/Enter).
 export default class Title extends Phaser.Scene {
@@ -58,34 +65,40 @@ export default class Title extends Phaser.Scene {
         .setOrigin(0.5);
     }
 
-    // 시작 버튼(고급 컴포넌트)
-    const btn = new Button(this, cx, 646, {
-      label: '시작하기',
-      icon: '▶',
-      width: 264,
-      height: 62,
-      color: COLORS.green,
-      onClick: () => this._start(),
-    });
-    btn.on('pointerover', () => this.eddie?.setMood('ok'));
-    btn.on('pointerout', () => this.eddie?.setMood('idle'));
-
-    this.add
-      .text(cx, 720 - 22, 'Space 또는 클릭으로 시작', {
-        fontFamily: FONT.body,
-        fontSize: '13px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5);
+    if (this.artBg) {
+      // 배경에 그려진 "시작하기" 버튼 위 투명 클릭존 + 호버 글로우
+      const b = ART.start;
+      const hov = this.add
+        .image(b.x, b.y, 'glow')
+        .setTint(COLORS.green)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0)
+        .setScale(b.w / 150, b.h / 60);
+      const zone = this.add.zone(b.x, b.y, b.w, b.h).setInteractive({ useHandCursor: true });
+      zone.on('pointerover', () => this.tweens.add({ targets: hov, alpha: 0.32, duration: 150 }));
+      zone.on('pointerout', () => this.tweens.add({ targets: hov, alpha: 0, duration: 150 }));
+      zone.on('pointerup', () => this._start());
+      // EDDIE 눈 생기
+      pulsingGlow(this, ART.eyeL.x, ART.eyeL.y, COLORS.eddieGlow, 0.5, 0.5);
+      pulsingGlow(this, ART.eyeR.x, ART.eyeR.y, COLORS.eddieGlow, 0.5, 0.5);
+    } else {
+      // 폴백: 고급 버튼 + 안내
+      const btn = new Button(this, cx, 646, {
+        label: '시작하기', icon: '▶', width: 264, height: 62, color: COLORS.green,
+        onClick: () => this._start(),
+      });
+      btn.on('pointerover', () => this.eddie?.setMood('ok'));
+      btn.on('pointerout', () => this.eddie?.setMood('idle'));
+      this.add
+        .text(cx, 720 - 22, 'Space 또는 클릭으로 시작', { fontFamily: FONT.body, fontSize: '13px', color: CSS.muted })
+        .setOrigin(0.5);
+      addDust(this, 44);
+      addVignette(this);
+    }
 
     // 시작: 스페이스바 / 엔터 / 클릭
     this.input.keyboard?.on('keydown-SPACE', () => this._start());
     this.input.keyboard?.on('keydown-ENTER', () => this._start());
-
-    if (!this.artBg) {
-      addDust(this, 44);
-      addVignette(this);
-    }
 
     if (this.eddie) this.time.delayedCall(700, () => this.eddie.talk());
   }

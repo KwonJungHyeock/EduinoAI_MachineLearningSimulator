@@ -70,6 +70,21 @@ export function glowBehind(scene, x, y, color, sx = 3.4, sy = 1.3, alpha = 0.2) 
     .setAlpha(alpha);
 }
 
+// 한 점에서 은은히 맥동하는 글로우(배경 속 EDDIE 눈에 생기를).
+export function pulsingGlow(scene, x, y, color, scale = 0.6, alpha = 0.6) {
+  const g = scene.add
+    .image(x, y, 'glow')
+    .setTint(color)
+    .setBlendMode(Phaser.BlendModes.ADD)
+    .setAlpha(alpha)
+    .setScale(scale);
+  scene.tweens.add({
+    targets: g, alpha: alpha * 0.45, scaleX: scale * 0.8, scaleY: scale * 0.8,
+    duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+  });
+  return g;
+}
+
 // 떠다니는 먼지 입자 — 정적·폐허감.
 export function addDust(scene, count = 40, depth = 5) {
   const { width, height } = scene.scale;
