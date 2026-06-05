@@ -93,7 +93,6 @@ function drawToken(scene) {
 export default class Player extends Phaser.GameObjects.Container {
   constructor(scene, x, y) {
     super(scene, x, y);
-    drawToken(scene);
     scene.add.existing(this);
     this.speed = 240;
 
@@ -106,22 +105,34 @@ export default class Player extends Phaser.GameObjects.Container {
       .setScale(2.8, 2.4);
     this.shadow = scene.add.ellipse(0, 70, 70, 18, 0x000000, 0.45);
 
-    this.body2 = scene.add.image(0, HEAD_CY - TH / 2, TOK).setOrigin(0.5, 0.5);
+    if (scene.textures.exists('eddieArt')) {
+      // ★ 실제 EDDIE 아트(투명 PNG) 사용
+      this.body2 = scene.add.image(0, 0, 'eddieArt');
+      const targetH = 168;
+      const s = targetH / this.body2.height;
+      this.body2.setScale(s).setOrigin(0.5, 0.5);
+      // 발 위치에 맞춰 살짝 위로(중심 보정)
+      this.body2.y = -targetH * 0.12;
+      this.shadow.y = targetH * 0.42;
+      this.add([this.light, this.shadow, this.body2]);
+    } else {
+      // 폴백: 코드로 그린 EDDIE 토큰 + 눈빛 오버레이
+      drawToken(scene);
+      this.body2 = scene.add.image(0, HEAD_CY - TH / 2, TOK).setOrigin(0.5, 0.5);
+      this.glowL = scene.add.image(-17, 0, 'glow').setTint(COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.85).setScale(0.55);
+      this.glowR = scene.add.image(17, 0, 'glow').setTint(COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.85).setScale(0.55);
+      this.eyeL = scene.add.ellipse(-17, 0, 14, 18, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
+      this.eyeR = scene.add.ellipse(17, 0, 14, 18, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
+      this.orb = scene.add.ellipse(0, HEAD_CY - TH / 2 + 6, 8, 8, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
+      this.add([this.light, this.shadow, this.body2, this.glowL, this.glowR, this.eyeL, this.eyeR, this.orb]);
+      scene.tweens.add({ targets: [this.orb], alpha: 0.4, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+      this._blink(scene);
+    }
 
-    // 눈빛(스크린 위) + 글로우 halo
-    const eyeY = 0; // 머리 중심 부근
-    this.glowL = scene.add.image(-17, eyeY, 'glow').setTint(COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.85).setScale(0.55);
-    this.glowR = scene.add.image(17, eyeY, 'glow').setTint(COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.85).setScale(0.55);
-    this.eyeL = scene.add.ellipse(-17, eyeY, 14, 18, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
-    this.eyeR = scene.add.ellipse(17, eyeY, 14, 18, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
-    this.orb = scene.add.ellipse(0, HEAD_CY - TH / 2 + 6, 8, 8, COLORS.eddieGlow).setBlendMode(Phaser.BlendModes.ADD);
-
-    this.add([this.light, this.shadow, this.body2, this.glowL, this.glowR, this.eyeL, this.eyeR, this.orb]);
     this.setDepth(10);
-
     scene.tweens.add({ targets: this.light, alpha: 0.3, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-    scene.tweens.add({ targets: [this.orb], alpha: 0.4, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-    this._blink(scene);
+    // 부유감(살짝 위아래)
+    scene.tweens.add({ targets: this.body2, y: this.body2.y - 4, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   }
 
   _blink(scene) {

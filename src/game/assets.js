@@ -9,6 +9,7 @@ const EXTS = ['png', 'jpg', 'jpeg', 'webp'];
 const SLOTS = [
   { key: 'bgTitle', dir: 'assets/title', names: ['bg', 'title'] },
   { key: 'bgLogin', dir: 'assets/login', names: ['bg', 'login'] },
+  { key: 'eddieArt', dir: 'assets/characters', names: ['eddie'] },
 ];
 
 function candidates(slot) {
