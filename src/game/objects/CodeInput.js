@@ -8,7 +8,7 @@ export default class CodeInput extends Phaser.GameObjects.Container {
     super(scene, x, y);
     scene.add.existing(this);
     const { length = 6, cell = 46, gap = 12, onSubmit, onChange } = opts;
-    this.length = length;
+    this.len = length;
     this.cellSize = cell;
     this.value = '';
     this._onSubmit = onSubmit;
@@ -45,8 +45,8 @@ export default class CodeInput extends Phaser.GameObjects.Container {
   }
 
   _refresh() {
-    const active = Math.min(this.value.length, this.length - 1);
-    for (let i = 0; i < this.length; i++) {
+    const active = Math.min(this.value.length, this.len - 1);
+    for (let i = 0; i < this.len; i++) {
       const ch = this.value[i] || '';
       this.cells[i].t.setText(ch);
       const state = ch ? 'filled' : i === this.value.length ? 'active' : 'idle';
@@ -62,7 +62,7 @@ export default class CodeInput extends Phaser.GameObjects.Container {
     } else if (e.key === 'Enter') {
       this._onSubmit?.(this.value);
     } else if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) {
-      if (this.value.length < this.length) {
+      if (this.value.length < this.len) {
         this.value += e.key.toUpperCase();
         this._refresh();
       }
