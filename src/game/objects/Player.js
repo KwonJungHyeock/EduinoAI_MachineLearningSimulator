@@ -91,10 +91,10 @@ function drawToken(scene) {
 }
 
 export default class Player extends Phaser.GameObjects.Container {
-  constructor(scene, x, y) {
+  constructor(scene, x, y, opts = {}) {
     super(scene, x, y);
     scene.add.existing(this);
-    this.speed = 240;
+    this.speed = opts.speed || 240;
 
     // 발치 빛 풀
     this.light = scene.add
@@ -130,6 +130,7 @@ export default class Player extends Phaser.GameObjects.Container {
     }
 
     this.setDepth(10);
+    if (opts.scale && opts.scale !== 1) this.setScale(opts.scale);
     scene.tweens.add({ targets: this.light, alpha: 0.3, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     // 부유감(살짝 위아래)
     scene.tweens.add({ targets: this.body2, y: this.body2.y - 4, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });

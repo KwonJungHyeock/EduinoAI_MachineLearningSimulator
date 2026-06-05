@@ -30,6 +30,14 @@ export default class Room extends Phaser.Scene {
 
     pulsingGlow(this, cx, cy - 30, COLORS.eddieGlow, 1.4, 0.18);
 
+    // 상단 헤더(구성 통일)
+    this.add
+      .text(cx, 22, 'PLAYINO : ESCAPE ROOM', { fontFamily: FONT.display, fontSize: '16px', color: '#e6edf7' })
+      .setOrigin(0.5).setAlpha(0.85).setLetterSpacing?.(3);
+    this.add
+      .text(cx, 48, `에피소드 · 시스템 복구    📍 ${this.roomName}`, { fontFamily: FONT.display, fontSize: '13px', color: '#ffb020' })
+      .setOrigin(0.5).setAlpha(0.85);
+
     this.add
       .text(cx, cy - 70, this.roomName, { fontFamily: FONT.display, fontSize: '40px', color: CSS.text })
       .setOrigin(0.5);
@@ -38,9 +46,10 @@ export default class Room extends Phaser.Scene {
         fontFamily: FONT.body, fontSize: '16px', color: CSS.muted,
       })
       .setOrigin(0.5);
+    // 가이드 멘트
     this.add
-      .text(cx, cy + 30, `roomId: ${this.roomId}`, {
-        fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#4a566e',
+      .text(cx, cy + 28, 'ESC 또는 아래 버튼으로 복도로 돌아갈 수 있습니다', {
+        fontFamily: FONT.body, fontSize: '14px', color: '#9fb0c6',
       })
       .setOrigin(0.5);
 

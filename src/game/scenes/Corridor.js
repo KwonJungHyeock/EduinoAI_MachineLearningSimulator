@@ -27,23 +27,36 @@ export default class Corridor extends Phaser.Scene {
     this.artBg = hasAsset(this, 'hubBg');
 
     if (this.artBg) {
-      // 월드 크기를 배경 비율(7680×2160 등)에 맞춤
+      // "멀리서 보는" 프레임: 배경을 화면보다 낮은 높이로 가운데 렌더(상·하 어둠 띠)
       const src = this.textures.get('hubBg').getSourceImage();
-      this.worldW = Math.round(WORLD_H * (src.width / src.height));
-      this.floorTop = 408; // 걷는 바닥 윗변(그림 기준)
-      this.floorBot = 688;
+      this.renderH = 600;
+      this.topY = (WORLD_H - this.renderH) / 2; // 60
+      this.worldW = Math.round(this.renderH * (src.width / src.height));
+      this.floorTop = Math.round(this.topY + this.renderH * 0.58); // ≈408
+      this.floorBot = Math.round(this.topY + this.renderH * 0.97); // ≈642
+      this.doorNameY = Math.round(this.topY + this.renderH * 0.15); // 상단 이름판 ≈150
+      this.doorLockY = Math.round(this.topY + this.renderH * 0.42); // 문 중앙 ≈312
     } else {
+      this.renderH = WORLD_H;
+      this.topY = 0;
       this.worldW = 2200;
       this.floorTop = 320;
       this.floorBot = 600;
+      this.doorNameY = this.floorTop - 24;
+      this.doorLockY = this.floorTop - 90;
     }
 
     this.cameras.main.setBackgroundColor('#04080a');
-    this.cameras.main.setBounds(0, 0, this.worldW, WORLD_H);
+    this.cameras.main.setBounds(0, 0, this.worldW, WORLD_H); // 세로 고정·가로 스크롤
     fadeIn(this, 500);
 
     if (this.artBg) {
-      this.add.image(this.worldW / 2, WORLD_H / 2, 'hubBg').setDisplaySize(this.worldW, WORLD_H).setDepth(0);
+      this.add.image(this.worldW / 2, WORLD_H / 2, 'hubBg').setDisplaySize(this.worldW, this.renderH).setDepth(0);
+      // 상·하 어둠 띠(레터박스 느낌)
+      const band = this.add.graphics().setScrollFactor(0).setDepth(1500);
+      band.fillStyle(0x03060a, 1);
+      band.fillRect(0, 0, BASE.w, this.topY);
+      band.fillRect(0, WORLD_H - this.topY, BASE.w, this.topY);
     } else {
       drawCorridorTexture(this, this.worldW, this.floorTop, this.floorBot);
       this.add.image(this.worldW / 2, WORLD_H / 2, 'corridorBg').setDepth(0);
@@ -51,12 +64,12 @@ export default class Corridor extends Phaser.Scene {
       this._debris();
     }
 
-    // 문(라벨/잠금/글로우/트리거) — 아트면 프레임 위에 오버레이만
+    // 문(이름판/잠금/글로우/트리거) — 아트면 프레임 위에 오버레이만
     this.doors = ROOMS.map((r, i) => this._makeDoor(r, Math.round(this.worldW * (DOOR_FRAC[i] ?? (i + 1) / (ROOMS.length + 1)))));
 
-    // 플레이어 — 직전 위치에서 이어짐
-    const pos = this.registry.get('corridorPos') || { x: Math.round(this.worldW * 0.08), y: this.floorBot - 40 };
-    this.player = new Player(this, pos.x, pos.y);
+    // 플레이어 — 직전 위치에서 이어짐(작게 → 멀리서 보는 느낌)
+    const pos = this.registry.get('corridorPos') || { x: Math.round(this.worldW * 0.08), y: this.floorBot - 30 };
+    this.player = new Player(this, pos.x, pos.y, { scale: this.artBg ? 0.7 : 1 });
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -69,49 +82,66 @@ export default class Corridor extends Phaser.Scene {
   }
 
   _makeDoor(r, x) {
-    const labelY = this.floorTop - 24; // 문 프레임 위(벽쪽)
     const color = r.locked ? COLORS.red : COLORS.eddieGlow;
 
-    // 프레임 강조 글로우(잠금=레드, 해제=틸)
+    // 문 중앙 글로우(해제=틸 / 잠금=레드)
     this.add
-      .image(x, this.floorTop - 70, 'glow')
+      .image(x, this.doorLockY, 'glow')
       .setTint(color)
       .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(r.locked ? 0.14 : 0.26)
-      .setScale(2.2, 2.6)
+      .setAlpha(r.locked ? 0.12 : 0.24)
+      .setScale(2, 2.4)
       .setDepth(1);
 
-    // 라벨 패널
+    // 이름판 — 문 상단(그림 명패 위치)
     this.add
-      .text(x, labelY, r.locked ? `${r.name}  🔒` : r.name, {
-        fontFamily: FONT.body, fontSize: '17px', color: r.locked ? CSS.muted : '#eafffb',
-        backgroundColor: 'rgba(5,12,14,0.72)', padding: { x: 10, y: 4 },
+      .text(x, this.doorNameY, r.name, {
+        fontFamily: FONT.display, fontSize: '18px',
+        color: r.locked ? '#c98e8e' : '#d8fff6',
+        backgroundColor: 'rgba(5,12,14,0.66)', padding: { x: 12, y: 5 },
       })
       .setOrigin(0.5)
       .setDepth(3);
 
-    // 잠금 X 표시
+    // 잠금 자물쇠 — 문 중앙
     if (r.locked) {
-      const g = this.add.graphics().setDepth(2);
-      g.lineStyle(4, COLORS.red, 0.5);
-      g.lineBetween(x - 26, this.floorTop - 150, x + 26, this.floorTop - 96);
-      g.lineBetween(x + 26, this.floorTop - 150, x - 26, this.floorTop - 96);
+      this.add
+        .text(x, this.doorLockY, '🔒', { fontSize: '40px' })
+        .setOrigin(0.5)
+        .setDepth(3)
+        .setAlpha(0.92);
     }
 
     return { ...r, cx: x };
   }
 
   _hud() {
+    const cx = BASE.w / 2;
+    // 상단 헤더 바
+    const bar = this.add.graphics().setScrollFactor(0).setDepth(1990);
+    bar.fillStyle(0x03070c, 0.55);
+    bar.fillRect(0, 0, BASE.w, 92);
+
     this.add
-      .text(BASE.w / 2, 36, '연구소 복도 · 시스템 복구', { fontFamily: FONT.display, fontSize: '20px', color: CSS.text })
-      .setOrigin(0.5).setScrollFactor(0).setAlpha(0.9).setDepth(2000);
+      .text(cx, 18, 'PLAYINO : ESCAPE ROOM', {
+        fontFamily: FONT.display, fontSize: '17px', color: '#e6edf7',
+      })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(2000).setLetterSpacing?.(3);
     this.add
-      .text(BASE.w / 2, 66, '방향키 / WASD 이동 · 방 앞에서 Space 입장', { fontFamily: FONT.body, fontSize: '13px', color: CSS.muted })
+      .text(cx, 44, '에피소드 · 시스템 복구', {
+        fontFamily: FONT.display, fontSize: '13px', color: '#ffb020',
+      })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(2000).setAlpha(0.85).setLetterSpacing?.(2);
+    this.add
+      .text(cx, 70, '📍 연구소 복도        방향키 / WASD 이동 · 방 앞에서 Space 입장', {
+        fontFamily: FONT.body, fontSize: '13px', color: '#9fb0c6',
+      })
       .setOrigin(0.5).setScrollFactor(0).setDepth(2000);
+
     this.prompt = this.add
-      .text(BASE.w / 2, BASE.h - 60, '', {
+      .text(cx, BASE.h - 52, '', {
         fontFamily: FONT.display, fontSize: '18px', color: CSS.text,
-        backgroundColor: 'rgba(6,12,18,0.8)', padding: { x: 18, y: 9 },
+        backgroundColor: 'rgba(6,12,18,0.82)', padding: { x: 18, y: 9 },
       })
       .setOrigin(0.5).setScrollFactor(0).setDepth(2000).setAlpha(0);
   }

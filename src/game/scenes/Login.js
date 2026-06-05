@@ -5,7 +5,6 @@ import { fadeIn, goTo } from '../fx/transition.js';
 import { hasAsset } from '../assets.js';
 import Eddie from '../objects/Eddie.js';
 import CodeInput from '../objects/CodeInput.js';
-import Button from '../objects/Button.js';
 import { mountLogin } from '../../ui/login.js';
 
 // 접속 코드(데모) — 이 값이 맞아야 진입.
@@ -13,8 +12,7 @@ const ACCESS_CODE = '123456';
 
 // 배경 아트(login/bg.png) 위 작동 영역 좌표(1280×720). 새 그림에 맞춰 미세조정 가능.
 const ART = {
-  code: { x: 292, y: 374 }, // 6칸 코드 입력(좌측 "접속 코드 입력" 아래)
-  enter: { x: 236, y: 474 }, // 접속하기 버튼
+  code: { x: 292, y: 366 }, // 6칸 코드 입력(좌측 "접속 코드 입력" 아래)
   eyeL: { x: 614, y: 322 }, // 구체 속 EDDIE 눈
   eyeR: { x: 666, y: 322 },
 };
@@ -73,16 +71,25 @@ export default class Login extends Phaser.Scene {
     }
 
     if (this.artBg) {
-      // 배경(코드칸/버튼 비워둔 새 아트) 위에 작동 UI를 얹는다.
+      // 배경 위 작동 UI — 코드 6자리 입력 시 자동 접속(버튼 없음)
       this.code = new CodeInput(this, ART.code.x, ART.code.y, {
-        length: 6, cell: 44, gap: 11,
+        length: 6, cell: 46, gap: 12,
+        onChange: (v) => {
+          if (v.length === 6) this._submit(v);
+        },
         onSubmit: (v) => this._submit(v),
       });
-      // 접속하기 버튼(로그아웃 없음)
-      new Button(this, ART.enter.x, ART.enter.y, {
-        label: '접속하기', width: 208, height: 54, color: COLORS.green,
-        onClick: () => this._submit(this.code.value),
-      });
+      // 가이드 멘트
+      this.add
+        .text(ART.code.x, ART.code.y + 60, '접속 코드 6자리를 입력하세요 — 일치 시 자동 접속', {
+          fontFamily: FONT.body, fontSize: '14px', color: '#aeb9cc',
+        })
+        .setOrigin(0.5);
+      this.add
+        .text(ART.code.x, ART.code.y + 86, 'DEMO  1 2 3 4 5 6', {
+          fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#6fb7ff',
+        })
+        .setOrigin(0.5).setAlpha(0.7);
       // EDDIE 눈 생기
       pulsingGlow(this, ART.eyeL.x, ART.eyeL.y, COLORS.eddieGlow, 0.5, 0.5);
       pulsingGlow(this, ART.eyeR.x, ART.eyeR.y, COLORS.eddieGlow, 0.5, 0.5);
@@ -104,8 +111,10 @@ export default class Login extends Phaser.Scene {
   }
 
   _submit(code) {
+    if (this._left) return;
     if ((code || '') !== ACCESS_CODE) {
-      this.code?.error(); // 길이 부족/오답 모두 에러 흔들림
+      this.code?.error(); // 오답 → 흔들림 후 비우기(재입력)
+      this.time.delayedCall(480, () => this.code?.clear());
       return;
     }
     this._proceed('ok');
