@@ -12,8 +12,8 @@ const ROOMS = [
   { id: 'buzzer', name: '부저 방', locked: true },
   { id: 'relay', name: '릴레이 방', locked: true },
 ];
-// 문 중심 x (월드폭 대비 비율) — 그림 프레임에 맞춰 미세조정 가능
-const DOOR_FRAC = [0.16, 0.4, 0.63, 0.86];
+// 문 중심 x (월드폭 대비 비율) — 균등 배치(코드가 문을 그리므로 항상 정확)
+const DOOR_FRAC = [0.2, 0.4, 0.6, 0.8];
 
 export default class Corridor extends Phaser.Scene {
   constructor() {
@@ -32,18 +32,20 @@ export default class Corridor extends Phaser.Scene {
       this.renderH = 600;
       this.topY = (WORLD_H - this.renderH) / 2; // 60
       this.worldW = Math.round(this.renderH * (src.width / src.height));
-      this.floorTop = Math.round(this.topY + this.renderH * 0.58); // ≈408
-      this.floorBot = Math.round(this.topY + this.renderH * 0.97); // ≈642
-      this.doorNameY = Math.round(this.topY + this.renderH * 0.15); // 상단 이름판 ≈150
-      this.doorLockY = Math.round(this.topY + this.renderH * 0.42); // 문 중앙 ≈312
+      this.floorTop = Math.round(this.topY + this.renderH * 0.6); // 걷는 바닥 윗변 ≈420
+      this.floorBot = Math.round(this.topY + this.renderH * 0.98); // ≈648
+      this.doorNameY = Math.round(this.topY + this.renderH * 0.1); // 이름판 ≈120
+      this.doorCenterY = Math.round(this.topY + this.renderH * 0.35); // 홀로문 중앙 ≈270
+      this.frameH = Math.round(this.renderH * 0.42); // 홀로문 높이 ≈252
     } else {
       this.renderH = WORLD_H;
       this.topY = 0;
       this.worldW = 2200;
-      this.floorTop = 320;
-      this.floorBot = 600;
-      this.doorNameY = this.floorTop - 24;
-      this.doorLockY = this.floorTop - 90;
+      this.floorTop = 360;
+      this.floorBot = 640;
+      this.doorNameY = 150;
+      this.doorCenterY = 250;
+      this.frameH = 200;
     }
 
     this.cameras.main.setBackgroundColor('#04080a');
@@ -81,35 +83,58 @@ export default class Corridor extends Phaser.Scene {
     addVignette(this);
   }
 
+  // 홀로그램 문 — 코드로 정확한 위치에 그림(배경 위에 얹힘)
   _makeDoor(r, x) {
     const color = r.locked ? COLORS.red : COLORS.eddieGlow;
+    const w = 156;
+    const h = this.frameH;
+    const top = this.doorCenterY - h / 2;
 
-    // 문 중앙 글로우(해제=틸 / 잠금=레드)
+    // 뒤 글로우
     this.add
-      .image(x, this.doorLockY, 'glow')
+      .image(x, this.doorCenterY, 'glow')
       .setTint(color)
       .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(r.locked ? 0.12 : 0.24)
-      .setScale(2, 2.4)
+      .setAlpha(r.locked ? 0.12 : 0.2)
+      .setScale(w / 90, h / 110)
       .setDepth(1);
 
-    // 이름판 — 문 상단(그림 명패 위치)
+    // 홀로 프레임(반투명 + 빛나는 테두리 + 스캔라인)
+    const g = this.add.graphics().setDepth(2);
+    g.fillStyle(color, 0.05);
+    g.fillRoundedRect(x - w / 2, top, w, h, 14);
+    g.lineStyle(2.5, color, 0.85);
+    g.strokeRoundedRect(x - w / 2, top, w, h, 14);
+    g.lineStyle(1, color, 0.18);
+    for (let yy = top + 12; yy < top + h - 8; yy += 10) g.lineBetween(x - w / 2 + 8, yy, x + w / 2 - 8, yy);
+    // 모서리 틱
+    g.lineStyle(3, color, 1);
+    const k = 16;
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => {
+      const cx2 = x + sx * (w / 2 - 4);
+      const cy2 = this.doorCenterY + sy * (h / 2 - 4);
+      g.lineBetween(cx2, cy2, cx2 - sx * k, cy2);
+      g.lineBetween(cx2, cy2, cx2, cy2 - sy * k);
+    });
+    this.tweens.add({ targets: g, alpha: { from: 0.75, to: 1 }, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+
+    // 이름판(상단)
     this.add
       .text(x, this.doorNameY, r.name, {
         fontFamily: FONT.display, fontSize: '18px',
-        color: r.locked ? '#c98e8e' : '#d8fff6',
-        backgroundColor: 'rgba(5,12,14,0.66)', padding: { x: 12, y: 5 },
+        color: r.locked ? '#e89b9b' : '#d8fff6',
+        backgroundColor: r.locked ? 'rgba(40,10,10,0.6)' : 'rgba(6,22,20,0.6)',
+        padding: { x: 12, y: 5 },
       })
-      .setOrigin(0.5)
-      .setDepth(3);
+      .setOrigin(0.5).setDepth(3);
 
-    // 잠금 자물쇠 — 문 중앙
+    // 중앙 상태 표시
     if (r.locked) {
-      this.add
-        .text(x, this.doorLockY, '🔒', { fontSize: '40px' })
-        .setOrigin(0.5)
-        .setDepth(3)
-        .setAlpha(0.92);
+      this.add.text(x, this.doorCenterY, '🔒', { fontSize: '42px' }).setOrigin(0.5).setDepth(3).setAlpha(0.92);
+    } else {
+      const core = this.add.image(x, this.doorCenterY, 'glow').setTint(color).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.4).setScale(0.9).setDepth(3);
+      this.tweens.add({ targets: core, alpha: 0.15, scale: 0.6, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+      this.add.text(x, this.doorCenterY + h / 2 - 22, '▶ 입장 가능', { fontFamily: FONT.body, fontSize: '12px', color: '#bafff0' }).setOrigin(0.5).setDepth(3).setAlpha(0.85);
     }
 
     return { ...r, cx: x };
