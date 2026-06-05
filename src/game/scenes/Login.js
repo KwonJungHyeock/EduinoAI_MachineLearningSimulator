@@ -5,13 +5,16 @@ import { fadeIn, goTo } from '../fx/transition.js';
 import { hasAsset } from '../assets.js';
 import Eddie from '../objects/Eddie.js';
 import CodeInput from '../objects/CodeInput.js';
+import Button from '../objects/Button.js';
 import { mountLogin } from '../../ui/login.js';
 
-// 배경 아트(login/bg.png) 위 작동 영역 좌표(1280×720). 그림에 맞춰 미세조정 가능.
+// 접속 코드(데모) — 이 값이 맞아야 진입.
+const ACCESS_CODE = '123456';
+
+// 배경 아트(login/bg.png) 위 작동 영역 좌표(1280×720). 새 그림에 맞춰 미세조정 가능.
 const ART = {
-  code: { x: 248, y: 348 }, // 6칸 코드 입력 중심(베이크된 ACCESS CODE 점 위)
-  submit: { x: 240, y: 436, w: 260, h: 52 }, // [ > 접속 진행 ]
-  logout: { x: 226, y: 512, w: 230, h: 48 }, // [ > 로그아웃 ]
+  code: { x: 248, y: 352 }, // 6칸 코드 입력 중심
+  enter: { x: 248, y: 460 }, // 접속하기 버튼
   eyeL: { x: 616, y: 322 },
   eyeR: { x: 668, y: 322 },
 };
@@ -69,13 +72,16 @@ export default class Login extends Phaser.Scene {
     }
 
     if (this.artBg) {
-      // 배경에 그려진 로그인 UI 위에 작동 영역을 얹는다(좌표계 1:1).
+      // 배경(코드칸/버튼 비워둔 새 아트) 위에 작동 UI를 얹는다.
       this.code = new CodeInput(this, ART.code.x, ART.code.y, {
         length: 6, cell: 44, gap: 11,
         onSubmit: (v) => this._submit(v),
       });
-      this._zone(ART.submit, () => this._submit(this.code.value)); // 접속 진행
-      this._zone(ART.logout, () => this._proceed('idle')); // 로그아웃 → 체험 입장
+      // 접속하기 버튼(로그아웃 없음)
+      new Button(this, ART.enter.x, ART.enter.y, {
+        label: '접속하기', width: 208, height: 54, color: COLORS.green,
+        onClick: () => this._submit(this.code.value),
+      });
       // EDDIE 눈 생기
       pulsingGlow(this, ART.eyeL.x, ART.eyeL.y, COLORS.eddieGlow, 0.5, 0.5);
       pulsingGlow(this, ART.eyeR.x, ART.eyeR.y, COLORS.eddieGlow, 0.5, 0.5);
@@ -96,24 +102,9 @@ export default class Login extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.DESTROY, () => this._cleanup());
   }
 
-  // 배경에 그려진 버튼 위 투명 클릭존 + 호버 글로우
-  _zone(b, cb) {
-    const hov = this.add
-      .image(b.x, b.y, 'glow')
-      .setTint(COLORS.eddieGlow)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setAlpha(0)
-      .setScale(b.w / 150, b.h / 60);
-    const z = this.add.zone(b.x, b.y, b.w, b.h).setInteractive({ useHandCursor: true });
-    z.on('pointerover', () => this.tweens.add({ targets: hov, alpha: 0.28, duration: 150 }));
-    z.on('pointerout', () => this.tweens.add({ targets: hov, alpha: 0, duration: 150 }));
-    z.on('pointerup', cb);
-    return z;
-  }
-
   _submit(code) {
-    if ((code || '').length < 6) {
-      this.code?.error();
+    if ((code || '') !== ACCESS_CODE) {
+      this.code?.error(); // 길이 부족/오답 모두 에러 흔들림
       return;
     }
     this._proceed('ok');
@@ -124,7 +115,7 @@ export default class Login extends Phaser.Scene {
     this._left = true;
     this.eddie?.setMood(mood);
     this.eddie?.talk();
-    goTo(this, SCENE.COMING_SOON, 450);
+    goTo(this, SCENE.STORY, 500); // 접속 성공 → 스토리 인트로
   }
 
   _back() {

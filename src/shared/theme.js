@@ -43,5 +43,8 @@ export const SCENE = {
   SPLASH: 'Splash',
   TITLE: 'Title',
   LOGIN: 'Login',
+  STORY: 'Story',
+  CORRIDOR: 'Corridor',
+  ROOM: 'Room',
   COMING_SOON: 'ComingSoon',
 };
