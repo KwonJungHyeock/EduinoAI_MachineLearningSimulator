@@ -10,6 +10,7 @@ const SLOTS = [
   { key: 'bgTitle', dir: 'assets/title', names: ['bg', 'title'] },
   { key: 'bgLogin', dir: 'assets/login', names: ['bg', 'login'] },
   { key: 'eddieArt', dir: 'assets/characters', names: ['eddie'] },
+  { key: 'hubBg', dir: 'assets/hub', names: ['bg', 'hub'] },
 ];
 
 function candidates(slot) {
