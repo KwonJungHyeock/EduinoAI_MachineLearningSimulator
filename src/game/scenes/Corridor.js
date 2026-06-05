@@ -118,15 +118,16 @@ export default class Corridor extends Phaser.Scene {
     });
     this.tweens.add({ targets: g, alpha: { from: 0.75, to: 1 }, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
-    // 이름판(상단)
-    this.add
+    // 이름판(상단) — 박스 없이 글로우 폰트로 배경에 녹임
+    const name = this.add
       .text(x, this.doorNameY, r.name, {
-        fontFamily: FONT.display, fontSize: '18px',
-        color: r.locked ? '#e89b9b' : '#d8fff6',
-        backgroundColor: r.locked ? 'rgba(40,10,10,0.6)' : 'rgba(6,22,20,0.6)',
-        padding: { x: 12, y: 5 },
+        fontFamily: FONT.display, fontSize: '21px',
+        color: r.locked ? '#ffb3a6' : '#d6fff5',
       })
       .setOrigin(0.5).setDepth(3);
+    name.setStroke('#04100e', 5);
+    name.setShadow(0, 0, r.locked ? '#ff5a3c' : '#6fffd6', 14, true, true);
+    name.setLetterSpacing?.(1);
 
     // 중앙 상태 표시
     if (r.locked) {
@@ -134,7 +135,8 @@ export default class Corridor extends Phaser.Scene {
     } else {
       const core = this.add.image(x, this.doorCenterY, 'glow').setTint(color).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.4).setScale(0.9).setDepth(3);
       this.tweens.add({ targets: core, alpha: 0.15, scale: 0.6, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-      this.add.text(x, this.doorCenterY + h / 2 - 22, '▶ 입장 가능', { fontFamily: FONT.body, fontSize: '12px', color: '#bafff0' }).setOrigin(0.5).setDepth(3).setAlpha(0.85);
+      const en = this.add.text(x, this.doorCenterY + h / 2 - 24, '▶ 입장 가능', { fontFamily: FONT.body, fontSize: '13px', color: '#cafff2' }).setOrigin(0.5).setDepth(3);
+      en.setShadow(0, 0, '#6fffd6', 8, false, true);
     }
 
     return { ...r, cx: x };
@@ -164,11 +166,12 @@ export default class Corridor extends Phaser.Scene {
       .setOrigin(0.5).setScrollFactor(0).setDepth(2000);
 
     this.prompt = this.add
-      .text(cx, BASE.h - 52, '', {
-        fontFamily: FONT.display, fontSize: '18px', color: CSS.text,
-        backgroundColor: 'rgba(6,12,18,0.82)', padding: { x: 18, y: 9 },
+      .text(cx, BASE.h - 40, '', {
+        fontFamily: FONT.display, fontSize: '20px', color: CSS.text,
       })
       .setOrigin(0.5).setScrollFactor(0).setDepth(2000).setAlpha(0);
+    this.prompt.setStroke('#04100e', 5);
+    this.prompt.setShadow(0, 0, '#6fffd6', 12, true, true);
   }
 
   _tryEnter() {
@@ -198,7 +201,8 @@ export default class Corridor extends Phaser.Scene {
       this._near = near;
       if (near) {
         this.prompt.setText(near.locked ? `🔒 ${near.name} · 준비 중` : `[Space]  ${near.name} 입장`);
-        this.prompt.setColor(near.locked ? CSS.muted : '#ffffff');
+        this.prompt.setColor(near.locked ? '#ffb3a6' : '#ffffff');
+        this.prompt.setShadow(0, 0, near.locked ? '#ff5a3c' : '#6fffd6', 12, true, true);
         this.tweens.add({ targets: this.prompt, alpha: 1, duration: 150 });
       } else {
         this.tweens.add({ targets: this.prompt, alpha: 0, duration: 150 });
