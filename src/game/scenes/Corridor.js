@@ -71,7 +71,7 @@ export default class Corridor extends Phaser.Scene {
 
     // 플레이어 — 직전 위치에서 이어짐(작게 → 멀리서 보는 느낌)
     const pos = this.registry.get('corridorPos') || { x: Math.round(this.worldW * 0.08), y: this.floorBot - 30 };
-    this.player = new Player(this, pos.x, pos.y, { scale: this.artBg ? 0.7 : 1 });
+    this.player = new Player(this, pos.x, pos.y, { scale: this.artBg ? 0.52 : 0.9 });
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
     this.cursors = this.input.keyboard.createCursorKeys();

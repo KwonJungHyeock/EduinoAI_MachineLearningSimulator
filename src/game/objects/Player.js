@@ -103,7 +103,8 @@ export default class Player extends Phaser.GameObjects.Container {
       .setBlendMode(Phaser.BlendModes.ADD)
       .setAlpha(0.5)
       .setScale(2.8, 2.4);
-    this.shadow = scene.add.ellipse(0, 70, 70, 18, 0x000000, 0.45);
+    // 소프트 접지 그림자(입체감)
+    this.shadow = scene.add.image(0, 70, 'glow').setTint(0x000000).setAlpha(0.5).setScale(0.5, 0.2);
 
     if (scene.textures.exists('eddieArt')) {
       // ★ 실제 EDDIE 아트(투명 PNG) 사용
