@@ -7,8 +7,8 @@ import Player from '../objects/Player.js';
 
 // 방 정의(센서 방만 진입). 배경 아트의 문 프레임 위치(가로 비율)에 맞춰 배치.
 const ROOMS = [
-  { id: 'sensor', name: '센서 방', locked: false },
-  { id: 'led', name: 'LED 방', locked: true },
+  { id: 'dodge', name: '미니게임 룸', locked: false }, // 도망치기 미니게임
+  { id: 'led', name: 'LED 방', locked: true }, // ★ 본 커리큘럼 시작점
   { id: 'buzzer', name: '부저 방', locked: true },
   { id: 'relay', name: '릴레이 방', locked: true },
 ];
@@ -178,10 +178,10 @@ export default class Corridor extends Phaser.Scene {
     if (this._left || !this._near || this._near.locked) return;
     this._left = true;
     this.registry.set('corridorPos', { x: this.player.x, y: this.player.y });
+    const target = this._near.id === 'dodge' ? SCENE.DODGE : SCENE.ROOM;
+    const data = { id: this._near.id, name: this._near.name };
     this.cameras.main.fadeOut(350, 5, 7, 13);
-    this.cameras.main.once('camerafadeoutcomplete', () =>
-      this.scene.start(SCENE.ROOM, { id: this._near.id, name: this._near.name }),
-    );
+    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start(target, data));
   }
 
   update(time, delta) {

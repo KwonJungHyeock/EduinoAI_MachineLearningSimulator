@@ -9,6 +9,7 @@ import Login from './scenes/Login.js';
 import Story from './scenes/Story.js';
 import Corridor from './scenes/Corridor.js';
 import Room from './scenes/Room.js';
+import Dodge from './scenes/Dodge.js';
 import ComingSoon from './scenes/ComingSoon.js';
 
 export function startGame(parent) {
@@ -23,6 +24,6 @@ export function startGame(parent) {
       height: BASE.h,
     },
     render: { antialias: true, roundPixels: false },
-    scene: [Boot, Preload, Splash, Title, Login, Story, Corridor, Room, ComingSoon],
+    scene: [Boot, Preload, Splash, Title, Login, Story, Corridor, Room, Dodge, ComingSoon],
   });
 }

@@ -46,5 +46,6 @@ export const SCENE = {
   STORY: 'Story',
   CORRIDOR: 'Corridor',
   ROOM: 'Room',
+  DODGE: 'Dodge',
   COMING_SOON: 'ComingSoon',
 };
