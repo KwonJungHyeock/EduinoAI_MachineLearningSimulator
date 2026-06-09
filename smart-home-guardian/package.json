@@ -1,0 +1,18 @@
+{
+  "name": "smart-home-guardian",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SMART HOME GUARDIAN — ESP32 스마트홈 키트 기반 Three.js 3D 나이트 디펜스 생존 게임",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
+  }
+}

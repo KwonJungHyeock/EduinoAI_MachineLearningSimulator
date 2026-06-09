@@ -1,0 +1,89 @@
+:root {
+  --green: #3ddc91;
+  --teal: #6fffd6;
+  --red: #ff5a3c;
+  --amber: #ffb020;
+  --blue: #6fb7ff;
+  --text: #e6edf7;
+  --muted: #9fb0c6;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0a1424; font-family: Pretendard, sans-serif; color: var(--text); }
+#scene { position: fixed; inset: 0; display: block; width: 100%; height: 100%; }
+
+/* shake */
+.shake { animation: shake 0.3s; }
+@keyframes shake {
+  10%,90% { transform: translate(-2px,1px); }
+  30%,70% { transform: translate(4px,-2px); }
+  50% { transform: translate(-5px,2px); }
+}
+
+#ui { position: fixed; inset: 0; pointer-events: none; z-index: 10; font-family: Pretendard, sans-serif; }
+#ui button, #ui .act { pointer-events: auto; }
+
+/* 상단 바 */
+.hud-top { position: absolute; top: 16px; left: 0; right: 0; display: flex; align-items: flex-start; justify-content: center; gap: 24px; padding: 0 20px; }
+.hud-stat { text-align: center; background: rgba(6,14,26,0.5); border: 1px solid rgba(111,183,255,0.18); border-radius: 12px; padding: 8px 16px; backdrop-filter: blur(6px); }
+.hud-stat .lbl { display: block; font-family: Orbitron; font-size: 10px; letter-spacing: 2px; color: var(--muted); }
+.hud-stat .val { font-family: Orbitron; font-size: 24px; font-weight: 700; color: #fff; }
+
+.hud-mid { flex: 1; max-width: 560px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.hud-alert { font-family: Orbitron; font-size: 18px; color: var(--text); min-height: 24px; text-shadow: 0 0 12px rgba(255,90,60,0.6); opacity: 0; transition: opacity 0.2s; }
+.hud-alert.on { opacity: 1; }
+.hud-alertbar { width: 320px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+#hud-alertfill { height: 100%; width: 0; background: linear-gradient(90deg, var(--red), var(--amber)); transition: width 0.1s linear; }
+.hud-night { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+.hud-night .bar { width: 180px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+#hud-nightfill { height: 100%; width: 0; background: var(--blue); transition: width 0.3s; }
+
+/* 좌측 내구도 + 센서 */
+.hud-left { position: absolute; left: 18px; top: 96px; width: 240px; }
+.hud-dura .lbl { font-family: Orbitron; font-size: 11px; letter-spacing: 1px; color: var(--muted); }
+.hud-dura .bar { height: 14px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; overflow: hidden; margin-top: 4px; }
+#hud-durafill { height: 100%; width: 100%; background: linear-gradient(90deg,#3ddc91,#6fffd6); transition: width 0.3s, background 0.3s; }
+.hud-sensors { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 13px; color: var(--muted); background: rgba(6,14,26,0.45); border: 1px solid rgba(111,183,255,0.14); border-radius: 8px; padding: 8px 10px; }
+
+/* 연결 상태 */
+.hud-conn { position: absolute; top: 16px; right: 18px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); background: rgba(6,14,26,0.5); border: 1px solid rgba(111,183,255,0.18); border-radius: 10px; padding: 8px 12px; }
+.hud-conn .dot { width: 9px; height: 9px; border-radius: 50%; background: #5a6b86; }
+.hud-conn.live .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.hud-conn button { background: #0d1320; color: var(--text); border: 1px solid #2a3a52; border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.hud-conn button:hover { border-color: var(--blue); }
+
+/* 액추에이터 바(하단) */
+.hud-actbar { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 14px; }
+.act { position: relative; width: 92px; height: 78px; border-radius: 14px; border: 1px solid #243a52; background: linear-gradient(180deg, rgba(20,30,48,0.9), rgba(10,16,28,0.95)); color: var(--text); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform 0.1s, border-color 0.2s, box-shadow 0.2s; font-family: inherit; }
+.act:hover { transform: translateY(-3px); border-color: var(--teal); }
+.act.on { border-color: var(--green); box-shadow: 0 0 18px rgba(61,220,145,0.4); background: linear-gradient(180deg, rgba(30,60,48,0.95), rgba(12,28,22,0.98)); }
+.act .ic { font-size: 24px; }
+.act .t { font-size: 12px; }
+.act .k { position: absolute; top: 5px; right: 7px; font-family: Orbitron; font-size: 10px; color: var(--muted); }
+
+/* 배너 / 토스트 */
+.hud-banner { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%); font-family: Orbitron; font-size: 40px; font-weight: 900; color: #fff; text-shadow: 0 0 24px rgba(111,255,214,0.5); opacity: 0; pointer-events: none; }
+.hud-banner.show { animation: banner 2.2s ease; }
+@keyframes banner { 0%{opacity:0;transform:translate(-50%,-40%) scale(0.9);} 15%{opacity:1;transform:translate(-50%,-50%) scale(1);} 75%{opacity:1;} 100%{opacity:0;} }
+
+.hud-toasts { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.toast { background: rgba(6,12,20,0.9); border: 1px solid var(--teal); border-radius: 10px; padding: 8px 16px; font-family: Orbitron; font-size: 15px; opacity: 1; transition: opacity 0.4s, transform 0.4s; }
+.toast.out { opacity: 0; transform: translateY(-10px); }
+
+/* 오버레이(시작/게임오버) */
+.hud-overlay { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(120% 120% at 50% 30%, rgba(10,20,36,0.7), rgba(4,8,16,0.92)); pointer-events: auto; }
+.hud-overlay .card { width: min(560px, 92vw); text-align: center; padding: 40px 36px; background: linear-gradient(180deg, rgba(16,24,40,0.95), rgba(8,12,20,0.97)); border: 1px solid rgba(111,183,255,0.2); border-radius: 20px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
+.hud-overlay h1 { font-family: Orbitron; font-size: 34px; margin: 0 0 14px; color: #fff; letter-spacing: 1px; }
+.hud-overlay h1.danger { color: var(--red); }
+.hud-overlay p { color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
+.hud-overlay .how { font-size: 13px; color: var(--muted); background: rgba(0,0,0,0.25); border-radius: 12px; padding: 14px; display: grid; gap: 8px; margin-bottom: 22px; }
+.hud-overlay .how b { color: var(--teal); }
+.hud-overlay .best { color: var(--amber); font-family: Orbitron; }
+.hud-overlay .hint { margin: 14px 0 0; font-size: 12px; color: #5a6b86; }
+.primary { font-family: Orbitron; font-size: 17px; font-weight: 700; color: #04140d; background: linear-gradient(180deg,#4cf0a8,#25b277); border: 1px solid rgba(70,230,160,0.6); border-radius: 14px; padding: 14px 30px; cursor: pointer; box-shadow: 0 10px 28px rgba(43,191,129,0.4); transition: transform 0.12s, filter 0.15s; }
+.primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.primary:active { transform: translateY(1px); }
+
+@media (max-width: 720px) {
+  .hud-left { display: none; }
+  .act { width: 72px; height: 66px; }
+}
