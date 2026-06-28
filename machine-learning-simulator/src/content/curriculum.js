@@ -6,11 +6,11 @@ export const CURRICULUM = [
     desc: '머신러닝이 무엇인지, 어떻게 배우는지 가장 쉬운 것부터.',
     lessons: [
       { id: '0.1', title: '머신러닝이란?', tag: '개념', status: 'ready' },
-      { id: '0.2', title: 'AI · ML · 딥러닝 관계', tag: '개념', status: 'soon' },
-      { id: '0.3', title: '학습의 종류 (지도·비지도·강화)', tag: '개념', status: 'soon' },
-      { id: '0.4', title: '데이터 · 특징 · 라벨', tag: '개념', status: 'soon' },
-      { id: '0.5', title: '학습 = 오차 줄이기 (선 맞추기 체험)', tag: '체험', status: 'soon' },
-      { id: '0.6', title: '훈련/테스트와 일반화', tag: '개념', status: 'soon' },
+      { id: '0.2', title: 'AI · ML · 딥러닝 관계', tag: '개념', status: 'ready' },
+      { id: '0.3', title: '학습의 종류 (지도·비지도·강화)', tag: '개념', status: 'ready' },
+      { id: '0.4', title: '데이터 · 특징 · 라벨', tag: '개념', status: 'ready' },
+      { id: '0.5', title: '학습 = 오차 줄이기 (선 맞추기 체험)', tag: '체험', status: 'ready' },
+      { id: '0.6', title: '훈련/테스트와 일반화', tag: '개념', status: 'ready' },
     ],
   },
   {

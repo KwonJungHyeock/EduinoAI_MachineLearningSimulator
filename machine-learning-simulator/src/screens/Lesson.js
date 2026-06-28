@@ -2,6 +2,7 @@ import { loadLesson } from '../content/lessons/index.js';
 import { lessonById } from '../content/curriculum.js';
 import { Progress } from '../app/Progress.js';
 import { go } from '../app/Router.js';
+import { mountWidget } from '../sim/registry.js';
 
 export function Lesson(root, id) {
   let cancelled = false;
@@ -19,7 +20,7 @@ export function Lesson(root, id) {
     render(host, content, id);
   });
 
-  return () => { cancelled = true; };
+  return () => { cancelled = true; host.__widget?.destroy?.(); };
 }
 
 function render(host, content, id) {
@@ -67,13 +68,32 @@ function render(host, content, id) {
     );
   }
 
+  let stepToken = 0;
+  function destroyWidget() {
+    if (host.__widget) { try { host.__widget.destroy?.(); } catch {} host.__widget = null; }
+  }
+  function mountInteractive(spec, emptyMsg) {
+    if (!spec || !spec.widget) { body.innerHTML = placeholder(emptyMsg); return; }
+    body.innerHTML = `<div class="widget-host"></div>`;
+    const mountEl = body.querySelector('.widget-host');
+    const my = stepToken;
+    mountWidget(spec.widget, mountEl, spec)
+      .then((inst) => {
+        if (my !== stepToken || !inst) { inst?.destroy?.(); return; }
+        host.__widget = inst;
+      })
+      .catch(() => { if (my === stepToken) body.innerHTML = placeholder('위젯 로드 실패'); });
+  }
+
   function paint() {
+    stepToken++;
+    destroyWidget();
     paintStepper();
     const step = steps[cur];
     body.innerHTML = '';
     if (step.key === 'concept') body.innerHTML = conceptHTML(content.concept);
-    else if (step.key === 'try') body.innerHTML = placeholder('🎮 체험은 곧 추가됩니다.');
-    else if (step.key === 'sim') body.innerHTML = placeholder('🧪 시뮬레이터는 곧 추가됩니다.');
+    else if (step.key === 'try') mountInteractive(content.tryIt, '🎮 이 레슨엔 체험이 없어요.');
+    else if (step.key === 'sim') mountInteractive(content.sim, '🧪 이 레슨엔 시뮬이 없어요.');
     else if (step.key === 'quiz') renderQuiz();
     else if (step.key === 'recap') renderRecap();
 

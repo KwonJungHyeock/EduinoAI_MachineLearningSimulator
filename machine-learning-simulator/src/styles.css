@@ -103,7 +103,27 @@ a { color: var(--blue); text-decoration: none; }
 .recap-quiz { margin: 14px 0; font-size: 15px; }
 .recap-msg { color: var(--muted); }
 
+/* ── 인터랙티브 위젯 ─────────────── */
+.widget { display: block; }
+.w-intro { color: #cdd6e6; line-height: 1.7; margin: 0 0 14px; }
+.w-canvas { width: 100%; height: auto; aspect-ratio: 600 / 380; background: #0c1422; border: 1px solid var(--line); border-radius: 12px; display: block; touch-action: none; cursor: crosshair; }
+.w-controls { margin-top: 14px; display: grid; gap: 12px; }
+.w-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 12px; }
+.w-row label { font-size: 13px; color: var(--muted); }
+.w-row label .v { color: var(--teal); font-family: Orbitron, sans-serif; margin-left: 6px; }
+.w-row input[type=range] { width: 100%; accent-color: var(--green); }
+.w-stats { display: flex; gap: 14px; }
+.w-stats .stat { flex: 1; background: #0d1422; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.w-stats .stat span { display: block; font-size: 11px; color: var(--muted); }
+.w-stats .stat b { font-family: Orbitron, sans-serif; font-size: 20px; color: #fff; }
+.w-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.w-btns .btn { padding: 10px 16px; font-size: 14px; }
+.w-btns .btn.on { background: linear-gradient(180deg,#ff7a66,#e0432c); color: #fff; box-shadow: 0 8px 22px rgba(224,67,44,.35); }
+.w-hint { font-size: 12px; color: #5a6b86; }
+.widget-host { display: block; }
+
 @media (max-width: 640px) {
+  .w-row { grid-template-columns: 120px 1fr; }
   .hero h1 { font-size: 32px; }
   .lesson { grid-template-columns: 18px 30px 1fr auto; }
   .l-tag { display: none; }

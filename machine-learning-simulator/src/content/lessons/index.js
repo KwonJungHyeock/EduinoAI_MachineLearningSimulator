@@ -1,6 +1,11 @@
 // 레슨 콘텐츠 동적 로더(코드 스플리팅). 새 레슨 = 파일 추가 후 여기 등록.
 const loaders = {
   '0.1': () => import('./0.1.js'),
+  '0.2': () => import('./0.2.js'),
+  '0.3': () => import('./0.3.js'),
+  '0.4': () => import('./0.4.js'),
+  '0.5': () => import('./0.5.js'),
+  '0.6': () => import('./0.6.js'),
 };
 
 export async function loadLesson(id) {
