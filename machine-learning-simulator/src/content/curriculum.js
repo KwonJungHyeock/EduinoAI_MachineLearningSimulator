@@ -17,9 +17,9 @@ export const CURRICULUM = [
     id: 'ch1', emoji: '📘', title: '지도학습 — 회귀', color: '#6fb7ff',
     desc: '선형회귀와 경사하강법으로 "학습"의 핵심을 만진다.',
     lessons: [
-      { id: '1.1', title: '선형 회귀', tag: '시뮬', status: 'soon' },
-      { id: '1.2', title: '경사하강법', tag: '시뮬', status: 'soon' },
-      { id: '1.3', title: '다항 회귀 · 과적합 · 정규화', tag: '시뮬', status: 'soon' },
+      { id: '1.1', title: '선형 회귀', tag: '시뮬', status: 'ready' },
+      { id: '1.2', title: '경사하강법', tag: '시뮬', status: 'ready' },
+      { id: '1.3', title: '다항 회귀 · 과적합 · 정규화', tag: '시뮬', status: 'ready' },
     ],
   },
   {

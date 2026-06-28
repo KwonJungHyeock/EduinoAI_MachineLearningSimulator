@@ -1,6 +1,8 @@
 // 위젯/시각자료 레지스트리(코드 스플리팅). 키 → create 함수.
 const widgets = {
   lineFit: () => import('./widgets/LineFit.js').then((m) => m.default),
+  gradientDescent: () => import('./widgets/GradientDescent.js').then((m) => m.default),
+  polyFit: () => import('./widgets/PolyFit.js').then((m) => m.default),
   venn: () => import('./visuals.js').then((m) => m.createVenn),
   rulesVsLearn: () => import('./visuals.js').then((m) => m.createRulesVsLearn),
   learnTypes: () => import('./visuals.js').then((m) => m.createLearnTypes),

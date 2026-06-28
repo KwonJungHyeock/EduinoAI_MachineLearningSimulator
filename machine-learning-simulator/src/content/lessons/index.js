@@ -6,6 +6,9 @@ const loaders = {
   '0.4': () => import('./0.4.js'),
   '0.5': () => import('./0.5.js'),
   '0.6': () => import('./0.6.js'),
+  '1.1': () => import('./1.1.js'),
+  '1.2': () => import('./1.2.js'),
+  '1.3': () => import('./1.3.js'),
 };
 
 export async function loadLesson(id) {
