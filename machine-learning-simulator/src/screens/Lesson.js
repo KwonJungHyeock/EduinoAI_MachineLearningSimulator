@@ -1,5 +1,5 @@
 import { loadLesson } from '../content/lessons/index.js';
-import { lessonById } from '../content/curriculum.js';
+import { lessonById, CURRICULUM } from '../content/curriculum.js';
 import { Progress } from '../app/Progress.js';
 import { go } from '../app/Router.js';
 import { mountWidget } from '../sim/registry.js';
@@ -20,22 +20,25 @@ export function Lesson(root, id) {
 }
 
 const STEP_META = {
-  concept: { icon: '📖', label: '개념' },
-  try: { icon: '🎮', label: '체험' },
-  sim: { icon: '🧪', label: '시뮬' },
+  concept: { icon: '📖', label: '이론' },
   quiz: { icon: '❓', label: '퀴즈' },
-  recap: { icon: '🏁', label: '정리' },
+  try: { icon: '🎮', label: '체험' },
+  sim: { icon: '🧪', label: '체험' },
+  recap: { icon: '🏁', label: '마무리' },
+  assess: { icon: '🏆', label: '평가' },
 };
 
 function render(host, content, id) {
   const meta = lessonById[id] || {};
   const color = meta.color || '#6fb7ff';
+  // 핵심 구조: 이론 → 퀴즈 → 체험 → 마무리 → 평가(선택)
   const steps = [];
   if (content.concept) steps.push('concept');
+  if (content.quiz) steps.push('quiz');
   if (content.tryIt) steps.push('try');
   if (content.sim) steps.push('sim');
-  if (content.quiz) steps.push('quiz');
   steps.push('recap');
+  if (content.assess) steps.push('assess');
 
   let cur = 0;
   const quiz = { answered: 0, score: 0, total: content.quiz?.length || 0 };
@@ -143,17 +146,23 @@ function render(host, content, id) {
   function renderRecap() {
     stage.innerHTML = `<div class="stage-inner recap-stage">
       <div class="recap-badge" style="--c:${color}">🏁</div>
-      <h2>레슨 정리</h2>
+      <h2>레슨 클리어!</h2>
       <ul>${(content.recap || []).map((r) => `<li>${r}</li>`).join('')}</ul>
-      ${quiz.total ? `<div class="recap-score">퀴즈 점수 <b>${quiz.score} / ${quiz.total}</b></div>` : ''}
-      <p class="recap-msg">"학습 완료"를 누르면 진척에 저장돼요. 잘하셨어요! 👏</p>
+      ${quiz.total ? `<div class="recap-score">퀴즈 <b>${quiz.score} / ${quiz.total}</b></div>` : ''}
+      <div class="recap-xp">완료 보상 <b>+50 XP</b> ⭐</div>
+      <p class="recap-msg">"학습 완료"를 누르면 저장돼요. 잘했어요! 👏</p>
     </div>`;
   }
 
   prevBtn.addEventListener('click', () => { if (cur > 0) { cur--; paint(); } });
   nextBtn.addEventListener('click', () => {
     if (cur < steps.length - 1) { cur++; paint(); }
-    else { Progress.markDone(id); go('/'); }
+    else {
+      Progress.markDone(id);
+      const ch = CURRICULUM.find((c) => c.lessons.some((l) => l.id === id));
+      if (ch && ch.lessons.every((l) => Progress.isDone(l.id))) Progress.addBadge('ch:' + ch.id, ch.title + ' 완료');
+      go('/');
+    }
   });
 
   paint();
@@ -165,7 +174,7 @@ function conceptHTML(sections) {
     if (s.list) inner += `<ul class="c-list">${s.list.map((li) => `<li>${li}</li>`).join('')}</ul>`;
     if (s.table) inner += tableHTML(s.table);
     if (s.visual) inner += `<div class="c-visual-slot" data-i="${i}"></div>`;
-    return `<div class="c-card"><h3>${s.h}</h3>${inner}</div>`;
+    return `<div class="c-card${s.visual ? ' has-visual' : ''}"><h3>${s.h}</h3>${inner}</div>`;
   }).join('')}</div>`;
 }
 function tableHTML(rows) {

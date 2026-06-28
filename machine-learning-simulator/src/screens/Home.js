@@ -21,6 +21,10 @@ export function Home(root) {
           <div class="overall-top"><span>전체 진행</span><span>${done} / ${totalLessons}</span></div>
           <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
         </div>
+        <div class="hero-stats">
+          <span class="chip-xp">⭐ ${Progress.getXP()} XP</span>
+          <span class="chip-badge">🏅 뱃지 ${Progress.getBadges().length}</span>
+        </div>
       </div>
     </header>
     <section class="chapters" id="chapters"></section>

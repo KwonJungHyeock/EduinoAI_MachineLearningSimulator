@@ -12,6 +12,7 @@ export default function createLineFit(mount, opts = {}) {
   el.className = 'sim-lab';
   el.innerHTML = `
     ${opts.intro ? `<p class="sim-intro">${opts.intro}</p>` : ''}
+    ${opts.challenge ? `<div class="sim-goal" id="goal"></div>` : ''}
     <div class="sim-grid">
       <div class="sim-canvas-wrap"><canvas class="sim-canvas"></canvas></div>
       <aside class="sim-side">
@@ -92,7 +93,13 @@ export default function createLineFit(mount, opts = {}) {
     wS.value = w.toFixed(2); bS.value = b.toFixed(2);
     $('vw').textContent = w.toFixed(2); $('vb').textContent = b.toFixed(2);
     $('vlr').textContent = lr.toFixed(3);
-    $('mse').textContent = mse().toFixed(2); $('step').textContent = step;
+    const m = mse();
+    $('mse').textContent = m.toFixed(2); $('step').textContent = step;
+    if (opts.challenge) {
+      const g = $('goal'); const tgt = opts.challenge.targetMse; const ok = m <= tgt;
+      g.classList.toggle('done', ok);
+      g.innerHTML = ok ? `🎉 도전 달성! 오차 ${m.toFixed(2)} ≤ ${tgt}` : `🎯 도전: 오차(MSE)를 <b>${tgt}</b> 이하로! · 현재 ${m.toFixed(2)}`;
+    }
   }
   function draw() {
     fitCanvas();
