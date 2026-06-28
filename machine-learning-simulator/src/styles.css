@@ -194,3 +194,28 @@ a { color: var(--blue); text-decoration: none; }
 /* 마무리 XP */
 .recap-xp { margin: 8px 0 4px; font-size: 17px; color: #ffd86b; }
 .recap-xp b { font-family: Orbitron, sans-serif; }
+
+/* ════ 이론 = 디지털 교과서(목차 + 번호 섹션) ════ */
+.textbook { display: grid; grid-template-columns: 250px 1fr; gap: 30px; align-items: start; }
+.tb-toc { position: sticky; top: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.tb-toc-title { font-family: Orbitron, sans-serif; font-size: 12px; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+.tb-toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.tb-toc a { display: flex; gap: 9px; align-items: baseline; padding: 9px 10px; border-radius: 8px; color: var(--muted); font-size: 13.5px; cursor: pointer; border-left: 2px solid transparent; transition: .15s; }
+.tb-toc a .t-n { font-family: Orbitron, sans-serif; font-size: 11px; color: #5a6b86; }
+.tb-toc a:hover { background: #0d1422; color: var(--text); }
+.tb-toc a.on { color: var(--c); border-left-color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
+.tb-toc a.on .t-n { color: var(--c); }
+.tb-body { max-width: 900px; }
+.tb-sec { display: grid; grid-template-columns: 48px 1fr; gap: 18px; padding: 26px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 12px; }
+.tb-sec:first-child { padding-top: 6px; }
+.tb-sec:last-child { border-bottom: none; }
+.tb-num { font-family: Orbitron, sans-serif; font-size: 16px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); border-radius: 10px; height: 40px; display: grid; place-items: center; }
+.tb-main h3 { margin: 4px 0 12px; font-size: 21px; color: #fff; }
+.tb-main p { margin: 0; line-height: 1.95; color: #cdd6e6; font-size: 15.5px; }
+.tb-main b { color: #fff; }
+@media (max-width: 860px) { .textbook { grid-template-columns: 1fr; } .tb-toc { position: static; } .tb-sec { grid-template-columns: 36px 1fr; } }
+
+/* 체험 명확 표시 배너 */
+.exp-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.exp-banner { margin-bottom: 14px; padding: 13px 18px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 12%, #0c1422); color: var(--text); font-size: 14.5px; display: flex; align-items: center; gap: 12px; }
+.exp-tag { font-family: Orbitron, sans-serif; font-weight: 700; color: var(--c); white-space: nowrap; padding: 6px 13px; border-radius: 20px; border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); font-size: 12.5px; }

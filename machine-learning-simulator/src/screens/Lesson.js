@@ -78,6 +78,23 @@ function render(host, content, id) {
       .catch(() => {});
   }
 
+  // 디지털 교과서: 목차 클릭 이동 + 스크롤 시 활성 목차 + 시각자료 마운트
+  function wireTextbook(sections) {
+    sections.forEach((sec, i) => {
+      if (sec.visual) { const slot = stage.querySelector(`.c-visual-slot[data-i="${i}"]`); if (slot) mountW(sec.visual, slot); }
+    });
+    const links = [...stage.querySelectorAll('.tb-toc a')];
+    links.forEach((a) => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      stage.querySelector(`#sec-${a.dataset.i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach((en) => { if (en.isIntersecting) { const i = en.target.dataset.i; links.forEach((a) => a.classList.toggle('on', a.dataset.i === i)); } });
+    }, { root: stage, rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+    stage.querySelectorAll('.tb-sec').forEach((se) => io.observe(se));
+    mounted.push({ destroy: () => io.disconnect() });
+  }
+
   function paintPath() {
     pathEl.innerHTML = steps.map((s, i) => {
       const m = STEP_META[s];
@@ -97,12 +114,13 @@ function render(host, content, id) {
     stage.innerHTML = '';
     if (s === 'concept') {
       stage.innerHTML = `<div class="stage-inner">${conceptHTML(content.concept)}</div>`;
-      content.concept.forEach((sec, i) => {
-        if (sec.visual) { const slot = stage.querySelector(`.c-visual-slot[data-i="${i}"]`); if (slot) mountW(sec.visual, slot); }
-      });
+      wireTextbook(content.concept);
     } else if (s === 'try' || s === 'sim') {
       stage.classList.add('full');
-      const holder = document.createElement('div'); holder.className = 'sim-holder'; stage.appendChild(holder);
+      const wrap = document.createElement('div'); wrap.className = 'exp-wrap';
+      wrap.innerHTML = `<div class="exp-banner"><span class="exp-tag">🎮 직접 해보기 · 체험</span> 슬라이더와 점을 직접 만지며 학습을 눈으로 확인하세요</div>`;
+      const holder = document.createElement('div'); holder.className = 'sim-holder'; wrap.appendChild(holder);
+      stage.appendChild(wrap);
       mountW(s === 'try' ? content.tryIt : content.sim, holder);
     } else if (s === 'quiz') renderQuiz();
     else if (s === 'recap') renderRecap();
@@ -149,8 +167,7 @@ function render(host, content, id) {
       <h2>레슨 클리어!</h2>
       <ul>${(content.recap || []).map((r) => `<li>${r}</li>`).join('')}</ul>
       ${quiz.total ? `<div class="recap-score">퀴즈 <b>${quiz.score} / ${quiz.total}</b></div>` : ''}
-      <div class="recap-xp">완료 보상 <b>+50 XP</b> ⭐</div>
-      <p class="recap-msg">"학습 완료"를 누르면 저장돼요. 잘했어요! 👏</p>
+      <p class="recap-msg">"학습 완료"를 누르면 이 레슨이 완료로 저장돼요. 잘했어요! 👏</p>
     </div>`;
   }
 
@@ -169,13 +186,19 @@ function render(host, content, id) {
 }
 
 function conceptHTML(sections) {
-  return `<div class="concept">${sections.map((s, i) => {
+  const num = (i) => String(i + 1).padStart(2, '0');
+  const toc = sections.map((s, i) => `<li><a data-i="${i}" class="${i === 0 ? 'on' : ''}"><span class="t-n">${num(i)}</span>${s.h}</a></li>`).join('');
+  const body = sections.map((s, i) => {
     let inner = s.p ? `<p>${s.p}</p>` : '';
     if (s.list) inner += `<ul class="c-list">${s.list.map((li) => `<li>${li}</li>`).join('')}</ul>`;
     if (s.table) inner += tableHTML(s.table);
     if (s.visual) inner += `<div class="c-visual-slot" data-i="${i}"></div>`;
-    return `<div class="c-card${s.visual ? ' has-visual' : ''}"><h3>${s.h}</h3>${inner}</div>`;
-  }).join('')}</div>`;
+    return `<section class="tb-sec" id="sec-${i}" data-i="${i}"><div class="tb-num">${num(i)}</div><div class="tb-main"><h3>${s.h}</h3>${inner}</div></section>`;
+  }).join('');
+  return `<div class="textbook">
+    <nav class="tb-toc"><div class="tb-toc-title">📚 목차</div><ol>${toc}</ol></nav>
+    <article class="tb-body">${body}</article>
+  </div>`;
 }
 function tableHTML(rows) {
   return `<table class="c-table"><thead><tr>${rows[0].map((c) => `<th>${c}</th>`).join('')}</tr></thead>
