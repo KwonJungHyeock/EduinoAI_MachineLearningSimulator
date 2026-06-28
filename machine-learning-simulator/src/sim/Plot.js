@@ -3,12 +3,12 @@ export default class Plot {
   constructor(canvas, { xRange = [0, 10], yRange = [0, 10] } = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.W = canvas.width; // 논리 해상도(고정)
-    this.H = canvas.height;
-    this.pad = { l: 46, r: 18, t: 16, b: 36 };
+    this.pad = { l: 48, r: 20, t: 18, b: 38 };
     this.xR = xRange;
     this.yR = yRange;
   }
+  get W() { return this.canvas.width; }   // 캔버스 실제 크기를 동적으로(반응형)
+  get H() { return this.canvas.height; }
   get pw() { return this.W - this.pad.l - this.pad.r; }
   get ph() { return this.H - this.pad.t - this.pad.b; }
 
