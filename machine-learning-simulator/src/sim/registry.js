@@ -1,12 +1,17 @@
-// 인터랙티브 위젯 레지스트리(코드 스플리팅). 새 위젯 = 여기에 등록.
+// 위젯/시각자료 레지스트리(코드 스플리팅). 키 → create 함수.
 const widgets = {
-  lineFit: () => import('./widgets/LineFit.js'),
+  lineFit: () => import('./widgets/LineFit.js').then((m) => m.default),
+  venn: () => import('./visuals.js').then((m) => m.createVenn),
+  rulesVsLearn: () => import('./visuals.js').then((m) => m.createRulesVsLearn),
+  learnTypes: () => import('./visuals.js').then((m) => m.createLearnTypes),
+  overfit: () => import('./visuals.js').then((m) => m.createOverfit),
+  featureTable: () => import('./visuals.js').then((m) => m.createFeatureTable),
 };
 
 export async function mountWidget(key, mountEl, opts) {
   const loader = widgets[key];
   if (!loader) return null;
-  const mod = await loader();
-  return mod.default(mountEl, opts); // { el, destroy }
+  const create = await loader();
+  return create(mountEl, opts); // { el, destroy }
 }
 export const hasWidget = (key) => !!widgets[key];

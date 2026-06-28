@@ -163,3 +163,15 @@ a { color: var(--blue); text-decoration: none; }
   .lesson { grid-template-columns: 18px 30px 1fr auto; }
   .l-tag { display: none; }
 }
+
+/* ── 개념 시각자료(애니메이션) ── */
+.c-visual { margin-top: 14px; background: #0a1220; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.vis-canvas { width: 100%; display: block; border-radius: 8px; }
+.feat-wrap { padding: 14px; }
+.ftbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ftbl th, .ftbl td { border: 1px solid var(--line); padding: 9px 10px; text-align: center; transition: background .35s, box-shadow .35s, color .35s; }
+.ftbl th { color: var(--muted); font-weight: 600; }
+.ftbl .id { color: #5a6b86; }
+.ftbl[data-hl=feat] .feat { background: rgba(111,183,255,.16); color: #cfe6ff; box-shadow: inset 0 0 0 1px var(--blue); }
+.ftbl[data-hl=label] .label { background: rgba(61,220,145,.16); color: #b6ffd9; box-shadow: inset 0 0 0 1px var(--green); }
+.feat-cap { margin-top: 10px; text-align: center; font-size: 13px; color: var(--muted); }

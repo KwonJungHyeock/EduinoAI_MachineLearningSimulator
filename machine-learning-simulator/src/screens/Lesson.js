@@ -16,7 +16,7 @@ export function Lesson(root, id) {
     if (!content) { host.innerHTML = `<div class="loading">이 레슨은 준비 중이에요. <a href="#/">← 홈</a></div>`; return; }
     render(host, content, id);
   });
-  return () => { cancelled = true; host.__widget?.destroy?.(); };
+  return () => { cancelled = true; host.__destroyAll?.(); };
 }
 
 const STEP_META = {
@@ -64,7 +64,16 @@ function render(host, content, id) {
   const nextBtn = host.querySelector('#next');
 
   let token = 0;
-  const destroyWidget = () => { if (host.__widget) { try { host.__widget.destroy?.(); } catch {} host.__widget = null; } };
+  let mounted = [];
+  function destroyAll() { mounted.forEach((wt) => { try { wt.destroy?.(); } catch {} }); mounted = []; }
+  host.__destroyAll = destroyAll;
+  function mountW(spec, container) {
+    if (!spec?.widget) { container.innerHTML = placeholder('준비 중'); return; }
+    const my = token;
+    mountWidget(spec.widget, container, spec)
+      .then((inst) => { if (my !== token || !inst) { inst?.destroy?.(); return; } mounted.push(inst); })
+      .catch(() => {});
+  }
 
   function paintPath() {
     pathEl.innerHTML = steps.map((s, i) => {
@@ -78,32 +87,27 @@ function render(host, content, id) {
 
   function paint() {
     token++;
-    destroyWidget();
+    destroyAll();
     paintPath();
     const s = steps[cur];
     stage.className = 'lab-stage';
     stage.innerHTML = '';
-    if (s === 'concept') { stage.innerHTML = `<div class="stage-inner">${conceptHTML(content.concept)}</div>`; }
-    else if (s === 'try' || s === 'sim') { stage.classList.add('full'); mountSim(s === 'try' ? content.tryIt : content.sim); }
-    else if (s === 'quiz') renderQuiz();
+    if (s === 'concept') {
+      stage.innerHTML = `<div class="stage-inner">${conceptHTML(content.concept)}</div>`;
+      content.concept.forEach((sec, i) => {
+        if (sec.visual) { const slot = stage.querySelector(`.c-visual-slot[data-i="${i}"]`); if (slot) mountW(sec.visual, slot); }
+      });
+    } else if (s === 'try' || s === 'sim') {
+      stage.classList.add('full');
+      const holder = document.createElement('div'); holder.className = 'sim-holder'; stage.appendChild(holder);
+      mountW(s === 'try' ? content.tryIt : content.sim, holder);
+    } else if (s === 'quiz') renderQuiz();
     else if (s === 'recap') renderRecap();
     // 전환 연출
     stage.classList.remove('enter'); void stage.offsetWidth; stage.classList.add('enter');
 
     prevBtn.style.visibility = cur === 0 ? 'hidden' : 'visible';
     nextBtn.textContent = cur === steps.length - 1 ? '학습 완료 ✓' : '다음 →';
-  }
-
-  function mountSim(spec) {
-    const holder = document.createElement('div');
-    holder.className = 'sim-holder';
-    stage.appendChild(holder);
-    if (!spec?.widget) { holder.innerHTML = placeholder('🧪 준비 중'); return; }
-    const my = token;
-    mountWidget(spec.widget, holder, spec).then((inst) => {
-      if (my !== token || !inst) { inst?.destroy?.(); return; }
-      host.__widget = inst;
-    }).catch(() => { if (my === token) holder.innerHTML = placeholder('위젯 로드 실패'); });
   }
 
   function renderQuiz() {
@@ -156,10 +160,11 @@ function render(host, content, id) {
 }
 
 function conceptHTML(sections) {
-  return `<div class="concept">${sections.map((s) => {
+  return `<div class="concept">${sections.map((s, i) => {
     let inner = s.p ? `<p>${s.p}</p>` : '';
     if (s.list) inner += `<ul class="c-list">${s.list.map((li) => `<li>${li}</li>`).join('')}</ul>`;
     if (s.table) inner += tableHTML(s.table);
+    if (s.visual) inner += `<div class="c-visual-slot" data-i="${i}"></div>`;
     return `<div class="c-card"><h3>${s.h}</h3>${inner}</div>`;
   }).join('')}</div>`;
 }
