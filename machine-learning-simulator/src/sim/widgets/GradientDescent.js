@@ -19,6 +19,7 @@ export default function createGradientDescent(mount, opts = {}) {
   el.className = 'sim-lab';
   el.innerHTML = `
     ${opts.intro ? `<p class="sim-intro">${opts.intro}</p>` : ''}
+    ${opts.steps ? `<ol class="sim-steps">${opts.steps.map((s) => `<li>${s}</li>`).join('')}</ol>` : ''}
     <div class="sim-grid">
       <div class="sim-canvas-wrap"><canvas class="sim-canvas"></canvas></div>
       <aside class="sim-side">
@@ -122,7 +123,12 @@ export default function createGradientDescent(mount, opts = {}) {
     $('J').textContent = Number.isFinite(jv) ? jv.toFixed(2) : '∞';
     $('st').textContent = step;
     $('vlr').textContent = lr.toFixed(3);
-    $('eq').innerHTML = `현재 직선  <b>y = ${w.toFixed(2)}·x + ${b.toFixed(2)}</b>`;
+    let msg;
+    if (!Number.isFinite(jv) || Math.abs(w) >= wR[1] - 0.05 || jv > 40) msg = '⚠️ <b style="color:#ff5a3c">발산!</b> 학습률(lr)을 줄이고 리셋하세요';
+    else if (Math.abs(w - wOpt) < 0.05 && Math.abs(b - bOpt) < 0.12) msg = '✅ <b style="color:#3ddc91">최적(★)에 수렴 완료</b>';
+    else if (running) msg = '⬇️ 비용이 낮아지는 방향으로 내려가는 중…';
+    else msg = '▶ [자동 하강]을 눌러 ★로 내려가는 경로를 보세요';
+    $('eq').innerHTML = `현재 직선 <b>y = ${w.toFixed(2)}x + ${b.toFixed(2)}</b><br>${msg}`;
   }
 
   $('lr').addEventListener('input', (e) => { lr = +e.target.value; $('vlr').textContent = lr.toFixed(3); });

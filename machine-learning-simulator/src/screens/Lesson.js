@@ -84,15 +84,21 @@ function render(host, content, id) {
       if (sec.visual) { const slot = stage.querySelector(`.c-visual-slot[data-i="${i}"]`); if (slot) mountW(sec.visual, slot); }
     });
     const links = [...stage.querySelectorAll('.tb-toc a')];
+    const secs = [...stage.querySelectorAll('.tb-sec')];
     links.forEach((a) => a.addEventListener('click', (e) => {
       e.preventDefault();
       stage.querySelector(`#sec-${a.dataset.i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }));
-    const io = new IntersectionObserver((ents) => {
-      ents.forEach((en) => { if (en.isIntersecting) { const i = en.target.dataset.i; links.forEach((a) => a.classList.toggle('on', a.dataset.i === i)); } });
-    }, { root: stage, rootMargin: '-15% 0px -70% 0px', threshold: 0 });
-    stage.querySelectorAll('.tb-sec').forEach((se) => io.observe(se));
-    mounted.push({ destroy: () => io.disconnect() });
+    // 스크롤 연동: 현재 화면 상단에 걸린 마지막 섹션을 활성화
+    const spy = () => {
+      const top = stage.getBoundingClientRect().top;
+      let act = 0;
+      secs.forEach((se, i) => { if (se.getBoundingClientRect().top - top <= 110) act = i; });
+      links.forEach((a, i) => a.classList.toggle('on', i === act));
+    };
+    stage.addEventListener('scroll', spy);
+    spy();
+    mounted.push({ destroy: () => stage.removeEventListener('scroll', spy) });
   }
 
   function paintPath() {

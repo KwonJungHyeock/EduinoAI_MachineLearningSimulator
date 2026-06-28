@@ -44,6 +44,7 @@ export default function createPolyFit(mount, opts = {}) {
   el.className = 'sim-lab';
   el.innerHTML = `
     ${opts.intro ? `<p class="sim-intro">${opts.intro}</p>` : ''}
+    ${opts.steps ? `<ol class="sim-steps">${opts.steps.map((s) => `<li>${s}</li>`).join('')}</ol>` : ''}
     <div class="sim-grid">
       <div class="sim-canvas-wrap"><canvas class="sim-canvas"></canvas></div>
       <aside class="sim-side">

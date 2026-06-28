@@ -196,12 +196,12 @@ a { color: var(--blue); text-decoration: none; }
 .recap-xp b { font-family: Orbitron, sans-serif; }
 
 /* ════ 이론 = 디지털 교과서(목차 + 번호 섹션) ════ */
-.textbook { display: grid; grid-template-columns: 250px 1fr; gap: 30px; align-items: start; }
-.tb-toc { position: sticky; top: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
-.tb-toc-title { font-family: Orbitron, sans-serif; font-size: 12px; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+.textbook { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+.tb-toc { position: sticky; top: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; }
+.tb-toc-title { font-family: Orbitron, sans-serif; font-size: 13px; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
 .tb-toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.tb-toc a { display: flex; gap: 9px; align-items: baseline; padding: 9px 10px; border-radius: 8px; color: var(--muted); font-size: 13.5px; cursor: pointer; border-left: 2px solid transparent; transition: .15s; }
-.tb-toc a .t-n { font-family: Orbitron, sans-serif; font-size: 11px; color: #5a6b86; }
+.tb-toc a { display: flex; gap: 10px; align-items: baseline; padding: 11px 12px; border-radius: 9px; color: var(--muted); font-size: 14.5px; line-height: 1.4; cursor: pointer; border-left: 2px solid transparent; transition: .15s; }
+.tb-toc a .t-n { font-family: Orbitron, sans-serif; font-size: 12px; color: #5a6b86; }
 .tb-toc a:hover { background: #0d1422; color: var(--text); }
 .tb-toc a.on { color: var(--c); border-left-color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
 .tb-toc a.on .t-n { color: var(--c); }
@@ -223,3 +223,8 @@ a { color: var(--blue); text-decoration: none; }
 /* 시뮬 사이드 설명 텍스트 */
 .side-info { background: #0d1422; border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-size: 13.5px; color: #cdd6e6; line-height: 1.6; }
 .side-info b { color: #fff; font-family: ui-monospace, monospace; }
+
+/* 시뮬 사용법 가이드(순서) */
+.sim-steps { margin: 0 0 14px; padding: 12px 16px 12px 36px; background: #0d1422; border: 1px solid var(--line); border-radius: 12px; color: #cdd6e6; font-size: 14px; line-height: 1.7; }
+.sim-steps li { margin: 2px 0; }
+.sim-steps li b { color: #fff; }
