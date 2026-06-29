@@ -250,3 +250,8 @@ a { color: var(--blue); text-decoration: none; }
 .mbar span i { font-style: normal; font-family: Orbitron, sans-serif; color: var(--green); }
 .mbar .mb { height: 8px; background: #0d1422; border-radius: 6px; overflow: hidden; }
 .mbar .mb > div { height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)); width: 0; transition: width .15s; border-radius: 6px; }
+
+/* 세그 변형(3열 / 2×2) + 신경망 구조 캔버스 */
+.seg.seg3 { grid-template-columns: 1fr 1fr 1fr; }
+.seg.seg2x2 { grid-template-columns: 1fr 1fr; }
+.net-canvas { width: 100%; height: 132px; display: block; border-radius: 8px; background: #0c1422; }

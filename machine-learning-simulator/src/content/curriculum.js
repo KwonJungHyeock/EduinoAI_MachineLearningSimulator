@@ -45,10 +45,10 @@ export const CURRICULUM = [
     id: 'ch4', emoji: '📓', title: '신경망 · 딥러닝 입문', color: '#ff5a3c',
     desc: '퍼셉트론에서 다층신경망·역전파까지.',
     lessons: [
-      { id: '4.1', title: '퍼셉트론 (AND·OR·XOR)', tag: '시뮬', status: 'soon' },
-      { id: '4.2', title: '다층신경망 (MLP)', tag: '시뮬', status: 'soon' },
-      { id: '4.3', title: '역전파', tag: '시뮬', status: 'soon' },
-      { id: '4.4', title: 'CNN 맛보기', tag: '개념', status: 'soon' },
+      { id: '4.1', title: '퍼셉트론 (AND·OR·XOR)', tag: '시뮬', status: 'ready' },
+      { id: '4.2', title: '다층신경망 (MLP)', tag: '시뮬', status: 'ready' },
+      { id: '4.3', title: '역전파', tag: '시뮬', status: 'ready' },
+      { id: '4.4', title: 'CNN 맛보기', tag: '시뮬', status: 'ready' },
     ],
   },
   {
