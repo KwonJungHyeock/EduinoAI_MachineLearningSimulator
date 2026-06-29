@@ -228,3 +228,25 @@ a { color: var(--blue); text-decoration: none; }
 .sim-steps { margin: 0 0 14px; padding: 12px 16px 12px 36px; background: #0d1422; border: 1px solid var(--line); border-radius: 12px; color: #cdd6e6; font-size: 14px; line-height: 1.7; }
 .sim-steps li { margin: 2px 0; }
 .sim-steps li b { color: #fff; }
+
+/* 분류 실험실: 클래스 선택 토글(세그) */
+.knob.place label { margin-bottom: 8px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg-b { padding: 9px 6px; border-radius: 9px; border: 1px solid var(--line); background: #0d1422; color: var(--muted); font-family: inherit; font-size: 13px; cursor: pointer; transition: .15s; }
+.seg-b:hover { border-color: var(--blue); color: var(--text); }
+.seg-b.on { border-color: var(--green); background: rgba(61,220,145,.12); color: #fff; box-shadow: inset 0 0 0 1px var(--green); }
+
+/* 분류 평가: 혼동행렬 + 지표 막대 */
+.cm-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; }
+.cm-h { display: grid; place-items: center; font-size: 11.5px; color: var(--muted); padding: 4px; text-align: center; }
+.cm-cell { border-radius: 10px; padding: 10px 4px; display: grid; place-items: center; border: 1px solid var(--line); }
+.cm-cell b { font-family: Orbitron, sans-serif; font-size: 22px; color: #fff; }
+.cm-cell span { font-size: 10.5px; color: var(--muted); letter-spacing: .5px; }
+.cm-cell.tp { background: rgba(61,220,145,.14); border-color: rgba(61,220,145,.5); }
+.cm-cell.tn { background: rgba(111,183,255,.12); border-color: rgba(111,183,255,.45); }
+.cm-cell.fp, .cm-cell.fn { background: rgba(255,90,60,.12); border-color: rgba(255,90,60,.45); }
+.metric-bars { display: grid; gap: 9px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.mbar span { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+.mbar span i { font-style: normal; font-family: Orbitron, sans-serif; color: var(--green); }
+.mbar .mb { height: 8px; background: #0d1422; border-radius: 6px; overflow: hidden; }
+.mbar .mb > div { height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)); width: 0; transition: width .15s; border-radius: 6px; }

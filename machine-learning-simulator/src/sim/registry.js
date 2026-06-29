@@ -3,6 +3,8 @@ const widgets = {
   lineFit: () => import('./widgets/LineFit.js').then((m) => m.default),
   gradientDescent: () => import('./widgets/GradientDescent.js').then((m) => m.default),
   polyFit: () => import('./widgets/PolyFit.js').then((m) => m.default),
+  classifierLab: () => import('./widgets/ClassifierLab.js').then((m) => m.default),
+  metricsLab: () => import('./widgets/MetricsLab.js').then((m) => m.default),
   venn: () => import('./visuals.js').then((m) => m.createVenn),
   rulesVsLearn: () => import('./visuals.js').then((m) => m.createRulesVsLearn),
   learnTypes: () => import('./visuals.js').then((m) => m.createLearnTypes),

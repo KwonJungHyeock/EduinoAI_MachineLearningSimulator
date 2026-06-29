@@ -9,6 +9,11 @@ const loaders = {
   '1.1': () => import('./1.1.js'),
   '1.2': () => import('./1.2.js'),
   '1.3': () => import('./1.3.js'),
+  '2.1': () => import('./2.1.js'),
+  '2.2': () => import('./2.2.js'),
+  '2.3': () => import('./2.3.js'),
+  '2.4': () => import('./2.4.js'),
+  '2.5': () => import('./2.5.js'),
 };
 
 export async function loadLesson(id) {

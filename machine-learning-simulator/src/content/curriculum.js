@@ -26,11 +26,11 @@ export const CURRICULUM = [
     id: 'ch2', emoji: '📙', title: '지도학습 — 분류', color: '#ffb020',
     desc: '결정경계와 평가지표로 분류기를 이해한다.',
     lessons: [
-      { id: '2.1', title: '로지스틱 회귀', tag: '시뮬', status: 'soon' },
-      { id: '2.2', title: '분류 평가 (정확도·혼동행렬)', tag: '개념', status: 'soon' },
-      { id: '2.3', title: 'kNN', tag: '시뮬', status: 'soon' },
-      { id: '2.4', title: '결정트리', tag: '시뮬', status: 'soon' },
-      { id: '2.5', title: 'SVM (마진·커널)', tag: '시뮬', status: 'soon' },
+      { id: '2.1', title: '로지스틱 회귀', tag: '시뮬', status: 'ready' },
+      { id: '2.2', title: '분류 평가 (정확도·혼동행렬)', tag: '시뮬', status: 'ready' },
+      { id: '2.3', title: 'kNN', tag: '시뮬', status: 'ready' },
+      { id: '2.4', title: '결정트리', tag: '시뮬', status: 'ready' },
+      { id: '2.5', title: 'SVM (마진·커널)', tag: '시뮬', status: 'ready' },
     ],
   },
   {
