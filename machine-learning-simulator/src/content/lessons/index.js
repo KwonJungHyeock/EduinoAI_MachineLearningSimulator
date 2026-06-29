@@ -14,6 +14,8 @@ const loaders = {
   '2.3': () => import('./2.3.js'),
   '2.4': () => import('./2.4.js'),
   '2.5': () => import('./2.5.js'),
+  '3.1': () => import('./3.1.js'),
+  '3.2': () => import('./3.2.js'),
 };
 
 export async function loadLesson(id) {

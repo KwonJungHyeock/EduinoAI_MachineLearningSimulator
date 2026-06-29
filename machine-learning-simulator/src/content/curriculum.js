@@ -37,8 +37,8 @@ export const CURRICULUM = [
     id: 'ch3', emoji: '📕', title: '비지도학습', color: '#b39bff',
     desc: '정답 없이 구조를 찾는다 — 군집과 차원축소.',
     lessons: [
-      { id: '3.1', title: 'K-평균 군집', tag: '시뮬', status: 'soon' },
-      { id: '3.2', title: 'PCA (주성분분석)', tag: '시뮬', status: 'soon' },
+      { id: '3.1', title: 'K-평균 군집', tag: '시뮬', status: 'ready' },
+      { id: '3.2', title: 'PCA (주성분분석)', tag: '시뮬', status: 'ready' },
     ],
   },
   {

@@ -5,6 +5,8 @@ const widgets = {
   polyFit: () => import('./widgets/PolyFit.js').then((m) => m.default),
   classifierLab: () => import('./widgets/ClassifierLab.js').then((m) => m.default),
   metricsLab: () => import('./widgets/MetricsLab.js').then((m) => m.default),
+  kmeansLab: () => import('./widgets/KMeansLab.js').then((m) => m.default),
+  pcaLab: () => import('./widgets/PCALab.js').then((m) => m.default),
   venn: () => import('./visuals.js').then((m) => m.createVenn),
   rulesVsLearn: () => import('./visuals.js').then((m) => m.createRulesVsLearn),
   learnTypes: () => import('./visuals.js').then((m) => m.createLearnTypes),
