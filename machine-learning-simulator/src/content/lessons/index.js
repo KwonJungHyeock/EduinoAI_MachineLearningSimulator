@@ -20,6 +20,10 @@ const loaders = {
   '4.2': () => import('./4.2.js'),
   '4.3': () => import('./4.3.js'),
   '4.4': () => import('./4.4.js'),
+  '5.1': () => import('./5.1.js'),
+  '5.2': () => import('./5.2.js'),
+  '5.3': () => import('./5.3.js'),
+  '5.4': () => import('./5.4.js'),
 };
 
 export async function loadLesson(id) {

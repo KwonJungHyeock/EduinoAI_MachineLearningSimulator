@@ -1,5 +1,5 @@
 // 분류 실험실 — 2클래스 점을 찍고 모델의 "결정경계"를 실시간으로 본다.
-// model: 'logistic' | 'knn' | 'tree' | 'svm'. 한 시뮬로 여러 분류기를 커버.
+// model: 'logistic' | 'knn' | 'tree' | 'svm'. opts.sandbox=true면 모델을 즉석에서 바꿔 비교.
 import Plot from '../Plot.js';
 
 const C0 = '#6fb7ff', C1 = '#ffb020';
@@ -10,17 +10,19 @@ const SAMPLE = [
 
 const sig = (z) => 1 / (1 + Math.exp(-z));
 const nx = (x) => (x - 5) / 5;
+const MODEL_NAMES = { logistic: '로지스틱', knn: 'kNN', tree: '결정트리', svm: 'SVM' };
 
 export default function createClassifierLab(mount, opts = {}) {
-  const model = opts.model || 'logistic';
+  let model = opts.model || 'logistic';
+  const sandbox = !!opts.sandbox;
   const el = document.createElement('div');
   el.className = 'sim-lab';
-  const knobs = {
+  const knobHTML = (m) => ({
     knn: `<div class="knob"><label>이웃 수 k <b id="vk">5</b></label><input type="range" id="k" min="1" max="15" step="2" value="5"></div>`,
     tree: `<div class="knob"><label>트리 깊이 <b id="vd">3</b></label><input type="range" id="d" min="1" max="6" step="1" value="3"></div>`,
     svm: `<div class="knob"><label>C (마진 강도) <b id="vc">1.0</b></label><input type="range" id="cC" min="0.2" max="8" step="0.2" value="1"></div>`,
     logistic: '',
-  }[model] || '';
+  }[m] || '');
   el.innerHTML = `
     ${opts.intro ? `<p class="sim-intro">${opts.intro}</p>` : ''}
     ${opts.steps ? `<ol class="sim-steps">${opts.steps.map((s) => `<li>${s}</li>`).join('')}</ol>` : ''}
@@ -28,11 +30,13 @@ export default function createClassifierLab(mount, opts = {}) {
       <div class="sim-canvas-wrap"><canvas class="sim-canvas"></canvas></div>
       <aside class="sim-side">
         <div class="sim-stats"><div class="stat big"><span>정확도</span><b id="acc">–</b></div></div>
+        ${sandbox ? `<div class="sim-knobs"><div class="knob place"><label>모델 선택</label>
+          <div class="seg seg2x2"><button class="seg-b on" data-m="logistic">로지스틱</button><button class="seg-b" data-m="knn">kNN</button><button class="seg-b" data-m="tree">결정트리</button><button class="seg-b" data-m="svm">SVM</button></div></div></div>` : ''}
         <div class="sim-knobs">
           <div class="knob place"><label>놓을 클래스</label>
-            <div class="seg"><button class="seg-b on" data-c="0">🔵 클래스 0</button><button class="seg-b" data-c="1">🟠 클래스 1</button></div>
+            <div class="seg"><button class="seg-b cls on" data-c="0">🔵 클래스 0</button><button class="seg-b cls" data-c="1">🟠 클래스 1</button></div>
           </div>
-          ${knobs}
+          <div id="mknobs">${knobHTML(model)}</div>
         </div>
         <div class="side-info" id="msg"></div>
         <div class="sim-btns"><button class="btn ghost" id="sample">기본 데이터</button><button class="btn ghost" id="clear">모두 지우기</button></div>
@@ -83,16 +87,16 @@ export default function createClassifierLab(mount, opts = {}) {
       const vals = [...new Set(rows.map((r) => r[f]))].sort((a, b) => a - b);
       for (let i = 0; i < vals.length - 1; i++) {
         const thr = (vals[i] + vals[i + 1]) / 2;
-        const L = rows.filter((r) => r[f] <= thr), R = rows.filter((r) => r[f] > thr);
-        if (!L.length || !R.length) continue;
-        const g = (L.length * gini(L) + R.length * gini(R)) / rows.length;
-        if (!best || g < best.g) best = { g, f, thr, L, R };
+        const L = rows.filter((r) => r[f] <= thr), Rr = rows.filter((r) => r[f] > thr);
+        if (!L.length || !Rr.length) continue;
+        const g = (L.length * gini(L) + Rr.length * gini(Rr)) / rows.length;
+        if (!best || g < best.g) best = { g, f, thr, L, R: Rr };
       }
     }
     if (!best) return { leaf: maj };
     return { f: best.f, thr: best.thr, left: buildTree(best.L, dep - 1), right: buildTree(best.R, dep - 1) };
   }
-  const treePredict = (node, x, y) => node.leaf !== undefined ? node.leaf : (( node.f === 'x' ? x : y) <= node.thr ? treePredict(node.left, x, y) : treePredict(node.right, x, y));
+  const treePredict = (node, x, y) => node.leaf !== undefined ? node.leaf : ((node.f === 'x' ? x : y) <= node.thr ? treePredict(node.left, x, y) : treePredict(node.right, x, y));
 
   function predictProb(x, y) {
     if (model === 'knn') return knnPredict(x, y);
@@ -101,7 +105,6 @@ export default function createClassifierLab(mount, opts = {}) {
     return sig(lw[0] * nx(x) + lw[1] * nx(y) + lb);
   }
   function retrain() { if (model === 'tree') tree = buildTree(pts, depth); }
-
   function accuracy() { if (!pts.length) return 0; let ok = 0; for (const p of pts) if ((predictProb(p.x, p.y) >= 0.5 ? 1 : 0) === p.c) ok++; return ok / pts.length; }
 
   function fit() {
@@ -112,7 +115,6 @@ export default function createClassifierLab(mount, opts = {}) {
   function draw() {
     fit();
     plot.clear();
-    // 결정영역 히트맵
     const N = 56;
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       const x = (i + 0.5) / N * 10, y = (j + 0.5) / N * 10;
@@ -126,7 +128,6 @@ export default function createClassifierLab(mount, opts = {}) {
     }
     ctx.globalAlpha = 1;
     plot.grid(); plot.axes('특징 1', '특징 2');
-    // SVM 마진선 + 서포트벡터
     if (model === 'svm' && (sw[0] || sw[1])) {
       for (const lvl of [-1, 0, 1]) {
         ctx.strokeStyle = lvl === 0 ? '#fff' : 'rgba(255,255,255,.4)'; ctx.lineWidth = lvl === 0 ? 2 : 1; ctx.setLineDash(lvl === 0 ? [] : [5, 5]);
@@ -136,7 +137,6 @@ export default function createClassifierLab(mount, opts = {}) {
       }
       ctx.setLineDash([]);
     }
-    // 점
     for (const p of pts) {
       const [X, Y] = plot.toPx(p.x, p.y);
       ctx.beginPath(); ctx.fillStyle = p.c ? C1 : C0; ctx.arc(X, Y, 7, 0, 7); ctx.fill();
@@ -152,19 +152,31 @@ export default function createClassifierLab(mount, opts = {}) {
       tree: `세로/가로 <b>직선 분할</b>로 영역을 나눕니다. 깊이를 키우면 더 잘게 → 과적합.`,
       svm: '흰 실선=경계, 점선=<b>마진</b>. 마진을 최대로 벌립니다(가장 든든한 경계).',
     }[model];
-    $('msg').innerHTML = m;
+    $('msg').innerHTML = (sandbox ? `<b>${MODEL_NAMES[model]}</b> · ` : '') + m;
   }
 
-  // 컨트롤
-  el.querySelectorAll('.seg-b').forEach((b) => b.addEventListener('click', () => {
-    el.querySelectorAll('.seg-b').forEach((x) => x.classList.remove('on')); b.classList.add('on'); placeC = +b.dataset.c;
+  // 클래스 선택
+  el.querySelectorAll('.seg-b.cls').forEach((b) => b.addEventListener('click', () => {
+    el.querySelectorAll('.seg-b.cls').forEach((x) => x.classList.remove('on')); b.classList.add('on'); placeC = +b.dataset.c;
   }));
-  if ($('k')) $('k').addEventListener('input', (e) => { k = +e.target.value; $('vk').textContent = k; draw(); });
-  if ($('d')) $('d').addEventListener('input', (e) => { depth = +e.target.value; $('vd').textContent = depth; retrain(); draw(); });
-  if ($('cC')) $('cC').addEventListener('input', (e) => { C = +e.target.value; $('vc').textContent = C.toFixed(1); });
-  $('sample').addEventListener('click', () => { pts = SAMPLE.map((p) => ({ ...p })); resetModel(); });
-  $('clear').addEventListener('click', () => { pts = []; resetModel(); });
-  function resetModel() { lw = [0, 0]; lb = 0; sw = [0, 0]; sb = 0; retrain(); draw(); }
+  // 모델별 노브 바인딩(샌드박스 전환 시 재호출)
+  function bindKnobs() {
+    if ($('k')) $('k').addEventListener('input', (e) => { k = +e.target.value; $('vk').textContent = k; draw(); });
+    if ($('d')) $('d').addEventListener('input', (e) => { depth = +e.target.value; $('vd').textContent = depth; retrain(); draw(); });
+    if ($('cC')) $('cC').addEventListener('input', (e) => { C = +e.target.value; $('vc').textContent = C.toFixed(1); });
+  }
+  bindKnobs();
+  // 샌드박스: 모델 전환
+  if (sandbox) el.querySelectorAll('.seg-b[data-m]').forEach((b) => b.addEventListener('click', () => {
+    el.querySelectorAll('.seg-b[data-m]').forEach((x) => x.classList.remove('on')); b.classList.add('on');
+    model = b.dataset.m; k = 5; depth = 3; C = 1;
+    $('mknobs').innerHTML = knobHTML(model); bindKnobs();
+    resetModel(); startLoop();
+  }));
+
+  $('sample').addEventListener('click', () => { pts = SAMPLE.map((p) => ({ ...p })); resetModel(); startLoop(); });
+  $('clear').addEventListener('click', () => { pts = []; resetModel(); startLoop(); });
+  function resetModel() { stopLoop(); lw = [0, 0]; lb = 0; sw = [0, 0]; sb = 0; retrain(); draw(); }
 
   function evToData(ev) { const r = canvas.getBoundingClientRect(); const px = (ev.clientX - r.left) / r.width * canvas.width; const py = (ev.clientY - r.top) / r.height * canvas.height; return plot.toData(px, py); }
   function near(x, y) { let bi = -1, bd = 0.4; pts.forEach((p, i) => { const d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; bi = i; } }); return bi; }
@@ -176,15 +188,19 @@ export default function createClassifierLab(mount, opts = {}) {
   });
   canvas.addEventListener('contextmenu', (ev) => { ev.preventDefault(); const [x, y] = evToData(ev); const i = near(x, y); if (i >= 0) { pts.splice(i, 1); retrain(); draw(); } });
 
-  retrain();
-  if (model === 'logistic' || model === 'svm') {
-    running = true;
-    const loop = () => { if (!running) return; for (let i = 0; i < 3; i++) (model === 'svm' ? svmStep : logiStep)(); draw(); raf = requestAnimationFrame(loop); };
-    raf = requestAnimationFrame(loop);
-  } else { requestAnimationFrame(draw); }
+  function startLoop() {
+    stopLoop(); retrain();
+    if (model === 'logistic' || model === 'svm') {
+      running = true;
+      const loop = () => { if (!running) return; for (let i = 0; i < 3; i++) (model === 'svm' ? svmStep : logiStep)(); draw(); raf = requestAnimationFrame(loop); };
+      raf = requestAnimationFrame(loop);
+    } else { requestAnimationFrame(draw); }
+  }
+  function stopLoop() { running = false; cancelAnimationFrame(raf); }
 
+  startLoop();
   const ro = new ResizeObserver(() => draw());
   ro.observe(el.querySelector('.sim-canvas-wrap'));
 
-  return { el, destroy() { running = false; cancelAnimationFrame(raf); ro.disconnect(); el.remove(); } };
+  return { el, destroy() { stopLoop(); ro.disconnect(); el.remove(); } };
 }

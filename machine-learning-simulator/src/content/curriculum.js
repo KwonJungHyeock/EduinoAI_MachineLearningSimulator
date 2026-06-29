@@ -55,10 +55,10 @@ export const CURRICULUM = [
     id: 'ch5', emoji: '📔', title: '심화 · 응용 · 윤리', color: '#6fffd6',
     desc: '최적화·검증·AI 윤리, 그리고 수료.',
     lessons: [
-      { id: '5.1', title: '경사하강 비교 (SGD·Momentum·Adam)', tag: '시뮬', status: 'soon' },
-      { id: '5.2', title: '교차검증 · 튜닝', tag: '개념', status: 'soon' },
-      { id: '5.3', title: '데이터 편향 · AI 윤리', tag: '개념', status: 'soon' },
-      { id: '5.4', title: '종합 프로젝트 · 수료', tag: '프로젝트', status: 'soon' },
+      { id: '5.1', title: '경사하강 비교 (SGD·Momentum·Adam)', tag: '시뮬', status: 'ready' },
+      { id: '5.2', title: '교차검증 · 튜닝', tag: '시뮬', status: 'ready' },
+      { id: '5.3', title: '데이터 편향 · AI 윤리', tag: '시뮬', status: 'ready' },
+      { id: '5.4', title: '종합 프로젝트 · 수료', tag: '프로젝트', status: 'ready' },
     ],
   },
 ];
