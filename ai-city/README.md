@@ -1,4 +1,4 @@
-# 에듀이노 AI 랩시티 (EDUINO AI LabCity)
+# EDUINO AI LabCity (에듀이노 AI 랩시티)
 
 author: eduino
 

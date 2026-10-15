@@ -41,12 +41,16 @@ function brain(n: number): { pts: Pt[]; edges: [number, number][] } {
   return { pts, edges };
 }
 
-export function createCore(intro: () => number): Draw {
+// tint(): 지금 강조할 지구 색(없으면 null) → 점 · 연결선 색이 그 색으로 서서히 물듦
+export function createCore(intro: () => number, tint: () => string | null = () => null): Draw {
   const { pts, edges } = brain(1500);
   const proj = new Float32Array(pts.length * 3);
   const sig = Array.from({ length: 26 }, (_, i) => ({ e: (i * 97) % edges.length, s: i * 0.37 }));
-  let rotY = 0, rotX = 0;
+  let rotY = 0, rotX = 0, mix = 0; const tc = [129, 140, 248];
   return (ctx, t, w, h, p) => {
+    const want = tint();
+    if (want) { const n = parseInt(want.slice(1), 16); tc[0] += (((n >> 16) & 255) - tc[0]) * 0.12; tc[1] += (((n >> 8) & 255) - tc[1]) * 0.12; tc[2] += ((n & 255) - tc[2]) * 0.12; }
+    mix += ((want ? 0.75 : 0) - mix) * 0.08;
     const k = intro(), cx = w / 2, cy = h * 0.5, S = Math.min(w, h) * 0.5;
     // 받침대에서 올라오는 부드러운 빛(위로 갈수록 옅어짐)
     const bk = ease(k * 1.4 - 0.2);
@@ -72,7 +76,7 @@ export function createCore(intro: () => number): Draw {
     for (const [a, b] of edges) {
       const za = (proj[a * 3 + 2] + proj[b * 3 + 2]) / 2, al = (0.06 + 0.3 * (0.6 - za)) * form;
       if (al <= 0.01) continue;
-      ctx.strokeStyle = `rgba(129,140,248,${al})`; ctx.beginPath(); ctx.moveTo(proj[a * 3], proj[a * 3 + 1]); ctx.lineTo(proj[b * 3], proj[b * 3 + 1]); ctx.stroke();
+      ctx.strokeStyle = `rgba(${Math.round(129 + (tc[0] - 129) * mix)},${Math.round(140 + (tc[1] - 140) * mix)},${Math.round(248 + (tc[2] - 248) * mix)},${al})`; ctx.beginPath(); ctx.moveTo(proj[a * 3], proj[a * 3 + 1]); ctx.lineTo(proj[b * 3], proj[b * 3 + 1]); ctx.stroke();
     }
     // 점(앞쪽일수록 크고 밝게, 마우스 가까이면 더 밝게)
     for (let i = 0; i < pts.length; i++) {
@@ -80,7 +84,7 @@ export function createCore(intro: () => number): Draw {
       const near = p.in ? Math.max(0, 1 - Math.hypot(x - p.x, y - p.y) / 90) : 0;
       const a = Math.min(1, (0.3 + 0.75 * (0.6 - z)) + near * 0.8) * (0.25 + 0.75 * ease(k * 1.2));
       const r = 0.55 + (0.6 - z) * 0.9 + near * 1.4;
-      ctx.fillStyle = `rgba(${Math.round(96 + 90 * c)},${Math.round(165 - 40 * c)},255,${a})`;
+      ctx.fillStyle = `rgba(${Math.round(96 + 90 * c + (tc[0] - 96 - 90 * c) * mix)},${Math.round(165 - 40 * c + (tc[1] - 165 + 40 * c) * mix)},${Math.round(255 + (tc[2] - 255) * mix)},${a})`;
       ctx.beginPath(); ctx.arc(x, y, Math.max(0.5, r), 0, TAU); ctx.fill();
     }
     // 신호(연결선을 따라 흐르는 빛)
