@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/components/AssetSlot.tsx","./src/components/Canvases.tsx","./src/components/TopBar.tsx","./src/data/districts.ts","./src/motion/heroField.ts","./src/motion/motifs.ts","./src/motion/useCanvas.ts","./src/screens/Brief.tsx","./src/screens/Hero.tsx","./src/screens/Select.tsx","./vite.config.ts"],"version":"5.6.3"}
