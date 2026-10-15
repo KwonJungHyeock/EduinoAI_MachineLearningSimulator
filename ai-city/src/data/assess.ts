@@ -6,6 +6,18 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'vision-3': {
+    title: '필터로 윤곽 찾기',
+    items: [
+      { kind: 'ox', q: '필터는 화면 위를 한 칸씩 옮겨 가며 곱하고 더하는 작은 숫자 표다.', answer: true, why: '이 계산을 합성곱(convolution)이라고 합니다.' },
+      { kind: 'ox', q: '흐리게(평균) 필터를 쓰면 물체의 윤곽이 가장 잘 드러난다.', answer: false, why: '평균은 경계를 뭉개서 물체 대비가 거의 1배 그대로였습니다.' },
+      { kind: 'ox', q: '윤곽 필터는 숫자의 합을 0에 가깝게 만들면 평평한 곳이 사라지고 경계만 남는다.', answer: true, why: '밝기가 같은 곳에서는 +와 −가 서로 지워져 0이 됩니다.' },
+      { kind: 'short', q: '작은 숫자 표를 화면 위로 옮기며 곱해 더하는 계산의 이름은?', accept: ['합성곱', 'convolution', '컨볼루션', '콘볼루션'], why: '합성곱(convolution)입니다.' },
+      { kind: 'essay', q: '내가 만든 필터의 숫자를 어떻게 정했는지, 왜 물체가 돋보였는지(또는 안 됐는지) 실험 결과로 설명해 보세요.',
+        keys: [{ label: '+ · − 배치(좌우 · 위아래 차이)', any: ['+', '−', '-', '양수', '음수', '차이', '왼쪽', '오른쪽'] }, { label: '합을 0으로', any: ['합', '0'] }, { label: '윤곽 · 경계', any: ['윤곽', '경계', '모서리'] }],
+        model: '왼쪽 열은 −, 오른쪽 열은 +로 넣고 가운데는 0으로 해서 합을 0으로 맞췄다. 그러면 밝기가 같은 바닥은 0이 되고, 사람과 기둥처럼 좌우 밝기가 바뀌는 경계만 크게 남아 물체 대비가 1.9배가 되었다.' }
+    ]
+  },
   'vision-2': {
     title: '이미지는 숫자다',
     items: [

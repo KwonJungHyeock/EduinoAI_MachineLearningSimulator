@@ -298,3 +298,28 @@
 .px__th i.ok { background: rgba(15, 107, 76, 0.9); } .px__th i.miss { background: rgba(194, 65, 12, 0.92); } .px__th i.warn { background: rgba(180, 120, 10, 0.92); }
 .px__th.is-on { box-shadow: 0 0 0 2px #f5c542; }
 .px__th.is-on img { opacity: 1; }
+
+/* ── 3차시: 필터 장면 ── */
+.seg--5 { grid-template-columns: repeat(3, 1fr); }
+.seg--5 button { font-size: 12.5px; }
+.kgrid { display: grid; grid-template-columns: repeat(3, auto); gap: 4px; justify-content: start; margin: 8px 0 2px; }
+.kro { min-width: 46px; text-align: center; padding: 5px 0; border-radius: 6px; background: #f1f3f2; border: 1px solid #d5dad7; font: 700 13px "Space Grotesk", sans-serif; color: #18201d; }
+.kcell { min-width: 84px; justify-content: space-between; }
+.cdrawer .kgrid { margin: 2px 0 2px 12px; }
+.fl__row { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 190px 1fr; gap: 10px; align-items: center; }
+.fl__pane { position: relative; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: #000; cursor: crosshair; }
+.fl__cv { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.fl__box { position: absolute; border: 1.5px dashed #f97316; border-radius: 3px; pointer-events: none; }
+.fl__win { position: absolute; outline: 2px solid #f5c542; pointer-events: none; }
+.fl__win--out { outline-width: 3px; }
+.fl__calc { background: rgba(6, 10, 16, 0.6); border-radius: 12px; padding: 10px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.fl__ct { margin: 0 0 6px; font-size: 11.5px; color: var(--muted); font-weight: 700; line-height: 1.5; }
+.fl__mats { display: flex; align-items: center; gap: 4px; }
+.fl__mats > b { color: var(--muted); }
+.fl__m { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.fl__m span { font: 600 10px "Space Grotesk", sans-serif; text-align: center; padding: 3px 0; border-radius: 3px; background: rgba(255, 255, 255, 0.08); color: #dfe6ef; min-width: 24px; }
+.fl__m--k span { background: rgba(245, 197, 66, 0.9); color: #18201d; }
+.fl__sum { margin: 8px 0 0; font-size: 11.5px; color: #cfd8e6; line-height: 1.6; }
+.fl__sum b { font-family: var(--en); color: #fff; } .fl__sum b.o { color: #14b8a6; font-size: 15px; }
+.cdrawer .kcell { line-height: 1.5; min-width: 76px; }
+.cdrawer .kgrid { gap: 3px; }

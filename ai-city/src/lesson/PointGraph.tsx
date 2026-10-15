@@ -6,7 +6,7 @@ export interface GSeries { name: string; cls?: 'a' | 'b'; points: GPoint[] }
 export function PointGraph({ xTicks, xMin, xMax, yMax = 1, yFmt = (v) => `${Math.round(v * 100)}%`, yLabel, xLabel, series, activeId, onHover, read, link, goal }: {
   xTicks: { v: number; label: string }[]; xMin: number; xMax: number; yMax?: number; yFmt?: (v: number) => string;
   yLabel: string; xLabel: string; series: GSeries[]; activeId?: number | null; onHover?: (id: number | null) => void;
-  read: string; link: string; goal?: { y: number; label: string };
+  read: string; link: string; goal?: { y: number; label: string; above?: boolean };
 }) {
   const W = 640, H = 200, L = 48, R = 18, T = 30, B = 30;
   const X = (v: number) => L + ((v - xMin) / (xMax - xMin || 1)) * (W - L - R);
@@ -21,7 +21,7 @@ export function PointGraph({ xTicks, xMin, xMax, yMax = 1, yFmt = (v) => `${Math
         {[0, 0.5, 1].map((f) => (
           <g key={f}><line x1={L} x2={W - R} y1={Y(f * yMax)} y2={Y(f * yMax)} className={f === 0.5 ? 'g-mid' : 'g-grid'} /><text x={L - 8} y={Y(f * yMax) + 4} className="g-axis" textAnchor="end">{yFmt(f * yMax)}</text></g>
         ))}
-        {goal && <><rect x={L} y={Y(goal.y)} width={W - L - R} height={Y(0) - Y(goal.y)} className="g-goal" /><text x={W - R - 4} y={Y(goal.y) - 4} className="g-goaltxt" textAnchor="end">{goal.label}</text></>}
+        {goal && <><rect x={L} y={goal.above ? Y(yMax) : Y(goal.y)} width={W - L - R} height={goal.above ? Y(goal.y) - Y(yMax) : Y(0) - Y(goal.y)} className="g-goal" /><text x={W - R - 4} y={Y(goal.y) - 4} className="g-goaltxt" textAnchor="end">{goal.label}</text></>}
         {xTicks.map((t) => <text key={t.label} x={X(t.v)} y={H - 14} className="g-axis" textAnchor="middle">{t.label}</text>)}
         {series.map((s) => s.points.length > 1 && <polyline key={s.name} points={[...s.points].sort((a, b) => a.x - b.x).map((p) => `${X(p.x)},${Y(p.y)}`).join(' ')} className={`g-line ${s.cls === 'b' ? 'g-line--b' : ''}`} />)}
         {all.map((p) => (
