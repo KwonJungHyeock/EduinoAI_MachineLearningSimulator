@@ -46,7 +46,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     doc.setDrawColor('#c9cfcc'); doc.setLineWidth(0.2); doc.line(M, y + 2, W - M, y + 2); y += 6.5;
   }
   { const f = p.lessons['vision-final'], a = f?.assess; font('bold', 9);
-    doc.text('종합', cols[0], y); doc.text('트랙 종합 평가', cols[1], y); font('normal', 9);
+    doc.text('종합', cols[0], y); doc.text('Lab 종합 평가', cols[1], y); font('normal', 9);
     doc.text(f?.status === 'done' ? `완료 ${day(f.updatedAt)}` : f ? '열림 (아직 안 함)' : '잠김', cols[2], y);
     doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
     y += 6.5; }
@@ -115,7 +115,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
   }
   // 트랙 종합 평가
   { const f = p.lessons['vision-final'], set = ASSESS['vision-final'];
-    if (f?.assess && set) { need(40); font('bold', 12); doc.text('트랙 종합 평가', M, y); y += 7; answers(f.assess, set.items); } }
+    if (f?.assess && set) { need(40); font('bold', 12); doc.text('Lab 종합 평가', M, y); y += 7; answers(f.assess, set.items); } }
   font('normal', 7.5, '#6b7280');
   doc.text('수치는 모두 시뮬레이션 계산값 · 서술형은 핵심어 자동 확인 후 교사가 최종 확인 · 가정은 임시', M, 290);
   // 파일 이름을 확실히 붙이려고 직접 링크로 내려받기

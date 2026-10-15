@@ -70,7 +70,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
         {g.hid.map((h) => { const on = active === h.d.id; return (
           <g key={h.d.id} className={`nmap__lane ${on ? 'on' : ''} ${lit(h.d.id) ? '' : 'dim'}`} style={{ ['--k' as string]: h.d.color }}>
             <rect x={420} y={h.top + 4} width={570} height={g.lane - 8} rx={14} fill={`url(#lane-${h.d.id})`} />
-            <text x={980} y={h.top + g.lane - 14} textAnchor="end" className="nmap__lanetag">{h.d.order} · {h.d.district}</text>
+            <text x={980} y={h.top + g.lane - 14} textAnchor="end" className="nmap__lanetag">{h.d.district}</text>
           </g>); })}
       </g>
       {/* 연결: 입력 → 은닉, 은닉 → 출력 */}

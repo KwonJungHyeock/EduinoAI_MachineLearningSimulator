@@ -7,7 +7,7 @@ export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
   'vision-final': {
-    title: '트랙 종합 평가 · AI 영상처리',
+    title: 'Lab 종합 평가 · AI 영상처리',
     items: [
       { kind: 'ox', q: '컴퓨터에게 사진은 칸마다 밝기 숫자가 적힌 표다. (2차시)', answer: true, why: '픽셀마다 0~255 숫자가 들어 있습니다.' },
       { kind: 'ox', q: '필터(합성곱)는 작은 숫자 표를 화면 위로 옮기며 곱해 더하는 계산이다. (3차시)', answer: true, why: '윤곽 필터는 합이 0이 되게 + · −를 배치했습니다.' },

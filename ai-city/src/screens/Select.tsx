@@ -1,5 +1,5 @@
 // author: eduino
-// Lab 선택 = 학습 신경망 지도. 왼쪽: 입력층(공통 기초) → 은닉층(6개 트랙) → 출력층(사건) 뉴런 지도, 신호가 흐름.
+// Lab 선택 = 학습 로드맵 신경망(components/Roadmap). 왼쪽: Foundation Lab 8차시 → 기초 수료 → 6개 Lab, 가로축 = 난이도.
 // 오른쪽: 고른 뉴런의 정보(원 안에서 그 기술의 원리 모션이 '활성화'됨) — 상자 없이 글자로만.
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -40,8 +40,8 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
         <div className="sel2__map">
           <p className="sel2__eye">LEARNING ROADMAP</p>
           <h1 className="sel2__q">기초에서 시작해, <em>원하는 Lab</em>으로.</h1>
-          <Roadmap selected={selected} onSelect={onSelect} onLesson={onLesson} ready={READY} />
-          <p className="sel2__how">왼쪽에서 오른쪽으로 갈수록 어려워집니다 · 뉴런 = 차시 · 빛나는 뉴런 = 완료 · 고리 = 다음 학습 · 누르면 그 Lab을 고르고, 열린 차시는 바로 시작</p>
+          <div className="sel2__scroll"><Roadmap selected={selected} onSelect={onSelect} onLesson={onLesson} ready={READY} /></div>
+          <p className="sel2__how">오른쪽으로 갈수록 어려워집니다 · 뉴런 = 차시 · 채운 뉴런 = 완료 · 퍼지는 고리 = 다음 학습(누르면 바로 시작)</p>
         </div>
         <motion.aside key={d.id} className="sel2__info" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
           <div className="act">
@@ -61,7 +61,7 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
             {d.open
               ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 합류 →</MagneticButton>
               : <span className="sel2__soon">준비 중인 Lab입니다</span>}
-            {d.open && <span className="hint">{READY.length}차시 열림</span>}
+            {d.open && (() => { const p = load(), nx = VISION_LESSONS.find((l) => lesson(p, `vision-${l.n}`)?.status === 'open' || (l.n === 1 && !lesson(p, 'vision-1'))); return <span className="hint">{nx ? `다음 학습 · ${nx.n}차시 ${nx.title}` : '모든 차시 완료'}</span>; })()}
           </div>
         </motion.aside>
       </div>

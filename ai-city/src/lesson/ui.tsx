@@ -16,6 +16,7 @@ export function LessonShell(props: {
   return (
     <section className="screen lesson-screen" style={{ ['--k' as string]: props.keyColor }}>
       {props.top}
+      <div className="lesson-mobile" role="note"><b>수업 화면은 넓은 화면용입니다</b><p>장면 · 그래프 · 지시서를 한눈에 보도록 만들어져 있어요.<br />PC나 태블릿 가로 화면에서 열어 주세요.</p></div>
       <div className="lesson-grid">
         <div className="lesson-left">
           <div className="scene">{props.scene}</div>

@@ -55,7 +55,7 @@ export function Roadmap({ selected, onSelect, onLesson, ready }: { selected: str
             {Array.from({ length: 5 }, (_, k) => <circle key={k} cx={COLX[i] - 16 + k * 8} cy={44} r={2.2} className={k <= i ? 'on' : ''} />)}
           </g>))}
         <text x={COLX[0] - 46} y={48} textAnchor="end" className="rmap__ax">쉬움</text><text x={COLX[4] + 66} y={48} className="rmap__ax">어려움</text>
-        <text x={125} y={64} textAnchor="middle" className="rmap__arc">INPUT · 공통 기초</text>
+        <text x={125} y={64} textAnchor="middle" className="rmap__lv">INPUT</text>
       </g>
       {/* Foundation 줄기 */}
       <g className={`rmap__row ${selected === 'academy' ? 'on' : ''}`} style={{ ['--k' as string]: DISTRICTS[0].color }}>

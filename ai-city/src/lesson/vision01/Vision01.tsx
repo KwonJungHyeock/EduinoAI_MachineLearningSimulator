@@ -280,7 +280,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   return (
     <LessonShell
       keyColor={KEY}
-      top={<TopBar crumb="Vision Lab · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">비전 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb="Vision Lab · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">Vision Lab 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
       scene={scene}
       band={band}
       drawer={drawer}

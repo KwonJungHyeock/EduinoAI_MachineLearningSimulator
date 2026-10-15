@@ -109,7 +109,7 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
   return (
     <LessonShell
       keyColor={def.keyColor}
-      top={<TopBar crumb={`Vision Lab · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">비전 {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb={`Vision Lab · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">Vision Lab {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
       scene={def.scene(step)}
       band={def.band}
       drawer={drawer}

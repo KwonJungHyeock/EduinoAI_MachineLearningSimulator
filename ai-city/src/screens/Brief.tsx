@@ -40,7 +40,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
             <p>{d.problem}</p>
           </motion.div>
           <motion.div variants={up}>
-            <p className="dpanel__label">이 트랙에서 배우는 기술</p>
+            <p className="dpanel__label">이 Lab에서 배우는 기술</p>
             <ul className="chips">{d.keywords.map((k) => <li key={k}>{k}</li>)}</ul>
           </motion.div>
         </div>
@@ -67,11 +67,11 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
           {next !== null && READY.includes(next)
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(next)}>{next}차시 시작</MagneticButton>
             : allDone
-            ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '종합 평가 다시 보기' : '트랙 종합 평가'}</MagneticButton>
+            ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '종합 평가 다시 보기' : 'Lab 종합 평가'}</MagneticButton>
             : next === null
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(1)}>처음부터 다시 하기</MagneticButton>
             : <MagneticButton className="btn btn--primary btn--key" disabled>{next}차시 준비 중</MagneticButton>}
-          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? '트랙 수료 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
+          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? 'Lab 수료 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
           {anyDone && <span className="brief__sp" />}
           {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
         </motion.div>

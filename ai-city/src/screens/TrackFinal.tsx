@@ -18,7 +18,7 @@ export function TrackFinal({ onExit, onHome }: { onExit: () => void; onHome: () 
   const [again, setAgain] = useState(0);
   return (
     <section className="screen final">
-      <TopBar crumb="Vision Lab · 트랙 종합 평가" onHome={onHome} right={<button className="btn btn--ghost" onClick={onExit}>← 브리핑</button>} />
+      <TopBar crumb="Vision Lab · 종합 평가" onHome={onHome} right={<button className="btn btn--ghost" onClick={onExit}>← 브리핑</button>} />
       <div className="final__body">
         <div className="final__left">
           <p className="eyebrow eyebrow--key">AI 영상처리 · 8차시 돌아보기</p>
@@ -42,7 +42,7 @@ export function TrackFinal({ onExit, onHome }: { onExit: () => void; onHome: () 
         </div>
         <div className="final__rail rail">
           <p className="lead-text">1~8차시에서 직접 실험한 결과를 떠올리며 답하세요. 서술형은 핵심어를 자동으로 확인하고, 최종 판단은 선생님이 리포트에서 합니다.</p>
-          <Assessment key={again} lessonId="vision-final" label="트랙 종합 평가" onDone={() => { update('vision-final', { status: 'done' }); setDone(true); }} />
+          <Assessment key={again} lessonId="vision-final" label="Lab 종합 평가" onDone={() => { update('vision-final', { status: 'done' }); setDone(true); }} />
           {done && (
             <div className="pdfbox">
               <p className="pdfbox__tag">학습 리포트 (8차시 + 종합 평가)</p>
