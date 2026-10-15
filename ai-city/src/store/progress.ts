@@ -4,10 +4,17 @@ export interface LessonRecord {
   status: 'open' | 'done';
   predict?: number;              // 예측 단계에서 고른 보기 (채점 안 함)
   report?: Record<string, unknown>;
+  exp?: { cameras: number; events: number; missed: number; missRate: number }[]; // 실험 근무 결과 (리포트 그래프용)
+  assess?: AssessRecord;
   updatedAt?: number;
   _deleted?: boolean;
 }
-export interface Progress { v: 1; lessons: Record<string, LessonRecord> }
+export interface AssessRecord {
+  answers: (boolean | string | null)[];
+  ox: [number, number]; short: [number, number]; essay: { label: string; hit: boolean }[];
+  at: number;
+}
+export interface Progress { v: 1; lessons: Record<string, LessonRecord>; student?: string }
 
 const KEY = 'ai_city_progress_v1';
 let mem: Progress | null = null; // 저장소를 못 쓰는 환경 대비
@@ -40,3 +47,4 @@ export function softDelete(id: string) {
   const p = load();
   if (p.lessons[id]) { p.lessons[id]._deleted = true; save(p); }
 }
+export function setStudent(name: string) { const p = load(); p.student = name; save(p); }

@@ -9,7 +9,9 @@ import { MonitorWall } from './MonitorWall';
 import { CamZoom } from './CamZoom';
 import { GraphDrawer, CodeDrawer, LogDrawer, type Run } from './drawers';
 import { TopBar } from '../../components/TopBar';
-import { update } from '../../store/progress';
+import { update, load, setStudent } from '../../store/progress';
+import { Assessment } from '../Assessment';
+import { downloadReport } from '../../report/pdf';
 
 const SEED = 1;
 const SHIFT = ASSUME.minutes * 60;     // 근무 시간(초)
@@ -36,6 +38,10 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   const [drawer, setDrawer] = useState<Drawer>('graph');
   const [mc, setMc] = useState<number | null>(null);
   const [saved, setSaved] = useState(false);
+  const [assessed, setAssessed] = useState(false);
+  const [student, setStudentName] = useState(() => load().student ?? '');
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [hoverRun, setHoverRun] = useState<number | null>(null);
   const [zoomCam, setZoomCam] = useState<number | null>(null);
   const [seenMiss, setSeenMiss] = useState(false);
   const onSeen = useCallback((k: 'found' | 'missed') => { if (k === 'missed') setSeenMiss(true); }, []);
@@ -104,7 +110,9 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   };
 
   // ── 지금 보여 줄 근무 ──
+  const hovered = playing === null && hoverRun !== null ? runs.find((r) => r.id === hoverRun && r.done) ?? null : null;
   const view = playing !== null ? runs.find((r) => r.id === playing) ?? null
+    : hovered ? hovered
     : step === 2 ? [...exp].reverse()[0] ?? null
     : step === 3 ? [...done].reverse().find((r) => r.kind === 'concept') ?? null
     : step >= 4 ? lastApply : null;
@@ -171,7 +179,8 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   // 정답을 고르면 결론 카드가 보이도록 레일을 내려 줌
   useEffect(() => { if (mc === need.correct) reportRef.current?.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'nearest' }); }, [mc, need.correct, saved]);
   const saveReport = () => {
-    update('vision-1', { status: 'done', predict: predict ?? undefined, report: { conclusion, threshold: applyOk?.p.threshold, runs: done.length, savedAt: Date.now() } });
+    const expLast = new Map<number, Run>(); exp.forEach((r) => expLast.set(r.p.cameras, r));
+    update('vision-1', { status: 'done', predict: predict ?? undefined, exp: [...expLast.values()].map((r) => ({ cameras: r.p.cameras, events: r.res.events, missed: r.res.missed, missRate: r.res.missRate })), report: { conclusion, threshold: applyOk?.p.threshold, runs: done.length, savedAt: Date.now() } });
     update('vision-2', { status: 'open' });
     setSaved(true);
   };
@@ -183,7 +192,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
     : step === 2 ? (exp.length === 0 ? '카메라 4대로 [근무 시작]을 누르세요' : !obs1Run ? '카메라를 4대나 8대로 두고 근무를 돌려 보세요' : !obs2Run ? '카메라를 32대 이상으로 늘려 근무를 돌려 보세요' : !seenMiss ? '주황 점이 있는 칸을 눌러 왜 놓쳤는지 확인하세요' : '[다음]을 눌러 개념으로 가세요')
     : step === 3 ? (conceptSeen ? '[다음]을 눌러 적용으로 가세요' : '[AI 보조 켜고 보기]를 누르세요')
     : step === 4 ? (applyOk ? '[다음]을 눌러 정리하세요' : '코드 서랍의 노란 칸을 바꾸고 [실행]을 누르세요')
-    : !mcFb?.ok ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : '[브리핑으로]를 눌러 2차시를 확인하세요';
+    : !mcFb?.ok ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : !assessed ? '차시 평가 5문항에 답하고 [평가 제출]을 누르세요' : '리포트 PDF를 내려받거나 [브리핑으로]를 누르세요';
 
   const rail = (
     <>
@@ -237,7 +246,18 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
                 <p>{conclusion}</p>
                 {!saved
                   ? <button className="rbtn rbtn--key is-target" onClick={saveReport}>보고서 저장</button>
-                  : <><p className="report__saved">관제 보고서 카드를 저장했습니다 · 비전 지구 2차시가 열렸습니다</p><button className="rbtn rbtn--key is-target" onClick={onExit}>브리핑으로</button></>}
+                  : <p className="report__saved">관제 보고서 카드를 저장했습니다 · 비전 지구 2차시가 열렸습니다</p>}
+              </div>
+            )}
+            {saved && <Assessment lessonId="vision-1" onDone={() => setAssessed(true)} />}
+            {assessed && (
+              <div className="pdfbox">
+                <p className="pdfbox__tag">학습 리포트</p>
+                <input className="as-in" value={student} placeholder="이름 (리포트에 표시)" onChange={(e) => { setStudentName(e.target.value); setStudent(e.target.value); }} />
+                <div className="ctrl__row">
+                  <button className="rbtn rbtn--key" disabled={pdfBusy} onClick={async () => { setPdfBusy(true); try { await downloadReport(load()); } finally { setPdfBusy(false); } }}>{pdfBusy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
+                  <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
+                </div>
               </div>
             )}
             <details className="kit"><summary>실물 키트로 해 보기 (선택)</summary><p>카메라 모듈 키트 연결은 준비 중입니다.</p></details>
@@ -265,7 +285,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
       band={band}
       drawer={drawer}
       onDrawer={setDrawer}
-      drawerBody={drawer === 'graph' ? <GraphDrawer runs={runs} mode={step >= 4 ? 'threshold' : 'cameras'} />
+      drawerBody={drawer === 'graph' ? <GraphDrawer runs={runs} mode={step >= 4 ? 'threshold' : 'cameras'} activeId={view?.id ?? null} onHover={setHoverRun} />
         : drawer === 'code' ? <CodeDrawer enabled={step === 4} operators={code.operators} ai={code.ai} threshold={code.threshold} running={playing !== null}
             onChange={(v) => setCode((c) => ({ ...c, ...v }))}
             onRun={() => startRun('apply', { cameras: 64, operators: code.operators, aiAssist: code.ai, threshold: code.threshold })} />

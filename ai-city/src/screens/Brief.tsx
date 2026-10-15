@@ -6,7 +6,9 @@ import { MotifCanvas } from '../components/Canvases';
 import { TopBar } from '../components/TopBar';
 import { AssetSlot } from '../components/AssetSlot';
 import { MagneticButton, spot } from '../components/Interactive';
+import { useState } from 'react';
 import { load, lesson } from '../store/progress';
+import { downloadReport } from '../report/pdf';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const up = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } };
@@ -16,6 +18,8 @@ export function Brief({ id, onBack, onHome, onStart }: { id: string; onBack: () 
   const prog = load();
   const st = (n: number) => lesson(prog, `vision-${n}`)?.status ?? (n === 1 ? 'open' : 'locked');
   const next = VISION_LESSONS.find((l) => st(l.n) === 'open')?.n ?? null;
+  const anyDone = VISION_LESSONS.some((l) => st(l.n) === 'done');
+  const [busy, setBusy] = useState(false);
   return (
     <section className="screen brief" style={{ ['--k' as string]: d.color }}>
       <MotifCanvas motif={d.motif} color={d.color} className="brief__canvas" />
@@ -60,6 +64,7 @@ export function Brief({ id, onBack, onHome, onStart }: { id: string; onBack: () 
             : <MagneticButton className="btn btn--primary btn--key" disabled>{next}차시 시작</MagneticButton>}
           <span className="hint">{next && next > 1 ? `${next}차시가 열렸습니다 · ${next}차시 화면은 다음 단계에서 제작합니다` : '1차시: 관제 요원이 되어 사람 눈의 한계를 확인합니다 (45분)'}</span>
           {next && next > 1 && <button className="btn btn--ghost" onClick={() => onStart(1)}>1차시 다시 하기</button>}
+          {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
         </motion.div>
       </motion.div>
       <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · 지구 · 현장 이름은 가칭</p>
