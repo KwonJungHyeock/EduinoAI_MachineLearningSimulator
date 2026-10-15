@@ -28,7 +28,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
 
   // 머리
   font('bold', 18); doc.text(`${track} 학습 리포트`, M, y); y += 8;
-  font('normal', 10, '#4b5552'); doc.text(`학생: ${p.student || '(이름 미입력)'}   ·   발행일: ${new Date().toLocaleDateString('ko-KR')}   ·   EDUINO AI LabCity · Vision Lab`, M, y); y += 4;
+  font('normal', 10, '#4b5552'); doc.text(`학생: ${p.student || '(이름 미입력)'}   ·   발행일: ${new Date().toLocaleDateString('ko-KR')}   ·   EDUINO AI · AI LabCity · Vision Lab`, M, y); y += 4;
   doc.setDrawColor('#18201d'); doc.setLineWidth(0.8); doc.line(M, y, W - M, y); y += 8;
 
   // 차시 요약 표

@@ -46,12 +46,20 @@ export function createCore(intro: () => number, tint: () => string | null = () =
   const { pts, edges } = brain(1500);
   const proj = new Float32Array(pts.length * 3);
   const sig = Array.from({ length: 26 }, (_, i) => ({ e: (i * 97) % edges.length, s: i * 0.37 }));
+  // 뉴런 허브(굵은 신경세포) + 허브끼리 잇는 긴 신경 섬유 — 뇌 안 신경망 구조가 보이게
+  const hubs = pts.map((_, i) => i).filter((i) => i % 34 === 0 && pts[i].y > -0.2);
+  const links: [number, number][] = [];
+  for (const a of hubs) {
+    const near = hubs.filter((b) => b !== a).map((b) => [Math.hypot(pts[a].x - pts[b].x, pts[a].y - pts[b].y, pts[a].z - pts[b].z), b] as [number, number]).filter(([d]) => d > 0.12).sort((x, y) => x[0] - y[0]).slice(0, 2);
+    for (const [, b] of near) if (!links.some(([x, y]) => (x === b && y === a) || (x === a && y === b))) links.push([a, b]);
+  }
+  const fire = Array.from({ length: 22 }, (_, i) => ({ l: (i * 13) % links.length, s: i * 0.41, sp: 0.35 + (i % 5) * 0.07 }));
   let rotY = 0, rotX = 0, mix = 0; const tc = [129, 140, 248];
   return (ctx, t, w, h, p) => {
     const want = tint();
     if (want) { const n = parseInt(want.slice(1), 16); tc[0] += (((n >> 16) & 255) - tc[0]) * 0.12; tc[1] += (((n >> 8) & 255) - tc[1]) * 0.12; tc[2] += ((n & 255) - tc[2]) * 0.12; }
     mix += ((want ? 0.75 : 0) - mix) * 0.08;
-    const k = intro(), cx = w / 2, cy = h * 0.5, S = Math.min(w, h) * 0.5;
+    const k = intro(), cx = w / 2, cy = h * 0.5, S = Math.min(w, h) * 0.58;
     // 받침대에서 올라오는 부드러운 빛(위로 갈수록 옅어짐)
     const bk = ease(k * 1.4 - 0.2);
     ctx.save(); ctx.translate(cx, h * 0.98); ctx.scale(1, 2.4);
@@ -74,7 +82,7 @@ export function createCore(intro: () => number, tint: () => string | null = () =
     // 연결선
     ctx.lineWidth = 1;
     for (const [a, b] of edges) {
-      const za = (proj[a * 3 + 2] + proj[b * 3 + 2]) / 2, al = (0.06 + 0.3 * (0.6 - za)) * form;
+      const za = (proj[a * 3 + 2] + proj[b * 3 + 2]) / 2, al = (0.08 + 0.36 * (0.6 - za)) * form;
       if (al <= 0.01) continue;
       ctx.strokeStyle = `rgba(${Math.round(129 + (tc[0] - 129) * mix)},${Math.round(140 + (tc[1] - 140) * mix)},${Math.round(248 + (tc[2] - 248) * mix)},${al})`; ctx.beginPath(); ctx.moveTo(proj[a * 3], proj[a * 3 + 1]); ctx.lineTo(proj[b * 3], proj[b * 3 + 1]); ctx.stroke();
     }
@@ -87,22 +95,37 @@ export function createCore(intro: () => number, tint: () => string | null = () =
       ctx.fillStyle = `rgba(${Math.round(96 + 90 * c + (tc[0] - 96 - 90 * c) * mix)},${Math.round(165 - 40 * c + (tc[1] - 165 + 40 * c) * mix)},${Math.round(255 + (tc[2] - 255) * mix)},${a})`;
       ctx.beginPath(); ctx.arc(x, y, Math.max(0.5, r), 0, TAU); ctx.fill();
     }
+    // 긴 신경 섬유(허브 ↔ 허브): 바깥으로 살짝 휜 곡선
+    const fib = (a: number, b: number) => { const ax = proj[a * 3], ay = proj[a * 3 + 1], bx = proj[b * 3], by = proj[b * 3 + 1], mx = (ax + bx) / 2, my = (ay + by) / 2; return [ax, ay, mx + (mx - cx) * 0.18, my + (my - cy) * 0.18, bx, by]; };
+    ctx.lineWidth = 1.1;
+    for (const [a, b] of links) {
+      const z = (proj[a * 3 + 2] + proj[b * 3 + 2]) / 2, al = (0.1 + 0.32 * (0.6 - z)) * form; if (al <= 0.01) continue;
+      const [ax, ay, qx, qy, bx, by] = fib(a, b);
+      ctx.strokeStyle = `rgba(${Math.round(165 + (tc[0] - 165) * mix)},${Math.round(180 + (tc[1] - 180) * mix)},${Math.round(252 + (tc[2] - 252) * mix)},${al})`;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.quadraticCurveTo(qx, qy, bx, by); ctx.stroke();
+    }
+    // 허브 뉴런: 크게 · 빛나게 · 천천히 숨 쉬듯
+    for (const i of hubs) {
+      const x = proj[i * 3], y = proj[i * 3 + 1], z = proj[i * 3 + 2], front = 0.6 - z;
+      const pulse = 0.75 + 0.25 * Math.sin(t * 2.2 + i), r = Math.max(0.5, (1.6 + front * 1.8) * pulse);
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 4.5);
+      g.addColorStop(0, `rgba(238,242,255,${0.95 * form})`); g.addColorStop(0.25, `rgba(${Math.round(165 + (tc[0] - 165) * mix)},${Math.round(180 + (tc[1] - 180) * mix)},252,${0.55 * form})`); g.addColorStop(1, 'rgba(99,102,241,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 4.5, 0, TAU); ctx.fill();
+    }
+    // 섬유를 따라 달리는 발화 신호
+    if (form > 0.4) for (const f of fire) {
+      const u = Math.max(0, t) * f.sp + f.s, ph = u % 1, [a, b] = links[((f.l + Math.floor(u) * 5) % links.length + links.length) % links.length];
+      const [ax, ay, qx, qy, bx, by] = fib(a, b), m1 = 1 - ph;
+      const x = m1 * m1 * ax + 2 * m1 * ph * qx + ph * ph * bx, y = m1 * m1 * ay + 2 * m1 * ph * qy + ph * ph * by;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 6); g.addColorStop(0, `rgba(255,255,255,${form})`); g.addColorStop(1, 'rgba(165,180,252,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 6, 0, TAU); ctx.fill();
+    }
     // 신호(연결선을 따라 흐르는 빛)
     if (form > 0.5) for (const s of sig) {
       const u = Math.max(0, t) * 0.9 + s.s, ph = u % 1, [a, b] = edges[((s.e + Math.floor(u)) * 7) % edges.length]; // 첫 프레임 시각이 시작보다 조금 이를 수 있어 음수 방지
       const x = proj[a * 3] + (proj[b * 3] - proj[a * 3]) * ph, y = proj[a * 3 + 1] + (proj[b * 3 + 1] - proj[a * 3 + 1]) * ph;
-      const g = ctx.createRadialGradient(x, y, 0, x, y, 4.5); g.addColorStop(0, `rgba(224,231,255,${0.9 * form})`); g.addColorStop(1, 'rgba(165,180,252,0)');
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 4.5); g.addColorStop(0, `rgba(224,231,255,${0.7 * form})`); g.addColorStop(1, 'rgba(165,180,252,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 4.5, 0, TAU); ctx.fill();
-    }
-    // 궤도 고리 3개 + 고리 위를 도는 점
-    const ring = ease((k - 0.55) / 0.4);
-    for (let r = 0; r < 3; r++) {
-      const rx = S * (0.52 + r * 0.1), ry = rx * 0.2, yy = cy + S * (0.18 - r * 0.2), tilt = (r - 1) * 0.06;
-      ctx.save(); ctx.translate(cx, yy); ctx.rotate(tilt);
-      ctx.strokeStyle = `rgba(165,180,252,${0.32 * ring})`; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.ellipse(0, 0, rx * (0.6 + 0.4 * ring), ry, 0, 0, TAU); ctx.stroke();
-      for (let d = 0; d < 5; d++) { const a = t * (0.35 + r * 0.12) * (r % 2 ? -1 : 1) + d * TAU / 5; const px = Math.cos(a) * rx * (0.6 + 0.4 * ring), py = Math.sin(a) * ry, front = Math.sin(a) > 0;
-        ctx.fillStyle = `rgba(224,231,255,${(front ? 0.95 : 0.35) * ring})`; ctx.beginPath(); ctx.arc(px, py, front ? 2.6 : 1.6, 0, TAU); ctx.fill(); }
-      ctx.restore();
     }
     // 클릭 물결
     if (p.click >= 0) { const rr = p.click * 220; ctx.strokeStyle = `rgba(165,180,252,${0.5 * (1 - p.click / 1.2)})`; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, TAU); ctx.stroke(); }
