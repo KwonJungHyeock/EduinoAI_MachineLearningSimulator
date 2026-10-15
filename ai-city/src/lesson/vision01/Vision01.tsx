@@ -132,11 +132,11 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
     const al = r.trace ? r.trace.alerts.filter((a) => a.t <= t) : [];
     return (
       <>
-        <span className="band__clock">{clock(t)} <i>/ {clock(SHIFT)}</i></span>
-        <span>사건 <b>{started}</b></span>
-        <span className="ok">찾음 <b>{found}</b></span>
-        <span className="miss">놓침 <b>{missed}</b>{started ? ` (${pct(missed / Math.max(1, started))})` : ''}</span>
-        {view.p.aiAssist && <><span>알림 <b>{al.length}</b></span><span>헛알림 <b>{al.filter((a) => a.ev < 0).length}</b></span><span className="miss">확인 못 함 <b>{al.filter((a) => a.outcome === 'expired' && a.at <= t).length}</b></span></>}
+        <span className="chip chip--clock"><i>근무 시간</i><b>{clock(t)}<small> / {clock(SHIFT)}</small></b></span>
+        <span className="chip"><i>사건</i><b>{started}</b></span>
+        <span className="chip ok"><i>찾음</i><b>{found}</b></span>
+        <span className="chip miss"><i>놓침</i><b>{missed}<small>{started ? ` ${pct(missed / Math.max(1, started))}` : ''}</small></b></span>
+        {view.p.aiAssist && <><span className="chip"><i>알림</i><b>{al.length}</b></span><span className="chip"><i>헛알림</i><b>{al.filter((a) => a.ev < 0).length}</b></span><span className="chip miss"><i>확인 못 함</i><b>{al.filter((a) => a.outcome === 'expired' && a.at <= t).length}</b></span></>}
         {playing !== null && <button className="band__skip" onClick={finish}>결과 바로 보기 ⏭</button>}
       </>
     );

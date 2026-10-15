@@ -62,8 +62,10 @@ export function GraphDrawer({ runs, mode, activeId, onHover }: { runs: Run[]; mo
         {act && (() => { const tw = tip(act.run).length * 7.6 + 18, tx = Math.min(W - R - tw, Math.max(L, act.x - tw / 2)), ty = Math.max(2, Y(act.y) - 44); return (
           <g pointerEvents="none"><rect x={tx} y={ty} width={tw} height={20} rx={5} className="g-tipbg" /><text x={tx + 8} y={ty + 14} className="g-tip">{tip(act.run)}</text></g>); })()}
       </svg>
-      <p className="gdrawer__read"><b>읽는 법</b>{read}</p>
-      <p className="gdrawer__read"><b>장면과의 연결</b>{pts.length ? link : '근무를 돌리면 점이 찍힙니다.'}</p>
+      <div className="gdrawer__side">
+        <p className="gdrawer__read"><b>읽는 법</b>{read}</p>
+        <p className="gdrawer__read"><b>장면과의 연결</b>{pts.length ? link : '근무를 돌리면 점이 찍힙니다.'}</p>
+      </div>
     </div>
   );
 }

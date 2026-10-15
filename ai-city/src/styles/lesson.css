@@ -227,3 +227,44 @@
 .as-fb .model { color: #4b5552; } .as-fb .teacher { color: #6b7280; font-size: 12px; }
 .as-sum { margin: 0; font-weight: 700; color: #0f6b4c; font-size: 14px; }
 .pdfbox { display: grid; gap: 8px; border: 1.5px solid #0f6b4c; border-radius: 12px; padding: 12px; background: #f3faf6; }
+
+
+/* ═══ 왼쪽 패널 조화: 레일과 같은 카드 언어(둥근 18px · 여백 · 그림자)를 짙은 유리로 ═══ */
+.lesson-screen { background: linear-gradient(180deg, #0a111c 0%, #070b12 100%); }
+.lesson-grid { gap: 0; padding: 0 0 0 clamp(14px, 2vw, 24px); }
+.lesson-left { gap: 10px; padding: 2px 16px 0 0; }
+.scene, .drawer, .band { border-radius: 18px; background: linear-gradient(180deg, rgba(23, 33, 49, 0.92), rgba(14, 21, 33, 0.92)); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 14px 40px -24px rgba(0, 0, 0, 0.9); }
+.scene { background: #0b1220; }
+.scene__cap { top: 11px; left: 14px; }
+.scene__tag { border-radius: 6px; padding: 2px 9px; }
+/* 수치 띠: 미션 카드처럼 라벨 위 · 값 아래 */
+.band { flex: 0 0 auto; min-height: 48px; padding: 6px 10px; gap: 6px; }
+.band__idle { padding: 0 6px; font-size: 13px; }
+.chip { display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 64px; padding: 4px 11px; border-radius: 10px; background: rgba(255, 255, 255, 0.045); line-height: 1.15; }
+.chip i { font-style: normal; font-size: 10.5px; font-weight: 700; color: #9fd8c2; letter-spacing: .02em; }
+.chip b { font-family: var(--en); font-size: 16px; color: var(--ink); }
+.chip b small { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.chip.ok b { color: #2fbf8a; } .chip.miss b { color: #f97316; }
+.chip.ok i { color: #2fbf8a; } .chip.miss i { color: #fdba74; }
+.chip--clock { min-width: 108px; background: rgba(20, 184, 166, 0.12); }
+.band__skip { border-radius: 10px; padding: 8px 14px; background: #fbfbf9; color: #18201d; font-weight: 700; }
+.band__skip:hover { background: #fff; }
+/* 서랍: 레일 단계 버튼처럼 알약형 세그먼트 탭 */
+.drawer__tabs { gap: 4px; padding: 8px 10px 2px; }
+.drawer__tab { border-radius: 999px; padding: 6px 16px; font-weight: 700; font-size: 12.5px; color: #9aa7ba; background: rgba(255, 255, 255, 0.04); }
+.drawer__tab.is-on { background: #fbfbf9; color: #18201d; }
+.drawer__body { padding: 8px 16px 12px; }
+.gdrawer__read { background: rgba(255, 255, 255, 0.04); border-radius: 10px; padding: 6px 10px; margin-top: 5px; }
+.ldrawer li { padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.03); }
+.cdrawer .code { background: rgba(0, 0, 0, 0.22); border-radius: 12px; padding: 8px 14px; }
+.lesson-src { padding-left: 4px; }
+/* 레일과 왼쪽 사이 숨 고르기 */
+.rail { border-radius: 22px 0 0 0; box-shadow: -1px 0 0 rgba(255, 255, 255, 0.06), -24px 0 60px -34px rgba(0, 0, 0, 0.8); }
+
+.gdrawer { flex-direction: row; gap: 14px; align-items: stretch; }
+.gdrawer__svg { flex: 1; min-width: 0; height: 100%; }
+.gdrawer__side { flex: 0 0 280px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+.gdrawer__side .gdrawer__read { margin: 0; }
+.gdrawer__read b { display: block; margin: 0 0 2px; }
+.cdrawer .code { line-height: 1.8; }
+.chip i { font-family: "Noto Sans KR Local", sans-serif; }
