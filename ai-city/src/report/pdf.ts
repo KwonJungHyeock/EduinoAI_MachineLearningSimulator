@@ -51,8 +51,22 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     need(60);
     font('bold', 12); doc.text(`${l.n}차시 · ${l.title}`, M, y); y += 7;
     // 내 실험 그래프 (카메라 수 – 놓친 비율)
+    const ch = rec.chart;
+    if (ch && ch.x.length) {
+      font('bold', 10); doc.text(`내 실험: ${ch.title}`, M, y); y += 3;
+      const gx = M + 10, gy = y + 2, gw = 110, gh = 34, n = Math.max(2, ch.x.length);
+      doc.setDrawColor('#9aa3a0'); doc.setLineWidth(0.2); doc.rect(gx, gy, gw, gh);
+      font('normal', 7, '#4b5552'); [0, 0.5, 1].forEach((v) => doc.text(pct(v), gx - 9, gy + gh - v * gh + 1));
+      const pts = ch.y.map((v, i) => [gx + (i / (n - 1)) * gw, gy + gh - v * gh, v] as const);
+      ch.x.forEach((lab, i) => doc.text(lab, gx + (i / (n - 1)) * gw - 3, gy + gh + 4));
+      doc.setDrawColor('#0f6b4c'); doc.setLineWidth(0.6);
+      for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+      doc.setFillColor('#0f6b4c'); font('bold', 7, '#0f6b4c');
+      pts.forEach(([x, yy, v]) => { doc.circle(x, yy, 1, 'F'); doc.text(pct(v), x - 2, yy - 2); });
+      y = gy + gh + 12;
+    }
     const exp = (rec.exp ?? []).slice().sort((a, b) => a.cameras - b.cameras);
-    if (exp.length) {
+    if (!ch && exp.length) {
       font('bold', 10); doc.text('내 실험: 카메라 수에 따른 놓친 사건 비율 (요원 1명 · AI 없음)', M, y); y += 3;
       const gx = M + 10, gy = y + 2, gw = 110, gh = 34, xs = [4, 8, 16, 32, 64];
       doc.setDrawColor('#9aa3a0'); doc.setLineWidth(0.2); doc.rect(gx, gy, gw, gh);

@@ -268,3 +268,33 @@
 .gdrawer__read b { display: block; margin: 0 0 2px; }
 .cdrawer .code { line-height: 1.8; }
 .chip i { font-family: "Noto Sans KR Local", sans-serif; }
+.g-line--b { stroke: #f97316; }
+.g-dot--b { fill: #f97316; }
+.g-legend { font: 700 11px "Noto Sans KR Local", sans-serif; }
+.g-legend.a { fill: #14b8a6; } .g-legend.b { fill: #f97316; }
+
+/* ── 2차시: 숫자 격자 장면 ── */
+.loading { position: fixed; inset: 0; display: grid; place-items: center; color: var(--muted); }
+.seg--4 { grid-template-columns: repeat(4, 1fr); }
+.seg--4 button { font-size: 13px; }
+.px { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+.px__main { flex: 1; min-height: 0; display: flex; justify-content: center; }
+.px__frame { position: relative; height: 100%; aspect-ratio: 16 / 10; max-width: 100%; border-radius: 10px; overflow: hidden; background: #000; }
+.px__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .3s; }
+.px__frame img.is-dim { opacity: 0.25; }
+.px__grid { position: absolute; inset: 0; display: grid; }
+.px__c { border: 0; padding: 0; margin: 0; font: 600 9px "Space Grotesk", sans-serif; display: grid; place-items: center; cursor: pointer; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25); overflow: hidden; }
+.px__c.is-on { box-shadow: inset 0 0 0 2px #f5c542; position: relative; z-index: 1; }
+.px__big { position: absolute; right: 10px; top: 36px; width: 190px; background: rgba(6, 10, 16, 0.92); border-radius: 12px; padding: 10px 12px; display: grid; gap: 1px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.px__big p { margin: 0 0 4px; font-size: 11px; color: var(--muted); font-weight: 700; }
+.px__big b { font: 700 26px "Space Grotesk", sans-serif; color: #fff; }
+.px__big b.d { color: #f97316; margin-top: 6px; }
+.px__big span { font-size: 11.5px; color: #b7c2d3; line-height: 1.4; }
+.px__strip { flex: 0 0 66px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; }
+.px__th { position: relative; border: 0; padding: 0; border-radius: 6px; overflow: hidden; cursor: pointer; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.px__th img { width: 100%; height: 100%; object-fit: cover; opacity: 0.75; }
+.px__th span { position: absolute; left: 3px; top: 2px; font-size: 9.5px; color: #fff; text-shadow: 0 1px 2px #000; font-weight: 700; }
+.px__th i { position: absolute; left: 0; right: 0; bottom: 0; font-style: normal; font-size: 10px; font-weight: 700; text-align: center; color: #fff; padding: 1px 0; }
+.px__th i.ok { background: rgba(15, 107, 76, 0.9); } .px__th i.miss { background: rgba(194, 65, 12, 0.92); } .px__th i.warn { background: rgba(180, 120, 10, 0.92); }
+.px__th.is-on { box-shadow: 0 0 0 2px #f5c542; }
+.px__th.is-on img { opacity: 1; }
