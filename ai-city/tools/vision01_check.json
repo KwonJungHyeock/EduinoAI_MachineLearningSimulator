@@ -1,0 +1,626 @@
+{
+  "assume": {
+    "minutes": 60,
+    "eventsPerCamPerHour": 2,
+    "eventSec": 10,
+    "watchAtOnce": 4,
+    "dwellSec": 5,
+    "noiseSigma": 10,
+    "eventChange": 45,
+    "reviewSec": 3,
+    "alertExpireSec": 15,
+    "alertCooldownSec": 10
+  },
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "goal": {
+    "cameras": 64,
+    "maxOperators": 2,
+    "maxMiss": 0.1
+  },
+  "ms": 3442,
+  "A": [
+    {
+      "cameras": 4,
+      "miss": 0,
+      "missMin": 0,
+      "missMax": 0,
+      "events": 4.2,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 0,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "cameras": 8,
+      "miss": 0,
+      "missMin": 0,
+      "missMax": 0,
+      "events": 16.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 0,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "cameras": 16,
+      "miss": 0.28727177974783996,
+      "missMin": 0.23529411764705882,
+      "missMax": 0.42424242424242425,
+      "events": 34.4,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 9.8,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "cameras": 32,
+      "miss": 0.7041059570467656,
+      "missMin": 0.5873015873015873,
+      "missMax": 0.7894736842105263,
+      "events": 62.6,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 44,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "cameras": 64,
+      "miss": 0.8095630571678372,
+      "missMin": 0.7377049180327869,
+      "missMax": 0.839622641509434,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 100.2,
+      "aiMissed": 0,
+      "overload": 0
+    }
+  ],
+  "B": [
+    {
+      "operators": 1,
+      "miss": 0.8095630571678372,
+      "missMin": 0.7377049180327869,
+      "missMax": 0.839622641509434,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 100.2,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "operators": 2,
+      "miss": 0.6687035873754194,
+      "missMin": 0.6343283582089553,
+      "missMax": 0.7142857142857143,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 82.8,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "operators": 4,
+      "miss": 0.3061599537979246,
+      "missMin": 0.26865671641791045,
+      "missMax": 0.3684210526315789,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 38,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "operators": 8,
+      "miss": 0,
+      "missMin": 0,
+      "missMax": 0,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 0,
+      "aiMissed": 0,
+      "overload": 0
+    },
+    {
+      "operators": 16,
+      "miss": 0,
+      "missMin": 0,
+      "missMax": 0,
+      "events": 123.8,
+      "falseAlerts": 0,
+      "load": 0,
+      "notWatched": 0,
+      "aiMissed": 0,
+      "overload": 0
+    }
+  ],
+  "C": [
+    {
+      "operators": 1,
+      "rows": [
+        {
+          "threshold": 10,
+          "miss": 0.9344750136048592,
+          "missMin": 0.9029850746268657,
+          "missMax": 0.9754098360655737,
+          "events": 123.8,
+          "falseAlerts": 18876.6,
+          "load": 15.833666666666668,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 115.6
+        },
+        {
+          "threshold": 15,
+          "miss": 0.9167702753865502,
+          "missMin": 0.8796992481203008,
+          "missMax": 0.9354838709677419,
+          "events": 123.8,
+          "falseAlerts": 13932.8,
+          "load": 11.713833333333334,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 113.4
+        },
+        {
+          "threshold": 20,
+          "miss": 0.8426435935418723,
+          "missMin": 0.7835820895522388,
+          "missMax": 0.8867924528301887,
+          "events": 123.8,
+          "falseAlerts": 7408.8,
+          "load": 6.277166666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 104
+        },
+        {
+          "threshold": 25,
+          "miss": 0.5335209928274491,
+          "missMin": 0.45081967213114754,
+          "missMax": 0.6209677419354839,
+          "events": 123.8,
+          "falseAlerts": 2567.6,
+          "load": 2.2428333333333335,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 66
+        },
+        {
+          "threshold": 30,
+          "miss": 0.0015037593984962405,
+          "missMin": 0,
+          "missMax": 0.007518796992481203,
+          "events": 123.8,
+          "falseAlerts": 605,
+          "load": 0.6073333333333334,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0.2
+        },
+        {
+          "threshold": 35,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 97.8,
+          "load": 0.18466666666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 40,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 15,
+          "load": 0.11566666666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 45,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 1.6,
+          "load": 0.10450000000000001,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 50,
+          "miss": 0.02032758907013412,
+          "missMin": 0.00819672131147541,
+          "missMax": 0.04477611940298507,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.101,
+          "notWatched": 0,
+          "aiMissed": 2.6,
+          "overload": 0
+        },
+        {
+          "threshold": 55,
+          "miss": 0.1590868419982747,
+          "missMin": 0.11475409836065574,
+          "missMax": 0.21052631578947367,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.08666666666666666,
+          "notWatched": 0,
+          "aiMissed": 19.8,
+          "overload": 0
+        },
+        {
+          "threshold": 60,
+          "miss": 0.52507968681977,
+          "missMin": 0.4838709677419355,
+          "missMax": 0.5754716981132075,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.049166666666666664,
+          "notWatched": 0,
+          "aiMissed": 64.8,
+          "overload": 0
+        },
+        {
+          "threshold": 65,
+          "miss": 0.7948415212507262,
+          "missMin": 0.7540983606557377,
+          "missMax": 0.839622641509434,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.021333333333333333,
+          "notWatched": 0,
+          "aiMissed": 98.2,
+          "overload": 0
+        },
+        {
+          "threshold": 70,
+          "miss": 0.9442995130062071,
+          "missMin": 0.917910447761194,
+          "missMax": 0.9622641509433962,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.005833333333333334,
+          "notWatched": 0,
+          "aiMissed": 116.8,
+          "overload": 0
+        },
+        {
+          "threshold": 75,
+          "miss": 0.9906347931756667,
+          "missMin": 0.9838709677419355,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.001,
+          "notWatched": 0,
+          "aiMissed": 122.6,
+          "overload": 0
+        },
+        {
+          "threshold": 80,
+          "miss": 0.9936019293516811,
+          "missMin": 0.9774436090225563,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.0006666666666666668,
+          "notWatched": 0,
+          "aiMissed": 123,
+          "overload": 0
+        },
+        {
+          "threshold": 85,
+          "miss": 1,
+          "missMin": 1,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0,
+          "notWatched": 0,
+          "aiMissed": 123.8,
+          "overload": 0
+        },
+        {
+          "threshold": 90,
+          "miss": 1,
+          "missMin": 1,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0,
+          "notWatched": 0,
+          "aiMissed": 123.8,
+          "overload": 0
+        }
+      ]
+    },
+    {
+      "operators": 2,
+      "rows": [
+        {
+          "threshold": 10,
+          "miss": 0.8763670511560925,
+          "missMin": 0.8059701492537313,
+          "missMax": 0.9098360655737705,
+          "events": 123.8,
+          "falseAlerts": 18876.6,
+          "load": 7.916833333333334,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 108.2
+        },
+        {
+          "threshold": 15,
+          "miss": 0.8247761750078606,
+          "missMin": 0.8045112781954887,
+          "missMax": 0.8548387096774194,
+          "events": 123.8,
+          "falseAlerts": 13932.8,
+          "load": 5.856916666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 102
+        },
+        {
+          "threshold": 20,
+          "miss": 0.7138391564120955,
+          "missMin": 0.6865671641791045,
+          "missMax": 0.7419354838709677,
+          "events": 123.8,
+          "falseAlerts": 7408.8,
+          "load": 3.1385833333333335,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 88.2
+        },
+        {
+          "threshold": 25,
+          "miss": 0.10992737362777852,
+          "missMin": 0.03759398496240601,
+          "missMax": 0.1693548387096774,
+          "events": 123.8,
+          "falseAlerts": 2567.6,
+          "load": 1.1214166666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 13.6
+        },
+        {
+          "threshold": 30,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 605,
+          "load": 0.3036666666666667,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 35,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 97.8,
+          "load": 0.09233333333333334,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 40,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 15,
+          "load": 0.057833333333333334,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 45,
+          "miss": 0,
+          "missMin": 0,
+          "missMax": 0,
+          "events": 123.8,
+          "falseAlerts": 1.6,
+          "load": 0.052250000000000005,
+          "notWatched": 0,
+          "aiMissed": 0,
+          "overload": 0
+        },
+        {
+          "threshold": 50,
+          "miss": 0.02032758907013412,
+          "missMin": 0.00819672131147541,
+          "missMax": 0.04477611940298507,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.0505,
+          "notWatched": 0,
+          "aiMissed": 2.6,
+          "overload": 0
+        },
+        {
+          "threshold": 55,
+          "miss": 0.1590868419982747,
+          "missMin": 0.11475409836065574,
+          "missMax": 0.21052631578947367,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.04333333333333333,
+          "notWatched": 0,
+          "aiMissed": 19.8,
+          "overload": 0
+        },
+        {
+          "threshold": 60,
+          "miss": 0.52507968681977,
+          "missMin": 0.4838709677419355,
+          "missMax": 0.5754716981132075,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.024583333333333332,
+          "notWatched": 0,
+          "aiMissed": 64.8,
+          "overload": 0
+        },
+        {
+          "threshold": 65,
+          "miss": 0.7948415212507262,
+          "missMin": 0.7540983606557377,
+          "missMax": 0.839622641509434,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.010666666666666666,
+          "notWatched": 0,
+          "aiMissed": 98.2,
+          "overload": 0
+        },
+        {
+          "threshold": 70,
+          "miss": 0.9442995130062071,
+          "missMin": 0.917910447761194,
+          "missMax": 0.9622641509433962,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.002916666666666667,
+          "notWatched": 0,
+          "aiMissed": 116.8,
+          "overload": 0
+        },
+        {
+          "threshold": 75,
+          "miss": 0.9906347931756667,
+          "missMin": 0.9838709677419355,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.0005,
+          "notWatched": 0,
+          "aiMissed": 122.6,
+          "overload": 0
+        },
+        {
+          "threshold": 80,
+          "miss": 0.9936019293516811,
+          "missMin": 0.9774436090225563,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0.0003333333333333334,
+          "notWatched": 0,
+          "aiMissed": 123,
+          "overload": 0
+        },
+        {
+          "threshold": 85,
+          "miss": 1,
+          "missMin": 1,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0,
+          "notWatched": 0,
+          "aiMissed": 123.8,
+          "overload": 0
+        },
+        {
+          "threshold": 90,
+          "miss": 1,
+          "missMin": 1,
+          "missMax": 1,
+          "events": 123.8,
+          "falseAlerts": 0,
+          "load": 0,
+          "notWatched": 0,
+          "aiMissed": 123.8,
+          "overload": 0
+        }
+      ]
+    }
+  ],
+  "ok": [
+    {
+      "h": 1,
+      "range": [
+        30,
+        35,
+        40,
+        45,
+        50
+      ]
+    },
+    {
+      "h": 2,
+      "range": [
+        30,
+        35,
+        40,
+        45,
+        50
+      ]
+    }
+  ],
+  "needH": 8,
+  "checks": [
+    {
+      "k": "결론 1",
+      "d": "카메라가 늘수록 요원 1명이 놓치는 사건이 늘어난다",
+      "v": true
+    },
+    {
+      "k": "예측 정답",
+      "d": "카메라 32대면 요원 1명이 절반 넘게 놓친다 (최소 59%)",
+      "v": true
+    },
+    {
+      "k": "결론 2",
+      "d": "카메라 64대를 요원 2명 이하가 사람 눈으로만 보면 놓침 10% 이하가 불가능",
+      "v": true
+    },
+    {
+      "k": "결론 3",
+      "d": "AI 보조를 켜면 요원 2명 이하로 목표 달성 가능 (기준값 범위: 1명 30~50 · 2명 30~50)",
+      "v": true
+    },
+    {
+      "k": "적용 피드백 1",
+      "d": "기준값이 너무 낮으면 알림 폭주로 놓친다",
+      "v": true
+    },
+    {
+      "k": "적용 피드백 2",
+      "d": "기준값이 너무 높으면 AI가 사건을 못 잡아 놓친다",
+      "v": true
+    }
+  ]
+}
