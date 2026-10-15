@@ -1,7 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "cd ai-city && npm ci",
-  "buildCommand": "cd ai-city && npm run build",
-  "outputDirectory": "ai-city/dist"
-}

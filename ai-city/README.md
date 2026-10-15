@@ -13,6 +13,9 @@ npm run build    # dist/ 생성 (웹 플랫폼에 올릴 정적 파일, 상대 �
 npm run preview  # 빌드 결과 확인
 ```
 
+## 배포 (Vercel)
+Vercel 프로젝트 설정: Root Directory = `ai-city`, Framework = Vite, 명령은 기본값(덮어쓰기 없음). 저장소 루트에는 vercel.json 을 두지 않는다.
+
 ## 구성
 ```
 src/
