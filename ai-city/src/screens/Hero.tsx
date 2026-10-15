@@ -1,22 +1,23 @@
 // author: eduino
-// 첫 화면: 'AI 코어'(뇌 모양 신경망 홀로그램 + 렌더한 받침대)에서 빛 회로가 뻗어 7개 학습 지구 유리 패널로 이어진다.
-// 왼쪽: 제목 · 학습 루프(보기 → 만들기 → 학습 → 해결) · 지구 미리보기 카드. 패널에 마우스를 올리면(또는 자동 순회) 카드 · 회로 · 코어 색이 그 지구로 바뀐다.
-// 처음 접속하면 화면이 스스로 조립되는 시네마틱 인트로(약 9초, 건너뛰기 가능). 움직임 줄이기 설정이면 완성된 화면만.
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+// 첫 화면(A안): 주인공은 'AI 코어' 하나. 7개 학습 지구는 코어 둘레 궤도를 도는 작은 빛 점 — 마우스를 올린 점만 지구 색 · 이름이 켜지고 코어도 그 색으로 물든다.
+// 왼쪽 아래: 제목 2줄 + 버튼 1개. 스크롤 아래 두 번째 화면에서 학습 루프 · 7개 지구 카드.
+// 처음 접속하면 화면이 스스로 조립되는 시네마틱 인트로(약 8초, 건너뛰기 가능). 움직임 줄이기 설정이면 완성된 화면만.
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DISTRICTS } from '../data/districts';
-import { MotifCanvas, PatternCanvas } from '../components/Canvases';
+import { MotifCanvas } from '../components/Canvases';
 import { TopBar } from '../components/TopBar';
 import { MagneticButton, spot } from '../components/Interactive';
 import { useCanvas } from '../motion/useCanvas';
 import { createCore } from '../motion/core';
 import { READY } from './Brief';
 
-const KEY = 'ai_labcity_intro_v1', END = 9.2;
+const KEY = 'ai_labcity_intro_v1', END = 8.2;
 const REDUCE = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const seen = () => { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } };
 const CAPS: [number, number, string][] = [[0.5, 2.3, 'AI는 데이터를 봅니다'], [2.3, 4.1, '스스로 규칙을 찾고'], [4.1, 5.9, '도시의 문제를 풉니다']];
-const LOOP = [['SEE', '원리를 눈으로'], ['BUILD', '규칙 · 모델 만들기'], ['TRAIN', '직접 학습시키기'], ['SOLVE', '도시 사건 해결']];
+const LOOP = [['SEE', '원리를 눈으로 보고'], ['BUILD', '규칙과 모델을 만들고'], ['TRAIN', '직접 학습시키고'], ['SOLVE', '도시의 사건을 해결']];
 const clamp = (x: number) => Math.max(0, Math.min(1, x));
+const N = DISTRICTS.length;
 
 function useIntro() {
   const [t, setT] = useState(() => (REDUCE || seen() ? END : 0));
@@ -36,97 +37,97 @@ function Core({ tRef, tintRef }: { tRef: { current: number }; tintRef: { current
   return <canvas ref={ref} className="core__cv" aria-hidden="true" />;
 }
 
+// 궤도: 점 7개의 위치를 매 프레임 직접 옮김(리액트 다시 그리기 없이). 마우스를 올리면 궤도가 거의 멈춤.
+function Orbit({ hover, setHover, onEnter, show }: { hover: number | null; setHover: (i: number | null) => void; onEnter: (id: string) => void; show: (i: number) => number }) {
+  const box = useRef<HTMLDivElement>(null), dots = useRef<(HTMLButtonElement | null)[]>([]);
+  const hv = useRef(hover); hv.current = hover;
+  const sh = useRef(show); sh.current = show;
+  useEffect(() => {
+    let raf = 0, a = -Math.PI / 2, last = performance.now();
+    const step = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (!REDUCE) a += dt * (hv.current === null ? 0.12 : 0.012);
+      const el = box.current; if (el) {
+        const w = el.clientWidth, h = el.clientHeight, rx = w / 2, ry = h / 2;
+        dots.current.forEach((d, i) => {
+          if (!d) return; const th = a + (i / N) * Math.PI * 2, x = rx + Math.cos(th) * rx, y = ry + Math.sin(th) * ry, front = Math.sin(th) > -0.15;
+          const s = (front ? 1 : 0.7) * (0.4 + 0.6 * sh.current(i));
+          d.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${s})`;
+          d.style.zIndex = front ? '4' : '1'; d.style.opacity = String(sh.current(i) * (front ? 1 : 0.45));
+          d.dataset.side = x > rx ? 'r' : 'l';
+        });
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
+  }, []);
+  return (
+    <div className="orbit" ref={box}>
+      <svg className="orbit__ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="49.8" ry="49.4" /></svg>
+      {DISTRICTS.map((d, i) => (
+        <button key={d.id} ref={(el) => { dots.current[i] = el; }} className={`node ${hover === i ? 'is-on' : ''}`} style={{ ['--k' as string]: d.color }}
+          aria-label={`${d.order} ${d.tech}`} onPointerEnter={() => setHover(i)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} onClick={() => onEnter(d.id)}>
+          <i />
+          <span className="node__tip"><b>{String(i).padStart(2, '0')} · {d.tech}</b><em>{d.site} · {d.open ? `${READY.length}차시 열림` : '준비 중'}</em></span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
   const { t, tRef, skip, replay } = useIntro();
   const intro = t < END;
-  const root = useRef<HTMLElement>(null), coreRef = useRef<HTMLDivElement>(null), panelRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [paths, setPaths] = useState<{ d: string; color: string; len: number }[]>([]);
-  // 강조 지구: 마우스가 올라간 패널, 없으면 4초마다 자동 순회
-  const [hover, setHover] = useState<number | null>(null), [auto, setAuto] = useState(1);
-  useEffect(() => { if (intro || hover !== null || REDUCE) return; const id = setInterval(() => setAuto((a) => (a + 1) % DISTRICTS.length), 4000); return () => clearInterval(id); }, [intro, hover]);
-  const focus = intro ? null : hover ?? auto, fd = focus !== null ? DISTRICTS[focus] : null;
+  const [hover, setHover] = useState<number | null>(null);
   const tintRef = useRef<string | null>(null); tintRef.current = hover !== null ? DISTRICTS[hover].color : null;
-  // 코어 → 패널 빛 회로(직각으로 꺾이는 선) — 화면 크기가 바뀌면 다시 계산
-  useLayoutEffect(() => {
-    const calc = () => {
-      const r = root.current?.getBoundingClientRect(), c = coreRef.current?.getBoundingClientRect(); if (!r || !c || r.width <= 1100) { setPaths([]); return; }
-      const sx = c.left + c.width / 2 - r.left, sy = c.top + c.height * 0.3 - r.top;
-      setPaths(panelRefs.current.map((el, i) => {
-        if (!el) return null; const b = el.getBoundingClientRect(), ex = b.left - r.left, ey = b.top + b.height / 2 - r.top;
-        const mx = sx + (ex - sx) * (0.45 + (i % 2) * 0.12), d = `M ${sx} ${sy} L ${mx} ${sy} L ${mx} ${ey} L ${ex} ${ey}`;
-        return { d, color: DISTRICTS[i].color, len: Math.abs(mx - sx) + Math.abs(ey - sy) + Math.abs(ex - mx) };
-      }).filter(Boolean) as { d: string; color: string; len: number }[]);
-    };
-    calc(); window.addEventListener('resize', calc); const id = setTimeout(calc, 400);
-    return () => { window.removeEventListener('resize', calc); clearTimeout(id); };
-  }, []);
-  // 마우스 위치로 패널 무리를 살짝 기울이고, 제목 빛 그라데이션이 커서를 따라감
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const onMove = (e: PointerEvent<HTMLElement>) => { const r = e.currentTarget.getBoundingClientRect(); setTilt({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 }); };
-
   const vis = (a: number, b = a + 0.9) => (intro ? clamp((t - a) / (b - a)) : 1);
-  const cap = CAPS.find(([a, b]) => t >= a && t < b);
   const fade = (a: number, b?: number) => ({ opacity: vis(a, b), transform: `translateY(${(1 - vis(a, b)) * 14}px)` });
+  const cap = CAPS.find(([a, b]) => t >= a && t < b);
+  const more = useRef<HTMLDivElement>(null);
   return (
-    <section ref={root} className={`screen hero2 ${intro ? 'is-intro' : ''}`} onPointerMove={onMove} style={{ ['--fx' as string]: `${50 + tilt.x * 60}%`, ['--k' as string]: fd?.color ?? '#818cf8' }}>
-      <div className="hero2__bg" aria-hidden="true" />
-      <PatternCanvas color={fd?.color ?? '#818cf8'} className="hero2__dots" />
-      <div style={{ opacity: vis(7.2) }}><TopBar right={<button className="btn btn--ghost" disabled>교사용 안내</button>} /></div>
+    <section className={`screen h3 ${intro ? 'is-intro' : ''}`}>
+      <div className="h3__first">
+        <div className="h3__bg" aria-hidden="true" />
+        <div style={{ opacity: vis(6.6) }}><TopBar right={<button className="btn btn--ghost" disabled>교사용 안내</button>} /></div>
 
-      <div className="hero2__copy">
-        <div className="hero2__eyebrow" style={fade(7.0)}><b>EDUINO</b><i />AI LabCity<span>SIMULATION-BASED AI COURSE</span></div>
-        <h1 className="hero2__h" style={fade(7.2, 8.0)}>AI를 쓰는 사람에서<br /><em>AI를 만드는 사람으로.</em></h1>
-        <p className="hero2__sub" style={fade(7.6, 8.4)}>공통 기초와 6개의 기술 트랙. 원리를 눈으로 보고, 모델을 직접 학습시키고, 도시의 사건을 해결합니다.</p>
-
-        <ol className="loop" style={fade(7.9, 8.7)}>
-          {LOOP.map(([en, ko], i) => <li key={en} onPointerMove={spot} style={{ animationDelay: `${i * 0.6}s` }}><span>0{i + 1}</span><b>{en}</b><em>{ko}</em></li>)}
-        </ol>
-
-        <div className="peek" style={fade(8.1, 8.9)} onPointerMove={spot}>
-          {fd && <div className="peek__in" key={fd.id}>
-            <p className="peek__tag"><i />{fd.order} · {fd.district}<span className={fd.open ? 'on' : ''}>{fd.open ? `${READY.length}차시 열림` : '준비 중'}</span></p>
-            <p className="peek__t">{fd.tech} <small>{fd.techEn}</small></p>
-            <p className="peek__p"><b>{fd.site}</b> — {fd.problem}</p>
-          </div>}
-          <div className="peek__dots">{DISTRICTS.map((d, i) => <button key={d.id} aria-label={`${d.tech} 미리보기`} className={i === focus ? 'on' : ''} style={{ ['--k' as string]: d.color }} onPointerEnter={() => setHover(i)} onPointerLeave={() => setHover(null)} onClick={() => onEnter(d.id)} />)}</div>
+        <div className="core">
+          <img className="core__ped" src="assets/core_pedestal.webp" alt="" style={{ opacity: vis(3.4, 5.2) }} />
+          <Core tRef={tRef} tintRef={tintRef} />
+          <Orbit hover={hover} setHover={setHover} onEnter={(id) => onEnter(id)} show={(i) => vis(5.6 + i * 0.12, 6.2 + i * 0.12)} />
+          {cap && <p className="core__cap" key={cap[2]}>{cap[2]}</p>}
         </div>
 
-        <div className="hero2__cta" style={{ ...fade(8.3, 9.0), pointerEvents: intro && t < 8.3 ? 'none' : undefined }}>
-          <MagneticButton className="btn btn--primary hero2__go" onClick={() => onEnter()}>AI LabCity 입장 →</MagneticButton>
-          <button className="btn btn--ghost" onClick={replay}>인트로 다시 보기</button>
+        <div className="h3__copy">
+          <p className="h3__eyebrow" style={fade(6.5)}>EDUINO · AI LabCity</p>
+          <h1 className="h3__h" style={fade(6.7, 7.5)}>AI를 쓰는 사람에서<br /><em>AI를 만드는 사람으로.</em></h1>
+          <div className="h3__cta" style={{ ...fade(7.2, 8.0), pointerEvents: intro && t < 7.2 ? 'none' : undefined }}>
+            <MagneticButton className="btn btn--primary h3__go" onClick={() => onEnter()}>입장하기 →</MagneticButton>
+            <button className="h3__link" onClick={replay}>인트로 다시 보기</button>
+          </div>
         </div>
+
+        <p className="h3__hint" style={{ opacity: hover === null ? vis(7.6) : 0 }}>궤도의 빛 점 = 7개 학습 지구 · 마우스를 올려 보세요</p>
+        <button className="h3__down" style={{ opacity: vis(7.8) }} onClick={() => more.current?.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' })}>7개 지구 둘러보기 ↓</button>
+        {intro && <button className="h3__skip" onClick={skip}>건너뛰기 ▸</button>}
       </div>
 
-      <div className="core" ref={coreRef}>
-        <img className="core__ped" src="assets/core_pedestal.webp" alt="" style={{ opacity: vis(3.4, 5.2) }} />
-        <Core tRef={tRef} tintRef={tintRef} />
-        {cap && <p className="core__cap" key={cap[2]}>{cap[2]}</p>}
+      <div className="h3__more" ref={more}>
+        <p className="h3__eyebrow">HOW YOU LEARN</p>
+        <h2 className="h3__h2">보고, 만들고, 학습시키고, 해결합니다.</h2>
+        <ol className="h3__loop">{LOOP.map(([en, ko], i) => <li key={en}><span>0{i + 1}</span><b>{en}</b><em>{ko}</em></li>)}</ol>
+        <div className="h3__grid">
+          {DISTRICTS.map((d, i) => (
+            <button key={d.id} className="dcard" style={{ ['--k' as string]: d.color }} onPointerMove={spot} onClick={() => onEnter(d.id)}>
+              <MotifCanvas motif={d.motif} color={d.color} className="dcard__cv" fps={24} />
+              <span className="dcard__no">{String(i).padStart(2, '0')} · {d.order}</span>
+              <span className="dcard__t">{d.tech}</span>
+              <span className="dcard__p">{d.site} — {d.problem}</span>
+              <span className={`dcard__st ${d.open ? 'on' : ''}`}>{d.open ? `${READY.length}차시 열림` : '준비 중'}</span>
+            </button>
+          ))}
+        </div>
+        <p className="src-line h3__src">코어 · 궤도 · 지구 모션은 코드로 생성한 추상 모션, 받침대는 직접 렌더</p>
       </div>
-
-      <svg className="circuit" aria-hidden="true">
-        <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
-        {paths.map((p, i) => { const k = vis(5.6 + i * 0.22, 6.6 + i * 0.22), on = focus === i, dim = focus !== null && !on; return (
-          <g key={i} filter="url(#glow)" className={`circuit__g ${on ? 'on' : ''} ${dim ? 'dim' : ''}`}>
-            <path d={p.d} className="circuit__base" style={{ stroke: p.color, strokeDasharray: p.len, strokeDashoffset: p.len * (1 - k) }} />
-            {k >= 1 && <path d={p.d} className="circuit__pulse" style={{ stroke: p.color, animationDelay: `${i * 0.35}s` }} />}
-          </g>); })}
-      </svg>
-
-      <nav className="stack" aria-label="학습 지구" style={{ transform: `perspective(1400px) rotateY(${-14 + tilt.x * 6}deg) rotateX(${6 - tilt.y * 4}deg)` }}>
-        {DISTRICTS.map((d, i) => { const k = vis(5.9 + i * 0.22, 6.8 + i * 0.22); return (
-          <button key={d.id} ref={(el) => { panelRefs.current[i] = el; }} className={`glass ${i % 2 ? 'glass--r' : ''} ${focus === i ? 'is-on' : ''}`} style={{ ['--k' as string]: d.color, opacity: k, transform: `translateY(${(1 - k) * 24}px)` }}
-            onClick={() => onEnter(d.id)} onPointerEnter={() => setHover(i)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} onPointerMove={spot}>
-            <span className="glass__no">{String(i).padStart(2, '0')}<i>{d.order}</i></span>
-            <span className="glass__t">{d.tech}</span>
-            <span className="glass__e">{d.techEn}</span>
-            <span className="glass__k">{d.keywords.slice(0, 2).join(' · ')}</span>
-            <MotifCanvas motif={d.motif} color={d.color} className="glass__cv" fps={24} />
-            <span className={`glass__st ${d.open ? 'on' : ''}`}>{d.open ? '입장 가능' : '준비 중'}</span>
-          </button>); })}
-      </nav>
-
-      {intro && <button className="hero2__skip" onClick={skip}>건너뛰기 ▸</button>}
-      <p className="src-line hero2__src" style={{ opacity: vis(8.6) }}>코어 · 회로 · 점 격자는 코드로 생성한 추상 모션, 받침대는 직접 렌더 · 패널에 마우스를 올려 보세요</p>
     </section>
   );
 }
