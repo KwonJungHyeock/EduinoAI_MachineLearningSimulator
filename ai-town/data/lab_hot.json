@@ -1,0 +1,17 @@
+{
+  "image": {
+    "src": "assets/lab_section.webp",
+    "w": 2000,
+    "h": 1250
+  },
+  "hotspots": [
+    { "id": "0-1", "name": "0-1", "kind": "bench", "x": 0.16, "y": 0.42, "status": "soon" },
+    { "id": "0-2", "name": "0-2", "kind": "bench", "x": 0.38, "y": 0.42, "status": "open" },
+    { "id": "0-3", "name": "0-3", "kind": "bench", "x": 0.62, "y": 0.42, "status": "soon" },
+    { "id": "0-4", "name": "0-4", "kind": "bench", "x": 0.84, "y": 0.42, "status": "soon" },
+    { "id": "0-5", "name": "0-5", "kind": "bench", "x": 0.16, "y": 0.76, "status": "soon" },
+    { "id": "0-6", "name": "0-6", "kind": "bench", "x": 0.38, "y": 0.76, "status": "soon" },
+    { "id": "0-7", "name": "0-7", "kind": "bench", "x": 0.62, "y": 0.76, "status": "soon" },
+    { "id": "0-8", "name": "0-8", "kind": "bench", "x": 0.84, "y": 0.76, "status": "soon" }
+  ]
+}
