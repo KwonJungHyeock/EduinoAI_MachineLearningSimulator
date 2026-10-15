@@ -21,7 +21,9 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
   doc.addFileToVFS('NotoB.ttf', b); doc.addFont('NotoB.ttf', 'Noto', 'bold');
   const W = 210, M = 16; let y = 18;
   const font = (w: 'normal' | 'bold', size: number, color = '#18201d') => { doc.setFont('Noto', w); doc.setFontSize(size); doc.setTextColor(color); };
-  const text = (s: string, x: number, maxW = W - M * 2, lh = 5.2) => { const lines = doc.splitTextToSize(s, maxW); doc.text(lines, x, y); y += lines.length * lh; };
+  // 글꼴 부분집합에 없는 기호는 비슷한 글자로
+  const fix = (s: string) => s.replace(/−/g, '-').replace(/✕/g, 'X').replace(/≠/g, '!=').replace(/[①②]/g, (c) => (c === '①' ? '1' : '2'));
+  const text = (s: string, x: number, maxW = W - M * 2, lh = 5.2) => { const lines = doc.splitTextToSize(fix(s), maxW); doc.text(lines, x, y); y += lines.length * lh; };
   const need = (h: number) => { if (y + h > 285) { doc.addPage(); y = 18; } };
 
   // 머리
@@ -43,7 +45,28 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
     doc.setDrawColor('#c9cfcc'); doc.setLineWidth(0.2); doc.line(M, y + 2, W - M, y + 2); y += 6.5;
   }
+  { const f = p.lessons['vision-final'], a = f?.assess; font('bold', 9);
+    doc.text('종합', cols[0], y); doc.text('트랙 종합 평가', cols[1], y); font('normal', 9);
+    doc.text(f?.status === 'done' ? `완료 ${day(f.updatedAt)}` : f ? '열림 (아직 안 함)' : '잠김', cols[2], y);
+    doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
+    y += 6.5; }
   y += 4;
+
+  // 평가 답(차시 · 종합 공통)
+  const answers = (a: NonNullable<Progress['lessons'][string]['assess']>, items: (typeof ASSESS)[string]['items']) => {
+    items.forEach((it, i) => {
+      need(14); const v = a.answers[i];
+      font('normal', 9);
+      if (it.kind === 'ox') text(`[OX] ${it.q}  →  내 답 ${v === true ? 'O' : v === false ? 'X' : '-'} (${v === it.answer ? '맞음' : '다시'})`, M);
+      if (it.kind === 'short') text(`[단답] ${it.q}  →  내 답 "${v ?? ''}"`, M);
+      if (it.kind === 'essay') {
+        text(`[서술] ${it.q}`, M); font('normal', 9, '#2b3330'); text(`내 답: ${v ?? ''}`, M + 4, W - M * 2 - 4);
+        font('normal', 8.5, '#4b5552'); text(`핵심어 확인: ${a.essay.map((e) => `${e.hit ? '✓' : '✕'} ${e.label}`).join('   ')}`, M + 4);
+        need(12); doc.setDrawColor('#18201d'); doc.setLineWidth(0.3); doc.rect(M + 4, y - 3.5, W - M * 2 - 4, 9);
+        font('normal', 9); doc.text('교사 확인:   □ 적절    □ 보완 필요     의견: ______________________________', M + 7, y + 2); y += 9;
+      }
+    });
+  };
 
   // 차시 상세 (완료한 차시만)
   for (const l of VISION_LESSONS) {
@@ -86,21 +109,13 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     const a = rec.assess, set = ASSESS[`vision-${l.n}`];
     if (a && set) {
       need(40); font('bold', 10); doc.text('차시 평가', M, y); y += 5;
-      set.items.forEach((it, i) => {
-        need(14); const v = a.answers[i];
-        font('normal', 9);
-        if (it.kind === 'ox') text(`[OX] ${it.q}  →  내 답 ${v === true ? 'O' : v === false ? 'X' : '-'} (${v === it.answer ? '맞음' : '다시'})`, M);
-        if (it.kind === 'short') text(`[단답] ${it.q}  →  내 답 "${v ?? ''}"`, M);
-        if (it.kind === 'essay') {
-          text(`[서술] ${it.q}`, M); font('normal', 9, '#2b3330'); text(`내 답: ${v ?? ''}`, M + 4, W - M * 2 - 4);
-          font('normal', 8.5, '#4b5552'); text(`핵심어 확인: ${a.essay.map((e) => `${e.hit ? '✓' : '✕'} ${e.label}`).join('   ')}`, M + 4);
-          need(12); doc.setDrawColor('#18201d'); doc.setLineWidth(0.3); doc.rect(M + 4, y - 3.5, W - M * 2 - 4, 9);
-          font('normal', 9); doc.text('교사 확인:   □ 적절    □ 보완 필요     의견: ______________________________', M + 7, y + 2); y += 9;
-        }
-      });
+      answers(a, set.items);
     }
     y += 6;
   }
+  // 트랙 종합 평가
+  { const f = p.lessons['vision-final'], set = ASSESS['vision-final'];
+    if (f?.assess && set) { need(40); font('bold', 12); doc.text('트랙 종합 평가', M, y); y += 7; answers(f.assess, set.items); } }
   font('normal', 7.5, '#6b7280');
   doc.text('수치는 모두 시뮬레이션 계산값 · 서술형은 핵심어 자동 확인 후 교사가 최종 확인 · 가정은 임시', M, 290);
   // 파일 이름을 확실히 붙이려고 직접 링크로 내려받기

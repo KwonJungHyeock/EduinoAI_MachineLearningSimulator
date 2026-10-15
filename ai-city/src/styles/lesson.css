@@ -472,3 +472,40 @@
 .v7__zone { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .v7__zone span { font: 700 13px var(--en); min-width: 62px; color: #18201d; }
 .v7__zone button { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid #d5dad7; background: #fff; font: 700 15px var(--en); cursor: pointer; }
+
+/* ── 8차시: 밤의 교차로 ── */
+.v8__tod { margin-bottom: 4px; }
+.v8__tod button { padding: 5px 0; font-size: 11.5px; background: rgba(255, 255, 255, 0.06); color: #cfd8e6; border-color: rgba(255, 255, 255, 0.14); }
+.v8__tod button.is-on { background: #fff; color: #18201d; border-color: #fff; }
+.v8__cmp { display: grid; gap: 4px; margin-top: 2px; }
+.v8__cmp div { display: grid; grid-template-columns: 22px 1fr 1fr; gap: 6px; font-size: 11.5px; color: #cfd8e6; align-items: center; }
+.v8__cmp span { font-weight: 700; color: var(--muted); }
+.v8__cmp b { font: 600 11.5px var(--en); color: #fff; }
+.v8__mt { margin-top: 8px; }
+.v8__bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; gap: 1px; background: rgba(255, 255, 255, 0.06); }
+.v8__bar i { background: #5b8def; min-width: 2px; } .v8__bar i:nth-child(2) { background: #3b5ba8; } .v8__bar i:nth-child(5) { background: #3b5ba8; }
+.v8__bar i.n { background: #f97316; }
+.v8__strip { grid-template-columns: repeat(10, 1fr); }
+.v8--concept { justify-content: center; gap: 16px; padding: 18px 28px; }
+.v8__set { display: grid; gap: 4px; }
+.v8__row { display: flex; align-items: center; gap: 4px; }
+.v8__row span { width: 40px; font-size: 11.5px; font-weight: 700; color: #cfd8e6; }
+.v8__row .cg__big { width: 44px; height: 44px; border-radius: 4px; }
+.v8__mix { max-width: 560px; }
+.v8__mix .v8__bar { height: 14px; }
+
+/* ── 트랙 종합 평가 ── */
+.final { background: radial-gradient(1200px 600px at 20% 0%, rgba(20, 184, 166, 0.08), transparent 60%), var(--bg); }
+.final__body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 420px; gap: 0; }
+.final__left { min-height: 0; overflow: auto; padding: 22px 34px 30px; }
+.final__left .eyebrow--key { color: #14b8a6; margin-bottom: 8px; }
+.final__h { margin: 0 0 18px; font-size: 28px; letter-spacing: -0.01em; }
+.final__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.final__list li { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: start; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07); }
+.final__list li.is-done { background: rgba(20, 184, 166, 0.07); box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.25); }
+.final__n { font: 700 18px var(--en); color: #14b8a6; }
+.final__t { margin: 0; font-weight: 700; font-size: 14.5px; color: #fff; }
+.final__k { margin: 2px 0 0; font-size: 12.5px; color: #b7c2d3; }
+.final__c { margin: 6px 0 0; font-size: 12px; color: #8b97a9; line-height: 1.5; }
+.final__s { font: 600 11.5px var(--en); color: #cfd8e6; white-space: nowrap; padding-top: 2px; }
+.final__rail { border-radius: 22px 0 0 0; }

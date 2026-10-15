@@ -113,3 +113,5 @@ export function hardSet(X: Float32Array[], n = DET.hardN): DataSet {
   for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
   const k = idx.slice(0, n); return { X: k.map((i) => X[i]), y: k.map(() => 2) };
 }
+// 8차시: 밤 장면 — 시험 50~79(30장), 헛탐지 모으기 학습 장면 0~29
+export const NIGHT = { testFrom: 50, testN: 30, trainScenes: 30 };

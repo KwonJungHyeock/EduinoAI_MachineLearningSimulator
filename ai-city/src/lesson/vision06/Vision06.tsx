@@ -84,6 +84,7 @@ export function Vision06({ onExit, onHome }: { onExit: () => void; onHome: () =>
 
   const retrain = async () => {
     if (busy || models.hard) return;
+    setBusy({ stage: '헛탐지 모으기 준비', p: 0 });
     const all: Float32Array[] = [];
     for (let i = 0; i < DET.trainScenes; i++) {
       const g = await loadGray(`./vision/ds/g/day-${pad3(i)}.png`); all.push(...mineHard(models.base!, g, SC.day[i].objs as Obj[]));

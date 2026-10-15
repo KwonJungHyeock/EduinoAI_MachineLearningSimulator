@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ASSESS, gradeShort, gradeEssay, type Item } from '../data/assess';
 import { update, type AssessRecord } from '../store/progress';
 
-export function Assessment({ lessonId, onDone }: { lessonId: string; onDone: (r: AssessRecord) => void }) {
+export function Assessment({ lessonId, onDone, label = '차시 평가' }: { lessonId: string; onDone: (r: AssessRecord) => void; label?: string }) {
   const set = ASSESS[lessonId];
   const [ans, setAns] = useState<(boolean | string | null)[]>(set.items.map(() => null));
   const [result, setResult] = useState<AssessRecord | null>(null);
@@ -39,7 +39,7 @@ export function Assessment({ lessonId, onDone }: { lessonId: string; onDone: (r:
 
   return (
     <div className="assess">
-      <p className="assess__tag">차시 평가 · {set.items.length}문항</p>
+      <p className="assess__tag">{label} · {set.items.length}문항</p>
       {set.items.map((it, i) => (
         <div key={i} className="as-q">
           <p className="as-q__q"><span className="as-kind">{it.kind === 'ox' ? 'OX' : it.kind === 'short' ? '단답' : '서술'}</span>{it.q}</p>

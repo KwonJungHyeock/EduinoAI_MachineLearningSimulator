@@ -11,15 +11,16 @@ import { load, lesson } from '../store/progress';
 import { downloadReport } from '../report/pdf';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-export const READY = [1, 2, 3, 4, 5, 6, 7]; // 화면이 만들어진 차시
+export const READY = [1, 2, 3, 4, 5, 6, 7, 8]; // 화면이 만들어진 차시
 const up = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } };
 
-export function Brief({ id, onBack, onHome, onStart }: { id: string; onBack: () => void; onHome: () => void; onStart: (n: number) => void }) {
+export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; onBack: () => void; onHome: () => void; onStart: (n: number) => void; onFinal: () => void }) {
   const d = DISTRICTS.find((x) => x.id === id) ?? DISTRICTS[1];
   const prog = load();
   const st = (n: number) => lesson(prog, `vision-${n}`)?.status ?? (n === 1 ? 'open' : 'locked');
   const next = VISION_LESSONS.find((l) => st(l.n) === 'open')?.n ?? null;
   const anyDone = VISION_LESSONS.some((l) => st(l.n) === 'done');
+  const allDone = VISION_LESSONS.every((l) => st(l.n) === 'done'), finalDone = lesson(prog, 'vision-final')?.status === 'done';
   const [busy, setBusy] = useState(false);
   return (
     <section className="screen brief" style={{ ['--k' as string]: d.color }}>
@@ -62,10 +63,12 @@ export function Brief({ id, onBack, onHome, onStart }: { id: string; onBack: () 
         <motion.div className="brief__cta" variants={up}>
           {next !== null && READY.includes(next)
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(next)}>{next}차시 시작</MagneticButton>
+            : allDone
+            ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '종합 평가 다시 보기' : '트랙 종합 평가'}</MagneticButton>
             : next === null
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(1)}>처음부터 다시 하기</MagneticButton>
             : <MagneticButton className="btn btn--primary btn--key" disabled>{next}차시 준비 중</MagneticButton>}
-          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : '모든 차시를 마쳤습니다'}</span>
+          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? '트랙 수료 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
           {VISION_LESSONS.filter((l) => st(l.n) === 'done' && READY.includes(l.n)).map((l) => <button key={l.n} className="btn btn--ghost" onClick={() => onStart(l.n)}>{l.n}차시 다시</button>)}
           {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
         </motion.div>

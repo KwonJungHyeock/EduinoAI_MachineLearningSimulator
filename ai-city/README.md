@@ -28,6 +28,25 @@ src/
   assets/fonts/         Noto Sans KR 부분집합(한글 2350자, OFL)
 ```
 
+## 비전 지구 차시 (공통 양식 v2: 미션 → 예측 → 실험 → 개념 → 적용 → 정리 + 차시 평가)
+모든 화면 수치는 `src/sim/*` 계산값이며, 같은 코드를 node 로 돌리는 점검이 있습니다:
+`node --experimental-strip-types --no-warnings tools/check_visionNN.ts`
+
+| 차시 | 주제 | 계산 | 점검 결과(요약) |
+|---|---|---|---|
+| 1 | 사람 눈으로는 다 못 본다 | sim/surveillance.ts | 카메라 4대 0% → 32대 절반 넘게 놓침 |
+| 2 | 이미지는 숫자다 | sim/pixels.ts | 32×20 · 기준 15 모두 찾고 헛알림 0 |
+| 3 | 필터로 윤곽 찾기 | sim/filters.ts | 세로 윤곽 필터 물체 대비 1.9배 |
+| 4 | 색으로 물체 골라내기 | sim/colors.ts | 색만 → 정밀 22%, 색 + 변화 → 목표 |
+| 5 | 분류 대결 kNN vs CNN | sim/nn.ts | 조각 100개 kNN 81% > CNN 74%, 1000개 CNN 97% > kNN 92% |
+| 6 | 객체 탐지 | sim/detect.ts | 5차시 모델 정밀 7% → 헛탐지 다시 학습 89% · 재현 78% |
+| 7 | 교차로 위험 감지 | sim/alarm.ts | 기준점 가운데 헛경보 5 · 놓침 6 → 발 + 횡단보도 예외 1 · 3 |
+| 8 | 밤의 교차로 — 데이터 편향 | sim/detect.ts | 낮만 배운 모델 밤 재현 35% → 밤 조각 79%(정밀 52%) → 헛탐지 다시 학습 · 기준 0.3 낮 83/83 · 밤 90/79 |
+| 끝 | 트랙 종합 평가 | screens/TrackFinal.tsx | OX 7 · 단답 3 · 서술 1 → 리포트 PDF |
+
+장면 · 데이터셋은 `tools/scene-render`(three.js + CC0 모델)로 직접 렌더: CCTV 장면 12개, 거리 장면 낮 200 · 밤 80장
+(조각 `public/vision/ds/crops.json`, 흑백 장면 `public/vision/ds/g/*.png`, 6차시 탐지 모델 `det_model.json` — `check_vision06.ts` 가 만듦).
+
 ## 마우스 반응
 | 지구 | 마우스로 하는 일 |
 |---|---|

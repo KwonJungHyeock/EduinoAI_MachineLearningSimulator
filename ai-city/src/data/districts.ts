@@ -34,7 +34,7 @@ export const DISTRICTS: District[] = [
     id: 'vision', order: '트랙 1', tech: 'AI 영상처리', techEn: 'Computer Vision',
     district: '비전 지구', site: '도시 영상 관제센터', color: '#14b8a6', motif: 'vision',
     keywords: ['픽셀 · 색', '필터 · 에지', '이미지 분류 (CNN)', '객체 탐지'],
-    situations: ['교차로 위험 감지', '불량품 검사 라인'],
+    situations: ['교차로 위험 감지', '밤의 교차로 — 데이터 편향'],
     role: '관제센터의 AI 영상처리 엔지니어', problem: '도시 곳곳의 카메라 영상을 사람 눈으로는 다 볼 수 없습니다', open: true
   },
   {
@@ -83,5 +83,5 @@ export const VISION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: stri
   { n: 5, arc: '알고리즘 체험', title: '분류 대결 — kNN vs CNN' },
   { n: 6, arc: '알고리즘 체험', title: '객체 탐지' },
   { n: 7, arc: '상황 해결', title: '교차로 위험 감지' },
-  { n: 8, arc: '상황 해결', title: '불량품 검사 라인' }
+  { n: 8, arc: '상황 해결', title: '밤의 교차로 — 데이터 편향' }
 ];

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Hero } from './screens/Hero';
 import { Select } from './screens/Select';
 import { Brief } from './screens/Brief';
+import { TrackFinal } from './screens/TrackFinal';
 import { Vision01 } from './lesson/vision01/Vision01';
 import { Vision02 } from './lesson/vision02/Vision02';
 import { Vision03 } from './lesson/vision03/Vision03';
@@ -11,8 +12,9 @@ import { Vision04 } from './lesson/vision04/Vision04';
 import { Vision05 } from './lesson/vision05/Vision05';
 import { Vision06 } from './lesson/vision06/Vision06';
 import { Vision07 } from './lesson/vision07/Vision07';
+import { Vision08 } from './lesson/vision08/Vision08';
 
-type Screen = 'hero' | 'select' | 'brief' | 'lesson';
+type Screen = 'hero' | 'select' | 'brief' | 'lesson' | 'final';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('hero');
@@ -33,7 +35,8 @@ export default function App() {
       >
         {screen === 'hero' && <Hero onEnter={enterCity} />}
         {screen === 'select' && <Select selected={selected} onSelect={setSelected} onEnter={enterDistrict} onHome={home} />}
-        {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} onStart={(n) => { setLessonN(n); setScreen('lesson'); }} />}
+        {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} onStart={(n) => { setLessonN(n); setScreen('lesson'); }} onFinal={() => setScreen('final')} />}
+        {screen === 'final' && <TrackFinal onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 1 && <Vision01 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 2 && <Vision02 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 3 && <Vision03 onExit={() => setScreen('brief')} onHome={home} />}
@@ -41,6 +44,7 @@ export default function App() {
         {screen === 'lesson' && lessonN === 5 && <Vision05 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 6 && <Vision06 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 7 && <Vision07 onExit={() => setScreen('brief')} onHome={home} />}
+        {screen === 'lesson' && lessonN === 8 && <Vision08 onExit={() => setScreen('brief')} onHome={home} />}
       </motion.div>
     </AnimatePresence>
   );
