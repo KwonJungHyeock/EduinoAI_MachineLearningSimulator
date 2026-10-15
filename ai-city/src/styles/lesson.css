@@ -509,3 +509,20 @@
 .final__c { margin: 6px 0 0; font-size: 12px; color: #8b97a9; line-height: 1.5; }
 .final__s { font: 600 11.5px var(--en); color: #cfd8e6; white-space: nowrap; padding-top: 2px; }
 .final__rail { border-radius: 22px 0 0 0; }
+
+/* 학습 진행 패널 */
+.tp { margin-top: 10px; padding: 12px; border-radius: 12px; background: #0f1720; color: #dfe6ef; display: grid; gap: 8px; box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.6); }
+.tp__ph { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.tp__ph li { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: #6f7c8e; }
+.tp__ph i { flex: none; width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; font: 700 10px var(--en); font-style: normal; background: rgba(255, 255, 255, 0.08); }
+.tp__ph li.on { color: #fff; } .tp__ph li.on i { background: #14b8a6; color: #fff; animation: beacon 1.6s ease-in-out infinite; }
+.tp__ph li.done { color: #5eead4; } .tp__ph li.done i { background: rgba(20, 184, 166, 0.25); color: #5eead4; }
+.tp__st { margin: 0; font-size: 12.5px; font-weight: 700; }
+.tp__bar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.tp__bar b { display: block; height: 100%; background: linear-gradient(90deg, #14b8a6, #5eead4); transition: width .25s; }
+.tp__loss svg { width: 100%; height: 54px; display: block; }
+.tp__ax { stroke: rgba(255, 255, 255, 0.12); }
+.tp__ln { fill: none; stroke: #f97316; stroke-width: 2; }
+.tp__pt { fill: #f97316; } .tp__now { fill: #fff; stroke: #f97316; stroke-width: 2; }
+.tp__loss p { margin: 2px 0 0; font-size: 11px; color: #9aa6b8; }
+.tp__loss b { font-family: var(--en); color: #fff; }

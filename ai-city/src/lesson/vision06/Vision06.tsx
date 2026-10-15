@@ -11,6 +11,7 @@ import { PointGraph } from '../PointGraph';
 import { CodeCells } from '../CodeCells';
 import { BigCrop } from '../CropGrid';
 import { loadGray, pad3, tick } from '../gray';
+import { TrainPanel } from '../TrainPanel';
 
 type MK = 'base' | 'hard';
 interface Cfg { model: MK; th: number; nms: boolean }
@@ -175,12 +176,7 @@ export function Vision06({ onExit, onHome }: { onExit: () => void; onHome: () =>
         </button>); })}
     </div>
   );
-  const prepBox = busy && (
-    <div className="v6__busy">
-      <p>{busy.stage}</p><i><b style={{ width: `${busy.p * 100}%` }} /></i>
-      {busy.loss && <p className="v6__loss">손실 {busy.loss.map((l) => l.toFixed(2)).join(' → ')}</p>}
-    </div>
-  );
+  const prepBox = busy && <TrainPanel b={busy} phases={['헛탐지 모으기', '다시 학습', '시험 장면 탐지']} cuts={[0.25, 0.85]} epochs={DET.hardEpochs} />;
 
   const def: LessonDef = {
     id: 'vision-6', n: 6, total: 8, title: '객체 탐지', keyColor: KEY,

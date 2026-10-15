@@ -11,3 +11,5 @@ author: eduino
 | public/vision/cam01~12 (장면 렌더 48장) | Kenney City Kit Roads · Commercial 2.1 · Suburban 2.0 · Car Kit (https://kenney.nl) + 사람: Ultimate Modular Men · Women (https://quaternius.com) 로 조립해 직접 렌더 (tools/scene-render) | Kenney · Quaternius | CC0 1.0 | 2026-10-15 | 비전 1차시 모니터 벽 · 확대 화면 |
 
 * 원본 모델은 저장소에 넣지 않고 tools/scene-render/fetch_kenney.sh 로 다시 받음. CC-BY 는 화면 출처 표기 대상.
+| public/vision/ds/* (거리 장면 낮 200 · 밤 80, 조각 · 흑백 장면) | 위와 같은 Kenney · Quaternius 모델로 직접 렌더 (tools/scene-render/dataset.ts) | Kenney · Quaternius | CC0 1.0 | 2026-10-15 | 비전 5~8차시 학습 · 탐지 자료 |
+| public/assets/vision_control.webp (관제실) | Kenney Furniture Kit 2.0 (https://kenney.nl/assets/furniture-kit) + Quaternius 사람 + 1차시 CCTV 렌더로 직접 렌더 (tools/scene-render/control.ts) | Kenney · Quaternius | CC0 1.0 | 2026-10-15 | 비전 지구 브리핑 현장 그림 |

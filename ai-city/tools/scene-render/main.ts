@@ -2,6 +2,7 @@
 // 장면 렌더 도구: Kenney 로우폴리 모델(CC0)로 CCTV 각도 장면을 조립해 이미지로 만든다. (개발용)
 //   ?probe=모델,모델…        모델 크기 측정
 //   ?scene=cam01&v=base|event  장면 렌더 → window.__out 에 PNG dataURL
+//   ?control=1&w=1600          관제실(브리핑 현장 그림) → control.ts
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
@@ -118,7 +119,10 @@ async function render(id: string, v: 'base' | 'event') {
 
 const q = new URLSearchParams(location.search);
 declare global { interface Window { __ds?: unknown } }
-if (q.get('dataset')) {
+if (q.get('control')) {
+  import('./control').then(({ control }) => control(Number(q.get('w') ?? 1600)))
+    .then((d) => { window.__out = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
+} else if (q.get('dataset')) {
   import('./dataset').then(({ dataset }) => dataset(Number(q.get('n') ?? 40), q.get('night') === '1', Number(q.get('seed') ?? 1)))
     .then((d) => { window.__ds = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
 } else

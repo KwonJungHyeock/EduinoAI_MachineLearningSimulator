@@ -186,3 +186,11 @@ button { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+/* 브리핑: 완료 · 열린 차시는 타임라인에서 바로 시작 */
+.lesson.is-play { cursor: pointer; }
+.lesson.is-play:focus-visible { outline: 2px solid var(--k); outline-offset: 4px; border-radius: 10px; }
+.lesson__again { font-style: normal; margin-left: 8px; color: var(--k); opacity: 0; transform: translateX(-4px); transition: opacity .3s var(--ease), transform .3s var(--ease); display: inline-block; }
+.lesson.is-play:hover .lesson__again, .lesson.is-play:focus-visible .lesson__again { opacity: 1; transform: none; }
+.lesson.is-play:hover .lesson__title { color: #fff; }
+.brief__sp { flex: 1; }
+.brief__asset img { border-radius: 14px; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06); }

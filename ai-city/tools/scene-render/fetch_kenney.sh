@@ -19,3 +19,9 @@ q 14d8n7IDnnlnGt_uiATnNg3uvi_4dyd9V m-worker; q 1fzSq1Rr037f7QkfXPWEAzmbLMNx-FpP
 q 18b3WwlrwrFYWAM7BcnjWeIxKJyxAQiGh f-casual; q 1iayBzVv_zLjuPtaNPouw_auwKlQLLmes f-formal; q 1GjWtofxjmPku25cXJxHrzLLeUbXw7A_s f-suit
 q 1iwF_fqDErPH9uyol6NmS-MnzGgsZ5ejV f-worker; q 1uxAFnDp73NO1c16LvHHjAYh1-deMNk5I f-adventurer
 echo "people done: $OUTP"
+
+# 가구(관제실 장면): Kenney Furniture Kit (CC0) — GLB 는 'Models/GLTF format/' 안에 있음
+F="$(dirname "$0")/public/models/furniture"; mkdir -p "$F"; T2="$(mktemp -d)"
+curl -sL -o "$T2/f.zip" https://kenney.nl/media/pages/assets/furniture-kit/440e0608a4-1677580847/kenney_furniture-kit.zip
+python3 -c "import zipfile,sys,os; z=zipfile.ZipFile(sys.argv[1]); [open(os.path.join(sys.argv[2], n.split('/')[-1]),'wb').write(z.read(n)) for n in z.namelist() if n.startswith('Models/GLTF format/') and n.endswith('.glb')]" "$T2/f.zip" "$F"
+rm -rf "$T2"; echo "furniture done: $F"

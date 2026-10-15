@@ -11,6 +11,7 @@ import { PointGraph } from '../PointGraph';
 import { CodeCells } from '../CodeCells';
 import { BigCrop } from '../CropGrid';
 import { loadGray, pad3, tick } from '../gray';
+import { TrainPanel } from '../TrainPanel';
 
 type MK = 'day' | 'night' | 'final';
 type Tod = 'day' | 'night';
@@ -135,9 +136,7 @@ export function Vision08({ onExit, onHome }: { onExit: () => void; onHome: () =>
   const ids = tod === 'day' ? DIDS : NIDS, gs = tod === 'day' ? ev.gd : ev.gn, k = Math.min(pic, ids.length - 1), gr = gs[k];
   const pctBox = (b: number[]) => ({ left: `${(b[0] / W) * 100}%`, top: `${(b[1] / H) * 100}%`, width: `${((b[2] - b[0]) / W) * 100}%`, height: `${((b[3] - b[1]) / H) * 100}%` });
   const total = parts.reduce((s, p) => s + p.n, 0);
-  const prepBox = busy && (
-    <div className="v6__busy"><p>{busy.stage}</p><i><b style={{ width: `${busy.p * 100}%` }} /></i>{busy.loss && <p className="v6__loss">손실 {busy.loss.map((l) => l.toFixed(2)).join(' → ')}</p>}</div>
-  );
+  const prepBox = busy && <TrainPanel b={busy} phases={models.current.night ? ['헛탐지 모으기', '다시 학습', '시험 장면 탐지'] : ['6차시 재료 준비', '밤 조각 더해 학습', '시험 장면 탐지']} cuts={[0.25, 0.75]} epochs={DET.hardEpochs} />;
   const todSeg = <div className="seg seg--2 v8__tod">{(['day', 'night'] as Tod[]).map((t) => <button key={t} className={tod === t ? 'is-on' : ''} onClick={() => { setTod(t); setPic(0); }}>{t === 'day' ? '낮 시험 40장' : '밤 시험 30장'}</button>)}</div>;
 
   const def: LessonDef = {

@@ -22,6 +22,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
   const anyDone = VISION_LESSONS.some((l) => st(l.n) === 'done');
   const allDone = VISION_LESSONS.every((l) => st(l.n) === 'done'), finalDone = lesson(prog, 'vision-final')?.status === 'done';
   const [busy, setBusy] = useState(false);
+  const playable = (n: number) => st(n) !== 'locked' && READY.includes(n);
   return (
     <section className="screen brief" style={{ ['--k' as string]: d.color }}>
       <MotifCanvas motif={d.motif} color={d.color} className="brief__canvas" />
@@ -46,16 +47,18 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
 
         <motion.aside className="brief__side" variants={up}>
           <AssetSlot src="assets/vision_control.webp" label="현장 렌더" className="brief__asset" />
-          <p className="src-line">현장 그림은 에셋 슬롯 (렌더 예정)</p>
+          <p className="src-line">현장: 직접 렌더한 관제실 · 영상 벽은 1차시 CCTV 장면 (CC0 모델)</p>
         </motion.aside>
 
         <motion.ol className="lessons" variants={up}>
           {VISION_LESSONS.map((l) => (
-            <li key={l.n} className={`lesson ${l.n === next ? 'is-next' : ''} ${st(l.n) === 'done' ? 'is-done' : ''} ${l.arc === '상황 해결' ? 'is-case' : ''}`} onPointerMove={spot}>
+            <li key={l.n} className={`lesson ${l.n === next ? 'is-next' : ''} ${st(l.n) === 'done' ? 'is-done' : ''} ${l.arc === '상황 해결' ? 'is-case' : ''} ${playable(l.n) ? 'is-play' : ''}`} onPointerMove={spot}
+              onClick={() => playable(l.n) && onStart(l.n)} role={playable(l.n) ? 'button' : undefined} tabIndex={playable(l.n) ? 0 : undefined}
+              onKeyDown={(e) => { if (playable(l.n) && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onStart(l.n); } }}>
               <span className="lesson__node" />
               <span className="lesson__n">{String(l.n).padStart(2, '0')}<em>{l.arc}</em></span>
               <span className="lesson__title">{l.title}</span>
-              <span className="lesson__st">{st(l.n) === 'done' ? '완료' : st(l.n) === 'open' ? '열림' : '잠김'}</span>
+              <span className="lesson__st">{st(l.n) === 'done' ? <>완료<i className="lesson__again">다시 하기 →</i></> : st(l.n) === 'open' ? '열림' : '잠김'}</span>
             </li>
           ))}
         </motion.ol>
@@ -69,7 +72,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(1)}>처음부터 다시 하기</MagneticButton>
             : <MagneticButton className="btn btn--primary btn--key" disabled>{next}차시 준비 중</MagneticButton>}
           <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? '트랙 수료 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
-          {VISION_LESSONS.filter((l) => st(l.n) === 'done' && READY.includes(l.n)).map((l) => <button key={l.n} className="btn btn--ghost" onClick={() => onStart(l.n)}>{l.n}차시 다시</button>)}
+          {anyDone && <span className="brief__sp" />}
           {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
         </motion.div>
       </motion.div>
