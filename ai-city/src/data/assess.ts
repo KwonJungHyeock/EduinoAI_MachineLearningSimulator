@@ -6,6 +6,18 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'vision-4': {
+    title: '색으로 물체 골라내기',
+    items: [
+      { kind: 'ox', q: '색 범위만 정하면 같은 색의 다른 물체와 진짜 물체를 구별할 수 있다.', answer: false, why: '교차로에서 다른 주황색 차까지 골라 정밀도가 낮았습니다.' },
+      { kind: 'ox', q: 'HSV는 색을 색상 · 채도 · 밝기로 나누어 표현한다.', answer: true, why: '사람이 말하는 "주황색"을 색상 범위로 정하기 쉽습니다.' },
+      { kind: 'ox', q: '정밀도는 진짜 물체 중에서 몇 %를 골라냈는지를 뜻한다.', answer: false, why: '그것은 재현율입니다. 정밀도는 고른 것 중 진짜 물체의 비율이에요.' },
+      { kind: 'short', q: '고른 것 중 진짜 물체의 비율을 무엇이라 할까?', accept: ['정밀도', 'precision', '정확도(정밀도)'], why: '정밀도(precision)입니다.' },
+      { kind: 'essay', q: '세 장면을 한 설정으로 맞추기 위해 어떤 단서를 함께 썼는지, 색만 썼을 때의 문제와 함께 설명해 보세요.',
+        keys: [{ label: '색만 쓰면 다른 물체도 골라짐', any: ['다른', '같은 색', '주황', '헛', '잘못'] }, { label: '변화(바뀐 곳) 함께 사용', any: ['변화', '바뀐', 'change', '차이'] }, { label: '정밀도 · 재현율', any: ['정밀', '재현'] }],
+        model: '색만 쓰면 교차로의 다른 주황색 차까지 골라 정밀도가 낮았다. 그래서 2차시의 변화(바뀐 곳) 단서를 함께 켜서 주황색이면서 새로 나타난 픽셀만 골랐더니 세 장면 모두 정밀도 80%, 재현율 50%를 넘었다.' }
+    ]
+  },
   'vision-3': {
     title: '필터로 윤곽 찾기',
     items: [

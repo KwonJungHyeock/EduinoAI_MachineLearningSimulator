@@ -11,7 +11,7 @@ import { load, lesson } from '../store/progress';
 import { downloadReport } from '../report/pdf';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-export const READY = [1, 2, 3]; // 화면이 만들어진 차시
+export const READY = [1, 2, 3, 4]; // 화면이 만들어진 차시
 const up = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } };
 
 export function Brief({ id, onBack, onHome, onStart }: { id: string; onBack: () => void; onHome: () => void; onStart: (n: number) => void }) {

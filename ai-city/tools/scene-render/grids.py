@@ -27,3 +27,15 @@ for s in meta['scenes']:
     hi['scenes'].append({'id': s['id'], 'name': s['name'], 'box': s['box'], 'data': base64.b64encode(im.tobytes()).decode()})
 (V / 'hires.json').write_text(json.dumps(hi, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 print('hires', (V / 'hires.json').stat().st_size // 1024, 'KB')
+
+# 4차시용: 색 장면(사건 · 평소) 128×80 RGB + 물체 상자
+COLOR_IDS = ['cam01', 'cam02', 'cam04']
+col = {'w': HW, 'h': HH, 'scenes': []}
+for s in meta['scenes']:
+    if s['id'] not in COLOR_IDS: continue
+    row = {'id': s['id'], 'name': s['name'], 'situation': s['situation'], 'box': s['box']}
+    for v in ('event', 'base'):
+        row[v] = base64.b64encode(Image.open(V / f"{s['id']}-{v}.webp").convert('RGB').resize((HW, HH), Image.BOX).tobytes()).decode()
+    col['scenes'].append(row)
+(V / 'colors.json').write_text(json.dumps(col, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+print('colors', (V / 'colors.json').stat().st_size // 1024, 'KB')
