@@ -1,0 +1,19 @@
+{
+  "image": {
+    "day": "assets/map_day.webp",
+    "night": "assets/map_night.webp",
+    "w": 2000,
+    "h": 1250
+  },
+  "hotspots": [
+    { "id": "plaza",     "name": "중앙 광장",       "kind": "plaza",     "x": 0.50, "y": 0.49, "status": "soon" },
+    { "id": "expansion", "name": "확장 부지",       "kind": "expansion", "x": 0.50, "y": 0.15, "status": "soon" },
+    { "id": "language",  "name": "언어 도서관",     "kind": "building",  "x": 0.38, "y": 0.28, "status": "soon" },
+    { "id": "voice",     "name": "음성 방송국",     "kind": "building",  "x": 0.62, "y": 0.28, "status": "soon" },
+    { "id": "vision",    "name": "비전 랩",         "kind": "building",  "x": 0.24, "y": 0.42, "status": "soon" },
+    { "id": "data",      "name": "데이터 관제센터", "kind": "building",  "x": 0.76, "y": 0.42, "status": "soon" },
+    { "id": "garage",    "name": "로봇 차고",       "kind": "garage",    "x": 0.26, "y": 0.66, "status": "open" },
+    { "id": "factory",   "name": "로봇 공장",       "kind": "building",  "x": 0.76, "y": 0.64, "status": "soon" },
+    { "id": "lab",       "name": "로봇 연구소",     "kind": "entry",     "x": 0.50, "y": 0.74, "status": "open" }
+  ]
+}
