@@ -27,7 +27,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
     <section className="screen brief" style={{ ['--k' as string]: d.color }}>
       <MotifCanvas motif={d.motif} color={d.color} className="brief__canvas" />
       <div className="brief__veil" aria-hidden="true" />
-      <TopBar crumb={`도시 지도 · ${d.district}`} onHome={onHome} right={<button className="btn btn--ghost" onClick={onBack}>← 지구 선택</button>} />
+      <TopBar crumb={`AI LabCity · ${d.district}`} onHome={onHome} right={<button className="btn btn--ghost" onClick={onBack}>← Lab 선택</button>} />
 
       <motion.div className="brief__body" initial="hidden" animate="show" transition={{ staggerChildren: 0.12, delayChildren: 0.15 }}>
         <div className="brief__main">
@@ -76,7 +76,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
           {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
         </motion.div>
       </motion.div>
-      <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · 지구 · 현장 이름은 가칭</p>
+      <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · Lab · 현장 이름은 가칭</p>
     </section>
   );
 }

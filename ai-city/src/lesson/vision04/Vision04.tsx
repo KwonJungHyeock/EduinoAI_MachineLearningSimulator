@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 4차시 · 색으로 물체 골라내기 — 색 범위(색상 · 채도)로 사건 물체만 골라낸다. 색만으로 안 되면 '변화'를 함께 쓴다.
+// Vision Lab 4차시 · 색으로 물체 골라내기 — 색 범위(색상 · 채도)로 사건 물체만 골라낸다. 색만으로 안 되면 '변화'를 함께 쓴다.
 // 수치는 src/sim/colors.ts 계산값(점검: tools/check_vision04.ts).
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { prepare, evaluate, pass, GOAL, BASIS4, type ColorData, type Range, type SceneEval } from '../../sim/colors';
@@ -157,7 +157,7 @@ export function Vision04({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read="청록 = 고른 것 중 진짜 물체 비율(헛선택이 적을수록 높음), 주황 = 진짜 물체 중 고른 비율(놓침이 적을수록 높음). 둘 다 높아야 목표."
           link={hov ? `위 장면의 빨간 칸(잘못 고름)이 많으면 청록이 낮고, 노란 칸(놓침)이 많으면 주황이 낮다. 이 실행: ${hov.ev.map((e) => `${e.name} ${pct(e.precision)}/${pct(e.recall)}`).join(' · ')}` : '점에 마우스를 올리면 그 실행의 고른 결과가 위 장면에 나타납니다.'} />); })()
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 색으로 고르기" run="result = pick_all(scenes=3, hue, width, sat, use_change)" onRun={() => run('apply', code)}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 색으로 고르기" run="result = pick_all(scenes=3, hue, width, sat, use_change)" onRun={() => run('apply', code)}
           lines={[
             { kind: 'cell', name: 'hue', value: `${code.hue}°`, comment: '가운데 색상 (0 빨강 · 30 주황 · 60 노랑 · 120 초록 · 240 파랑)', dec: () => setCode((c) => ({ ...c, hue: (c.hue + 350) % 360 })), inc: () => setCode((c) => ({ ...c, hue: (c.hue + 10) % 360 })) },
             { kind: 'cell', name: 'width', value: `${code.width}°`, comment: '색상 폭', dec: () => setCode((c) => ({ ...c, width: WIDTHS[Math.max(0, WIDTHS.indexOf(c.width) - 1)] })), inc: () => setCode((c) => ({ ...c, width: WIDTHS[Math.min(WIDTHS.length - 1, WIDTHS.indexOf(c.width) + 1)] })) },

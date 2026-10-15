@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 3차시 · 필터로 윤곽 찾기 — 3×3 필터(합성곱)로 12장면의 물체 윤곽을 돋보이게 한다.
+// Vision Lab 3차시 · 필터로 윤곽 찾기 — 3×3 필터(합성곱)로 12장면의 물체 윤곽을 돋보이게 한다.
 // 수치는 src/sim/filters.ts 계산값(점검: tools/check_vision03.ts).
 import { useEffect, useRef, useState } from 'react';
 import { PRESETS, score, prepare, GOAL_RATIO, BASIS3, type Hires, type Kernel } from '../../sim/filters';
@@ -119,7 +119,7 @@ export function Vision03({ onExit, onHome }: { onExit: () => void; onHome: () =>
           link={shown ? `위 오른쪽 지도에서 주황 상자(물체) 안이 밖보다 ${shown.median.toFixed(2)}배 밝다 = 이 점의 높이. 아래 12장면 띠의 숫자가 장면별 값.` : ''} />
       : d === 'code'
       ? (st === 4
-        ? <div className="cdrawer"><pre className="code"><span className="c"># 비전 지구 · 내 3×3 필터 (각 칸 −2 ~ 2)</span>{'\n'}kernel = </pre>{kGrid(mine, true)}<pre className="code">{'\n'}result = apply_to_all(cameras=12, kernel)   <span className="c"># 합 = {mine.reduce((a, b) => a + b, 0)}</span></pre><button className="run-btn" onClick={() => run('apply', `내 필터 ${app.length + 1}`, mine)}>실행 ▶</button></div>
+        ? <div className="cdrawer"><pre className="code"><span className="c"># Vision Lab · 내 3×3 필터 (각 칸 −2 ~ 2)</span>{'\n'}kernel = </pre>{kGrid(mine, true)}<pre className="code">{'\n'}result = apply_to_all(cameras=12, kernel)   <span className="c"># 합 = {mine.reduce((a, b) => a + b, 0)}</span></pre><button className="run-btn" onClick={() => run('apply', `내 필터 ${app.length + 1}`, mine)}>실행 ▶</button></div>
         : <div className="cdrawer cdrawer--locked">코드 서랍은 적용 단계에서 열립니다.</div>)
       : <ol className="ldrawer">{[...runs].reverse().map((r) => <li key={r.id}><b>#{r.id}</b> {r.kind === 'exp' ? '실험' : '적용'} · {r.name} [{r.k.map(fmt).join(', ')}] → 물체 대비 {r.median.toFixed(2)}배 · 목표 넘은 장면 {r.per.filter((v) => v >= GOAL_RATIO).length}/12</li>)}{!runs.length && <li>아직 기록이 없습니다.</li>}</ol>,
     wrap: {

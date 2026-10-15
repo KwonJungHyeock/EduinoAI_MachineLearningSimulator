@@ -1,5 +1,5 @@
 // author: eduino
-// 지구 선택 = 학습 신경망 지도. 왼쪽: 입력층(공통 기초) → 은닉층(6개 트랙) → 출력층(사건) 뉴런 지도, 신호가 흐름.
+// Lab 선택 = 학습 신경망 지도. 왼쪽: 입력층(공통 기초) → 은닉층(6개 트랙) → 출력층(사건) 뉴런 지도, 신호가 흐름.
 // 오른쪽: 고른 뉴런의 정보(원 안에서 그 기술의 원리 모션이 '활성화'됨) — 상자 없이 글자로만.
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -16,8 +16,10 @@ export function Select({ selected, onSelect, onEnter, onHome }: {
   selected: string; onSelect: (id: string) => void; onEnter: (id: string) => void; onHome: () => void;
 }) {
   const [hover, setHover] = useState<string | null>(null);
+  // 오른쪽 정보 · 버튼은 '누른 것'만 따라감(마우스가 지나가는 뉴런으로 바뀌지 않게). 지나가는 뉴런은 지도 아래 미리보기 한 줄로.
   const shown = hover ?? selected;
-  const d = DISTRICTS.find((x) => x.id === shown) ?? DISTRICTS[0];
+  const d = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
+  const hv = hover && hover !== selected ? DISTRICTS.find((x) => x.id === hover) ?? null : null;
   const sel = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
 
   useEffect(() => {
@@ -34,11 +36,12 @@ export function Select({ selected, onSelect, onEnter, onHome }: {
   return (
     <section className="screen sel2" style={{ ['--k' as string]: d.color }}>
       <div className="sel2__bg" aria-hidden="true" />
-      <TopBar crumb="학습 신경망 · 지구 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
+      <TopBar crumb="Lab 네트워크 · Lab 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
       <div className="sel2__body">
         <div className="sel2__map">
+          <h1 className="sel2__q">어느 <em>Lab</em>에 합류할까요?</h1>
           <NeuralMap active={shown} onHover={setHover} onPick={(id) => onSelect(id)} />
-          <p className="sel2__how">뉴런에 마우스를 올리면 그 경로가 켜지고, 누르면 선택됩니다 · ← → 로 이동</p>
+          <p className="sel2__how">{hv ? <><b style={{ color: hv.color }}>{hv.order} · {hv.district}</b> — {hv.tech} · 눌러서 선택</> : '뉴런에 마우스를 올리면 그 경로가 켜지고, 누르면 그 Lab을 고릅니다 · ← → 로 이동'}</p>
         </div>
         <motion.aside key={d.id} className="sel2__info" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
           <div className="act">
@@ -55,13 +58,13 @@ export function Select({ selected, onSelect, onEnter, onHome }: {
           </dl>
           <div className="sel2__cta">
             {d.open
-              ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 진입 →</MagneticButton>
-              : <span className="sel2__soon">준비 중인 지구입니다</span>}
+              ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 합류 →</MagneticButton>
+              : <span className="sel2__soon">준비 중인 Lab입니다</span>}
             {d.open && <span className="hint">{READY.length}차시 열림</span>}
           </div>
         </motion.aside>
       </div>
-      <p className="src-line sel2__src">임시: 지구 · 현장 이름은 가칭, 이번 시안에서는 비전 지구만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
+      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Vision Lab만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
     </section>
   );
 }

@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 7차시 · 상황 해결① 교차로 위험 감지 — 6차시 탐지 모델 + 규칙(차도 구역 · 기준점 · 횡단보도 제외)으로 무단횡단 경보.
+// Vision Lab 7차시 · 상황 해결① 교차로 위험 감지 — 6차시 탐지 모델 + 규칙(차도 구역 · 기준점 · 횡단보도 제외)으로 무단횡단 경보.
 // 수치는 src/sim/alarm.ts · src/sim/detect.ts 계산값(점검: tools/check_vision07.ts).
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { unpack, type CNN } from '../../sim/nn';
@@ -198,7 +198,7 @@ export function Vision07({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read="주황 = 위험한데 경보가 안 울린 장면 수, 청록 = 안전한데 경보가 울린 장면 수. 둘 다 목표 띠(아래) 안에 들어와야 합니다."
           link={hov ? `위 장면과 아래 40장 격자가 이 실행의 규칙(${tag(hov)})으로 바뀌었습니다. 격자의 빨간 칸 = 헛경보, 노란 칸 = 놓친 위험.` : '점에 마우스를 올리면 그 규칙의 경보 결과가 위 장면 · 40장 격자에 나타납니다.'} />); })()
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 무단횡단 경보" run="alarm = any(person in road_zone and not crosswalk  for person in detect(scene, threshold))" onRun={() => record('apply', code)}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 무단횡단 경보" run="alarm = any(person in road_zone and not crosswalk  for person in detect(scene, threshold))" onRun={() => record('apply', code)}
           lines={[
             { kind: 'cell', name: 'point', value: `'${code.point}'`, comment: "사람 위치: 'center' 상자 가운데 · 'feet' 상자 아래", toggle: () => setCode((c) => ({ ...c, point: c.point === 'feet' ? 'center' : 'feet' })) },
             { kind: 'cell', name: 'road_top', value: `${code.top}`, comment: '차도 구역 위 선 (화면 높이 비율)', dec: () => setCode((c) => ({ ...c, top: step(TOPS, c.top, -1) })), inc: () => setCode((c) => { const t = step(TOPS, c.top, 1); return t < c.bottom ? { ...c, top: t } : c; }) },

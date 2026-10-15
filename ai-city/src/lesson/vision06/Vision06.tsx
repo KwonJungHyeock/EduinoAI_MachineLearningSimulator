@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 6차시 · 객체 탐지 — 5차시 조각 분류기를 창 밀기(슬라이딩 윈도)로 장면 전체에 쓴다.
+// Vision Lab 6차시 · 객체 탐지 — 5차시 조각 분류기를 창 밀기(슬라이딩 윈도)로 장면 전체에 쓴다.
 // 확신도 기준 · 겹침 제거(NMS) · 헛탐지 조각을 '빈 곳'으로 더해 다시 학습 → 정밀도 · 재현율.
 // 수치는 src/sim/detect.ts · src/sim/nn.ts 계산값(점검: tools/check_vision06.ts).
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -261,7 +261,7 @@ export function Vision06({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read={`${MN[cur.model]} · NMS ${cur.nms ? '켬' : '끔'}. 청록 = 남은 상자 중 진짜 물체 비율, 주황 = 진짜 물체 중 찾은 비율. 기준을 올리면(오른쪽) 청록은 오르고 주황은 내려갑니다.`}
           link={hover !== null ? `위 장면이 기준 ${THS[hover]}의 결과로 바뀌었습니다. 빨간 상자(헛탐지)가 줄면 청록이 오르고, 노란 점선(놓침)이 늘면 주황이 내려가요.` : '점에 마우스를 올리면 그 기준으로 찾은 상자가 위 장면에 나타납니다.'} />
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 객체 탐지" run="boxes = detect(scenes=40, model, threshold, nms)" running={!!busy}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 객체 탐지" run="boxes = detect(scenes=40, model, threshold, nms)" running={!!busy}
           onRun={() => { if (code.model === 'hard' && !models.hard) { pendingApply.current = true; retrain(); } else record('apply', code); }}
           lines={[
             { kind: 'cell', name: 'hard_negatives', value: code.model === 'hard' ? 'True' : 'False', comment: "헛탐지 조각을 '빈 곳'으로 더해 다시 학습한 모델", toggle: () => setCode((c) => ({ ...c, model: c.model === 'hard' ? 'base' : 'hard' })) },

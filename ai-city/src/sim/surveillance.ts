@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 1차시 계산 모델: 사람 요원이 여러 카메라를 볼 때 놓치는 사건 vs AI 보조(화면 변화 감지).
+// Vision Lab 1차시 계산 모델: 사람 요원이 여러 카메라를 볼 때 놓치는 사건 vs AI 보조(화면 변화 감지).
 // 화면과 node 점검(tools/check_vision01.ts)이 이 파일 하나를 같이 쓴다. 화면 수치는 모두 여기서 계산한 값.
 
 export interface Params {

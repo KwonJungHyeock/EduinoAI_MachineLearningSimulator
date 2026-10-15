@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 1차시 · 사람 눈으로는 다 못 본다 — 공통 양식 v2 6단계(미션 → 예측 → 실험 → 개념 → 적용 → 정리)
+// Vision Lab 1차시 · 사람 눈으로는 다 못 본다 — 공통 양식 v2 6단계(미션 → 예측 → 실험 → 개념 → 적용 → 정리)
 // 화면의 모든 수치는 src/sim/surveillance.ts 계산값. 가정은 화면 맨 아래 '임시'로 표시.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -246,7 +246,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
                 <p>{conclusion}</p>
                 {!saved
                   ? <button className="rbtn rbtn--key is-target" onClick={saveReport}>보고서 저장</button>
-                  : <p className="report__saved">관제 보고서 카드를 저장했습니다 · 비전 지구 2차시가 열렸습니다</p>}
+                  : <p className="report__saved">관제 보고서 카드를 저장했습니다 · Vision Lab 2차시가 열렸습니다</p>}
               </div>
             )}
             {saved && <Assessment lessonId="vision-1" onDone={() => setAssessed(true)} />}
@@ -280,7 +280,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   return (
     <LessonShell
       keyColor={KEY}
-      top={<TopBar crumb="비전 지구 · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">비전 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb="Vision Lab · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">비전 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
       scene={scene}
       band={band}
       drawer={drawer}

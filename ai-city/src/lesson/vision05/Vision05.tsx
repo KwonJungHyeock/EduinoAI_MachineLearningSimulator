@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 5차시 · 분류 대결: kNN vs CNN — 거리 장면에서 잘라낸 20×20 조각을 '차 · 사람 · 빈 곳'으로 나눈다.
+// Vision Lab 5차시 · 분류 대결: kNN vs CNN — 거리 장면에서 잘라낸 20×20 조각을 '차 · 사람 · 빈 곳'으로 나눈다.
 // kNN(기억해서 비교) 과 CNN(필터를 스스로 학습)을 학습 조각 수 · 에폭을 바꿔 브라우저에서 직접 학습 · 시험한다.
 // 수치는 src/sim/nn.ts 계산값(점검: tools/check_vision05.ts).
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -246,7 +246,7 @@ export function Vision05({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read="같은 학습 조각 수에서 청록(kNN)과 주황(CNN) 점의 높이를 비교하세요. 오른쪽으로 갈수록 예가 많습니다."
           link={hov ? `위 조각 격자가 이 실행의 결과로 바뀌었습니다. 빨간 테두리 ${test.y.length - hov.ok}개 = 틀린 조각. 조각에 마우스를 올리면 왜 그렇게 판단했는지 볼 수 있어요.` : '점에 마우스를 올리면 그 실행의 맞힘 · 틀림이 위 조각 격자에 나타납니다.'} />); })()
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 조각 분류" run="model = train(model, n_crops, epochs);  test(model, crops=183)" running={!!live} onRun={() => train('apply', code)}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 조각 분류" run="model = train(model, n_crops, epochs);  test(model, crops=183)" running={!!live} onRun={() => train('apply', code)}
           lines={[
             { kind: 'cell', name: 'model', value: `'${code.model}'`, comment: "'knn' 기억해서 비교 · 'cnn' 필터 학습", toggle: () => setCode((c) => ({ ...c, model: c.model === 'knn' ? 'cnn' : 'knn' })) },
             { kind: 'cell', name: 'n_crops', value: `${code.n}`, comment: '학습 조각 수', dec: () => setCode((c) => ({ ...c, n: NS[Math.max(0, NS.indexOf(c.n) - 1)] })), inc: () => setCode((c) => ({ ...c, n: NS[Math.min(NS.length - 1, NS.indexOf(c.n) + 1)] })) },

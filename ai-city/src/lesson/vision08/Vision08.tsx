@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 8차시 · 상황 해결② 밤의 교차로 — 데이터 편향. 낮 장면으로만 만든 6차시 탐지 모델을 밤에 쓰면 사람 · 차를 놓친다.
+// Vision Lab 8차시 · 상황 해결② 밤의 교차로 — 데이터 편향. 낮 장면으로만 만든 6차시 탐지 모델을 밤에 쓰면 사람 · 차를 놓친다.
 // 밤 조각을 더해 다시 학습 → 늘어난 헛탐지를 다시 모아 학습 → 낮 · 밤을 따로 재서 확인.
 // 수치는 src/sim/detect.ts · src/sim/nn.ts 계산값(점검: tools/check_vision08.ts).
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -250,7 +250,7 @@ export function Vision08({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read={`청록 = 낮 시험 장면, 주황 = 밤 시험 장면에서 찾은 물체 비율. 두 선의 간격이 데이터 편향의 크기입니다.${st >= 4 ? '' : ' 다시 학습하면 점이 하나씩 늘어납니다.'}`}
           link={hover !== null ? `위 장면이 '${MN[MKS[hover]]}'의 결과로 바뀌었습니다. 오른쪽 위 [낮 · 밤] 버튼으로 다른 시간대도 보세요.` : '점에 마우스를 올리면 그 모델의 탐지 결과가 위 장면에 나타납니다.'} />); })()
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 낮 · 밤 탐지" run="model = train(training_data);  detect(day=40, night=30, threshold)" running={!!busy}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 낮 · 밤 탐지" run="model = train(training_data);  detect(day=40, night=30, threshold)" running={!!busy}
           onRun={async () => { if (scans[code.model]) { record('apply', code); return; } pendingApply.current = true; if (!models.current.night) await trainNight(); if (code.model === 'final' && !models.current.final) await trainFinal(); }}
           lines={[
             { kind: 'cell', name: 'training_data', value: CODE[code.model], comment: '낮만 · 낮+밤 조각 · 낮+밤+헛탐지', dec: () => setCode((c) => ({ ...c, model: MKS[Math.max(0, MKS.indexOf(c.model) - 1)] })), inc: () => setCode((c) => ({ ...c, model: MKS[Math.min(2, MKS.indexOf(c.model) + 1)] })) },

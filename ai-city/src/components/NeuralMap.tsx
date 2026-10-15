@@ -60,7 +60,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
       </defs>
       {/* 층 구분선 · 층 이름 */}
       <g className="nmap__layer">
-        {[[110, 'INPUT', '공통 기초 · 1'], [470, 'HIDDEN', '기술 트랙 · 6'], [760, 'OUTPUT', '해결할 사건 · 12']].map(([x, a, b]) => (
+        {[[110, 'INPUT', 'Foundation Lab'], [470, 'HIDDEN', '기술 Lab · 6'], [760, 'OUTPUT', '도시 사건 · 12']].map(([x, a, b]) => (
           <g key={a as string}><line x1={x as number} x2={x as number} y1={20} y2={H - 26} /><text x={x as number} y={H - 8} textAnchor="middle"><tspan className="a">{a}</tspan>  {b}</text></g>))}
       </g>
       {/* 깊은 층(장식, 가장 크게 움직임) */}
@@ -70,7 +70,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
         {g.hid.map((h) => { const on = active === h.d.id; return (
           <g key={h.d.id} className={`nmap__lane ${on ? 'on' : ''} ${lit(h.d.id) ? '' : 'dim'}`} style={{ ['--k' as string]: h.d.color }}>
             <rect x={420} y={h.top + 4} width={570} height={g.lane - 8} rx={14} fill={`url(#lane-${h.d.id})`} />
-            <text x={980} y={h.top + g.lane - 14} textAnchor="end" className="nmap__lanetag">TRACK {String(h.i + 1).padStart(2, '0')} · {h.d.district}</text>
+            <text x={980} y={h.top + g.lane - 14} textAnchor="end" className="nmap__lanetag">{h.d.order} · {h.d.district}</text>
           </g>); })}
       </g>
       {/* 연결: 입력 → 은닉, 은닉 → 출력 */}
@@ -98,7 +98,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
       </g>
       {/* 은닉층: 트랙(아이콘 링) */}
       <g style={shift(14)}>
-        {g.hid.map((h, i) => { const d = h.d, sel = active === d.id, f = fire?.id === d.id; return (
+        {g.hid.map((h) => { const d = h.d, sel = active === d.id, f = fire?.id === d.id; return (
           <g key={d.id} className={`nmap__n ${sel ? 'is-on' : ''} ${lit(d.id) ? '' : 'dim'}`} style={{ ['--k' as string]: d.color }} tabIndex={0} role="button" aria-label={`${d.order} ${d.tech}`}
             onPointerEnter={() => onHover(d.id)} onFocus={() => onHover(d.id)} onClick={() => pick(d.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(d.id); } }}>
             <circle cx={h.x} cy={h.y} r={34} className="nmap__hit" />
@@ -106,7 +106,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
             <circle cx={h.x} cy={h.y} r={sel ? 24 : 19} className="nmap__halo" />
             <circle cx={h.x} cy={h.y} r={sel ? 17 : 14} className="nmap__ring" />
             <g transform={`translate(${h.x} ${h.y}) scale(${sel ? 1 : 0.85})`} className="nmap__glyph"><Glyph id={d.motif} /></g>
-            <text x={h.x - 34} y={h.y - 4} className="nmap__no" textAnchor="end">{String(i + 1).padStart(2, '0')} · {d.open ? 'OPEN' : 'SOON'}</text>
+            <text x={h.x - 34} y={h.y - 4} className="nmap__no" textAnchor="end">{d.order} · {d.open ? 'OPEN' : 'SOON'}</text>
             <text x={h.x - 34} y={h.y + 15} className="nmap__t" textAnchor="end">{d.tech}</text>
           </g>); })}
       </g>
@@ -119,7 +119,7 @@ export function NeuralMap({ active, onHover, onPick, labels = true }: { active: 
           <circle cx={g.inp.x} cy={g.inp.y} r={34} className="nmap__halo nmap__halo--in" />
           <circle cx={g.inp.x} cy={g.inp.y} r={24} className="nmap__ring" />
           <g transform={`translate(${g.inp.x} ${g.inp.y}) scale(1.3)`} className="nmap__glyph"><Glyph id="split" /></g>
-          <text x={g.inp.x} y={g.inp.y + 58} className="nmap__no" textAnchor="middle">00 · INPUT</text>
+          <text x={g.inp.x} y={g.inp.y + 58} className="nmap__no" textAnchor="middle">LAB 00 · INPUT</text>
           <text x={g.inp.x} y={g.inp.y + 78} className="nmap__t" textAnchor="middle">{IN.tech}</text>
         </g>
       </g>

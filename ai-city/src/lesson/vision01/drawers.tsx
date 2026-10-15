@@ -80,7 +80,7 @@ export function CodeDrawer({ enabled, operators, ai, threshold, onChange, onRun,
   return (
     <div className="cdrawer">
       <pre className="code">
-        <span className="c"># 비전 지구 · 관제 설정</span>{'\n'}
+        <span className="c"># Vision Lab · 관제 설정</span>{'\n'}
         cameras   = 64{'            '}<span className="c"># 고정</span>{'\n'}
         operators = <span className="cell"><button aria-label="요원 수 줄이기" onClick={() => onChange({ operators: step(operators, -1, 1, 8) })}>−</button><b>{operators}</b><button aria-label="요원 수 늘리기" onClick={() => onChange({ operators: step(operators, 1, 1, 8) })}>+</button></span>{'      '}<span className="c"># 요원 수 (1~8)</span>{'\n'}
         ai_assist = <span className="cell cell--toggle"><button onClick={() => onChange({ ai: !ai })}><b>{ai ? 'True' : 'False'}</b></button></span>{'       '}<span className="c"># AI 보조 (True = 켬)</span>{'\n'}

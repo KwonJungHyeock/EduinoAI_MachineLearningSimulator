@@ -18,7 +18,7 @@ export function TrackFinal({ onExit, onHome }: { onExit: () => void; onHome: () 
   const [again, setAgain] = useState(0);
   return (
     <section className="screen final">
-      <TopBar crumb="비전 지구 · 트랙 종합 평가" onHome={onHome} right={<button className="btn btn--ghost" onClick={onExit}>← 브리핑</button>} />
+      <TopBar crumb="Vision Lab · 트랙 종합 평가" onHome={onHome} right={<button className="btn btn--ghost" onClick={onExit}>← 브리핑</button>} />
       <div className="final__body">
         <div className="final__left">
           <p className="eyebrow eyebrow--key">AI 영상처리 · 8차시 돌아보기</p>

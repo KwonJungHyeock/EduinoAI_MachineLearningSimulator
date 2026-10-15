@@ -1,5 +1,5 @@
 // author: eduino
-// 비전 지구 2차시 · 이미지는 숫자다 — 해상도 · 기준값을 바꿔 12장면의 사건을 숫자 차이로 찾는다.
+// Vision Lab 2차시 · 이미지는 숫자다 — 해상도 · 기준값을 바꿔 12장면의 사건을 숫자 차이로 찾는다.
 // 모든 수치는 src/sim/pixels.ts 계산값(점검: tools/check_vision02.ts).
 import { useEffect, useRef, useState } from 'react';
 import { detect, RES, BASIS2, type Grids, type DetectResult } from '../../sim/pixels';
@@ -118,7 +118,7 @@ export function Vision02({ onExit, onHome }: { onExit: () => void; onHome: () =>
           read="청록 = 찾은 장면 수(높을수록 좋음), 주황 = 헛알림 장면 수(낮을수록 좋음). 해상도를 올리면 청록은 오르지만 주황도 따라 오른다."
           link={shown ? `아래 12장면 띠에서 '찾음' ${shown.res.found}개 · '헛' ${shown.res.falseAlarms}개 = 이 점들의 높이. 장면을 눌러 [차이] 보기로 확인하세요.` : ''} />
       : d === 'code'
-      ? <CodeCells enabled={st === 4} title="비전 지구 · 화면 숫자 비교" run="result = compare_all(cameras=12, cols, threshold)" onRun={() => run('apply', code.cols, code.th)}
+      ? <CodeCells enabled={st === 4} title="Vision Lab · 화면 숫자 비교" run="result = compare_all(cameras=12, cols, threshold)" onRun={() => run('apply', code.cols, code.th)}
           lines={[
             { kind: 'cell', name: 'cols', value: `${code.cols}`, comment: `가로 칸 수 → ${code.cols}×${rowsOf(code.cols)} = ${code.cols * rowsOf(code.cols)}개 숫자`, dec: () => setCode((c) => ({ ...c, cols: RES[Math.max(0, RES.indexOf(c.cols as 8) - 1)] })), inc: () => setCode((c) => ({ ...c, cols: RES[Math.min(3, RES.indexOf(c.cols as 8) + 1)] })) },
             { kind: 'cell', name: 'threshold', value: `${code.th}`, comment: '숫자 차이가 이보다 크면 변화 (5 ~ 60)', dec: () => setCode((c) => ({ ...c, th: Math.max(5, c.th - 5) })), inc: () => setCode((c) => ({ ...c, th: Math.min(60, c.th + 5) })) }
