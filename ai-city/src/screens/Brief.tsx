@@ -5,6 +5,7 @@ import { DISTRICTS, VISION_LESSONS } from '../data/districts';
 import { MotifCanvas } from '../components/Canvases';
 import { TopBar } from '../components/TopBar';
 import { AssetSlot } from '../components/AssetSlot';
+import { MagneticButton, spot } from '../components/Interactive';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const up = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } };
@@ -38,18 +39,18 @@ export function Brief({ id, onBack, onHome }: { id: string; onBack: () => void; 
           <p className="src-line">현장 그림은 에셋 슬롯 (렌더 예정)</p>
         </motion.aside>
 
-        <motion.div className="lessons" variants={up}>
+        <motion.ol className="lessons" variants={up}>
           {VISION_LESSONS.map((l) => (
-            <div key={l.n} className={`lesson ${l.n === 1 ? 'is-next' : ''} ${l.arc === '상황 해결' ? 'is-case' : ''}`}>
-              <span className="lesson__n">{String(l.n).padStart(2, '0')}</span>
-              <span className="lesson__arc">{l.arc}</span>
+            <li key={l.n} className={`lesson ${l.n === 1 ? 'is-next' : ''} ${l.arc === '상황 해결' ? 'is-case' : ''}`} onPointerMove={spot}>
+              <span className="lesson__node" />
+              <span className="lesson__n">{String(l.n).padStart(2, '0')}<em>{l.arc}</em></span>
               <span className="lesson__title">{l.title}</span>
-            </div>
+            </li>
           ))}
-        </motion.div>
+        </motion.ol>
 
         <motion.div className="brief__cta" variants={up}>
-          <button className="btn btn--primary btn--key" disabled title="다음 단계에서 제작">1차시 시작</button>
+          <MagneticButton className="btn btn--primary btn--key" disabled title="다음 단계에서 제작">1차시 시작</MagneticButton>
           <span className="hint">1차시 화면은 다음 단계에서 제작합니다</span>
         </motion.div>
       </motion.div>
