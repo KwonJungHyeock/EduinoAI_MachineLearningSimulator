@@ -6,6 +6,18 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'vision-5': {
+    title: '분류 대결: kNN vs CNN',
+    items: [
+      { kind: 'ox', q: 'kNN은 학습 조각을 기억해 두었다가 가장 비슷한 조각들의 정답으로 다수결한다.', answer: true, why: '가장 가까운 k개(여기서는 3개)의 정답을 따릅니다.' },
+      { kind: 'ox', q: 'CNN의 필터 숫자는 사람이 하나하나 정해 주어야 한다.', answer: false, why: 'CNN은 정답을 보며 틀린 만큼 필터 숫자를 스스로 고칩니다.' },
+      { kind: 'ox', q: '학습 조각이 적을 때는 kNN이 CNN보다 나을 수 있다.', answer: true, why: '실험에서 조각 100개 이하일 때 kNN이 앞섰습니다.' },
+      { kind: 'short', q: '학습 조각 전체를 한 번 복습하는 것을 무엇이라 할까?', accept: ['에폭', 'epoch', '에포크'], why: '에폭(epoch)입니다.' },
+      { kind: 'essay', q: '정확도 95%를 넘기기 위해 모델 · 학습 조각 수 · 에폭을 어떻게 정했는지, 실험 결과를 근거로 설명해 보세요.',
+        keys: [{ label: 'CNN 선택', any: ['CNN', 'cnn', '합성곱', '필터'] }, { label: '조각(데이터) 많이', any: ['1000', '많', '늘'] }, { label: '에폭 · 손실', any: ['에폭', '손실', '복습', 'epoch'] }],
+        model: '조각 100개일 때는 kNN이 더 정확했지만 1000개에서는 CNN이 앞섰다. 그래서 CNN을 고르고 학습 조각을 1000개로 늘렸고, 에폭 2에서는 손실이 아직 높아 에폭을 8로 늘리니 시험 정확도가 97%가 되었다.' }
+    ]
+  },
   'vision-4': {
     title: '색으로 물체 골라내기',
     items: [

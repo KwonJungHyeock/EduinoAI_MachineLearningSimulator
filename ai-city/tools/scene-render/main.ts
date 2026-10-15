@@ -117,5 +117,10 @@ async function render(id: string, v: 'base' | 'event') {
 }
 
 const q = new URLSearchParams(location.search);
+declare global { interface Window { __ds?: unknown } }
+if (q.get('dataset')) {
+  import('./dataset').then(({ dataset }) => dataset(Number(q.get('n') ?? 40), q.get('night') === '1', Number(q.get('seed') ?? 1)))
+    .then((d) => { window.__ds = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
+} else
 (q.get('probe') ? probe(q.get('probe')!.split(',')) : render(q.get('scene') ?? 'cam01', (q.get('v') as 'base' | 'event') ?? 'base'))
   .catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });

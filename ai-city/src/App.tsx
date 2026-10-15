@@ -8,6 +8,7 @@ import { Vision01 } from './lesson/vision01/Vision01';
 import { Vision02 } from './lesson/vision02/Vision02';
 import { Vision03 } from './lesson/vision03/Vision03';
 import { Vision04 } from './lesson/vision04/Vision04';
+import { Vision05 } from './lesson/vision05/Vision05';
 
 type Screen = 'hero' | 'select' | 'brief' | 'lesson';
 
@@ -35,6 +36,7 @@ export default function App() {
         {screen === 'lesson' && lessonN === 2 && <Vision02 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 3 && <Vision03 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 4 && <Vision04 onExit={() => setScreen('brief')} onHome={home} />}
+        {screen === 'lesson' && lessonN === 5 && <Vision05 onExit={() => setScreen('brief')} onHome={home} />}
       </motion.div>
     </AnimatePresence>
   );
