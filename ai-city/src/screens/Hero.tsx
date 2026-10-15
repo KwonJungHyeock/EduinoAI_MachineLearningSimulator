@@ -4,9 +4,9 @@
 // 처음 접속하면 화면이 스스로 조립되는 시네마틱 인트로(약 8초, 건너뛰기 가능). 움직임 줄이기 설정이면 완성된 화면만.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DISTRICTS } from '../data/districts';
-import { MotifCanvas } from '../components/Canvases';
+import { NeuralMap } from '../components/NeuralMap';
 import { TopBar } from '../components/TopBar';
-import { MagneticButton, spot } from '../components/Interactive';
+import { MagneticButton } from '../components/Interactive';
 import { useCanvas } from '../motion/useCanvas';
 import { createCore } from '../motion/core';
 import { READY } from './Brief';
@@ -84,6 +84,7 @@ export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
   const fade = (a: number, b?: number) => ({ opacity: vis(a, b), transform: `translateY(${(1 - vis(a, b)) * 14}px)` });
   const cap = CAPS.find(([a, b]) => t >= a && t < b);
   const more = useRef<HTMLDivElement>(null);
+  const [mapHover, setMapHover] = useState<string | null>(null), mapD = DISTRICTS.find((x) => x.id === mapHover) ?? null;
   return (
     <section className={`screen h3 ${intro ? 'is-intro' : ''}`}>
       <div className="h3__first">
@@ -115,16 +116,9 @@ export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
         <p className="h3__eyebrow">HOW YOU LEARN</p>
         <h2 className="h3__h2">보고, 만들고, 학습시키고, 해결합니다.</h2>
         <ol className="h3__loop">{LOOP.map(([en, ko], i) => <li key={en}><span>0{i + 1}</span><b>{en}</b><em>{ko}</em></li>)}</ol>
-        <div className="h3__grid">
-          {DISTRICTS.map((d, i) => (
-            <button key={d.id} className="dcard" style={{ ['--k' as string]: d.color }} onPointerMove={spot} onClick={() => onEnter(d.id)}>
-              <MotifCanvas motif={d.motif} color={d.color} className="dcard__cv" fps={24} />
-              <span className="dcard__no">{String(i).padStart(2, '0')} · {d.order}</span>
-              <span className="dcard__t">{d.tech}</span>
-              <span className="dcard__p">{d.site} — {d.problem}</span>
-              <span className={`dcard__st ${d.open ? 'on' : ''}`}>{d.open ? `${READY.length}차시 열림` : '준비 중'}</span>
-            </button>
-          ))}
+        <div className="h3__net">
+          <NeuralMap active={mapHover} onHover={setMapHover} onPick={(id) => onEnter(id)} />
+          <p className="h3__netcap">{mapD ? <><b style={{ color: mapD.color }}>{mapD.order} · {mapD.tech}</b> — {mapD.site}: {mapD.problem} <em>{mapD.open ? `${READY.length}차시 열림 · 눌러서 들어가기` : '준비 중'}</em></> : '뉴런에 마우스를 올려 7개 지구를 살펴보세요. 공통 기초(입력)에서 시작해 기술 트랙(은닉)을 지나 도시의 사건(출력)을 해결합니다.'}</p>
         </div>
         <p className="src-line h3__src">코어 · 궤도 · 지구 모션은 코드로 생성한 추상 모션, 받침대는 직접 렌더</p>
       </div>

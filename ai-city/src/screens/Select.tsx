@@ -1,119 +1,67 @@
 // author: eduino
-// 지구 선택: 왼쪽 지구 인덱스 + 오른쪽 미리보기(그 기술의 원리 모션 · 배우는 것 · 사건 · 전개). 배경 점 격자는 마우스에 반응.
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+// 지구 선택 = 학습 신경망 지도. 왼쪽: 입력층(공통 기초) → 은닉층(6개 트랙) → 출력층(사건) 뉴런 지도, 신호가 흐름.
+// 오른쪽: 고른 뉴런의 정보(원 안에서 그 기술의 원리 모션이 '활성화'됨) — 상자 없이 글자로만.
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ARC, DISTRICTS } from '../data/districts';
-import { MotifCanvas, PatternCanvas } from '../components/Canvases';
+import { DISTRICTS } from '../data/districts';
+import { MotifCanvas } from '../components/Canvases';
 import { TopBar } from '../components/TopBar';
-import { MagneticButton, spot } from '../components/Interactive';
+import { MagneticButton } from '../components/Interactive';
+import { NeuralMap } from '../components/NeuralMap';
+import { READY } from './Brief';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Select({ selected, onSelect, onEnter, onHome }: {
   selected: string; onSelect: (id: string) => void; onEnter: (id: string) => void; onHome: () => void;
 }) {
-  const d = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
-  // 선택 표시: 유리판 하나가 선택된 항목 위치로 미끄러짐 (layoutId 는 화면 전환을 멈추게 해서 쓰지 않음)
-  const items = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [sel, setSel] = useState({ y: 0, h: 0 });
-  useLayoutEffect(() => {
-    const measure = () => { const el = items.current[selected]; if (el) setSel({ y: el.offsetTop, h: el.offsetHeight }); };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [selected]);
+  const [hover, setHover] = useState<string | null>(null);
+  const shown = hover ?? selected;
+  const d = DISTRICTS.find((x) => x.id === shown) ?? DISTRICTS[0];
+  const sel = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       const i = DISTRICTS.findIndex((x) => x.id === selected);
-      if (e.key === 'ArrowDown') onSelect(DISTRICTS[(i + 1) % DISTRICTS.length].id);
-      if (e.key === 'ArrowUp') onSelect(DISTRICTS[(i - 1 + DISTRICTS.length) % DISTRICTS.length].id);
-      if (e.key === 'Enter' && d.open) onEnter(d.id);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') onSelect(DISTRICTS[(i + 1) % DISTRICTS.length].id);
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') onSelect(DISTRICTS[(i - 1 + DISTRICTS.length) % DISTRICTS.length].id);
+      if (e.key === 'Enter' && sel.open && !(e.target instanceof SVGElement)) onEnter(sel.id);
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [selected, d, onSelect, onEnter]);
+  }, [selected, sel, onSelect, onEnter]);
 
   return (
-    <section className="screen select" style={{ ['--k' as string]: d.color }}>
-      <PatternCanvas color={d.color} className="pattern" />
-      <TopBar crumb="도시 지도 · 지구 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
-      <div className="select__body">
-        <nav className="dlist" aria-label="지구 목록">
-          <motion.span className="dlist__sel" style={{ ['--k' as string]: d.color }} initial={false} animate={{ y: sel.y, height: sel.h, opacity: sel.h ? 1 : 0 }} transition={{ type: 'spring', stiffness: 380, damping: 34 }} />
-          {DISTRICTS.map((x, i) => {
-            const on = x.id === selected;
-            return (
-              <motion.button
-                key={x.id}
-                ref={(el) => { items.current[x.id] = el; }}
-                className={`ditem ${on ? 'is-on' : ''}`}
-                style={{ ['--k' as string]: x.color }}
-                onClick={() => onSelect(x.id)}
-                onPointerMove={spot}
-                initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.05 * i, ease: EASE }}
-              >
-                <span className="ditem__no">{String(i).padStart(2, '0')}</span>
-                <span className="ditem__text">
-                  <span className="ditem__tech">{x.tech}</span>
-                  <span className="ditem__place">{x.order} · {x.district}</span>
-                </span>
-                <span className={`ditem__state ${x.open ? 'open' : ''}`}>{x.open ? '열림' : '준비 중'}</span>
-              </motion.button>
-            );
-          })}
-        </nav>
-
-        {/* 중첩 AnimatePresence(exit 대기)는 화면 전환을 멈추게 해서 쓰지 않음 — 들어오는 애니메이션만 */}
-          <motion.article
-            key={d.id}
-            className="dpanel"
-            onPointerMove={spot}
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: EASE }}
-          >
-            <div className="dpanel__stage">
-              <MotifCanvas motif={d.motif} color={d.color} className="dpanel__canvas" />
-              <div className="dpanel__stagecap">
-                <span className="dpanel__order">{d.order}</span>
-                <span>{d.district} · {d.site}</span>
-              </div>
-              <span className="dpanel__try">마우스를 올려 원리를 움직여 보세요</span>
-            </div>
-
-            <div className="dpanel__info">
-              <div>
-                <h2 className="dpanel__tech">{d.tech}</h2>
-                <p className="dpanel__en">{d.techEn}</p>
-                <p className="dpanel__label">배우는 기술</p>
-                <ul className="chips">{d.keywords.map((k) => <li key={k}>{k}</li>)}</ul>
-              </div>
-              <div>
-                <p className="dpanel__label">이 지구에서 해결할 사건</p>
-                <ul className="cases">{d.situations.map((s, i) => <li key={s}><b>CASE {String(i + 1).padStart(2, '0')}</b>{s}</li>)}</ul>
-                <p className="dpanel__label">내 역할</p>
-                <p className="dpanel__role">{d.role}</p>
-              </div>
-            </div>
-
-            <ol className="track">
-              {ARC.map((a, i) => (
-                <li key={a} className={i === ARC.length - 1 ? 'is-goal' : ''}>
-                  <span className="track__node" /><span className="track__no">{String(i + 1).padStart(2, '0')}</span>{a}
-                </li>
-              ))}
-            </ol>
-
-            <div className="dpanel__cta">
-              {d.open
-                ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 진입</MagneticButton>
-                : <button className="btn" disabled>준비 중</button>}
-              <span className="hint">↑ ↓ 로 지구 이동 · Enter 로 진입</span>
-            </div>
-          </motion.article>
+    <section className="screen sel2" style={{ ['--k' as string]: d.color }}>
+      <div className="sel2__bg" aria-hidden="true" />
+      <TopBar crumb="학습 신경망 · 지구 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
+      <div className="sel2__body">
+        <div className="sel2__map">
+          <NeuralMap active={shown} onHover={setHover} onPick={(id) => onSelect(id)} />
+          <p className="sel2__how">뉴런에 마우스를 올리면 그 경로가 켜지고, 누르면 선택됩니다 · ← → 로 이동</p>
+        </div>
+        <motion.aside key={d.id} className="sel2__info" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+          <div className="act">
+            <MotifCanvas motif={d.motif} color={d.color} className="act__cv" />
+            <span className="act__ring" /><span className="act__ring act__ring--2" />
+          </div>
+          <p className="eyebrow eyebrow--key">{d.order} · {d.district}</p>
+          <h2 className="sel2__t">{d.tech}</h2>
+          <p className="sel2__en">{d.techEn}</p>
+          <dl className="sel2__dl">
+            <dt>배우는 기술</dt><dd>{d.keywords.join('  ·  ')}</dd>
+            <dt>해결할 사건</dt><dd>{d.situations.map((s, i) => <span key={s}><b>CASE {String(i + 1).padStart(2, '0')}</b>{s}</span>)}</dd>
+            <dt>현장 · 역할</dt><dd>{d.site} — {d.role}</dd>
+          </dl>
+          <div className="sel2__cta">
+            {d.open
+              ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 진입 →</MagneticButton>
+              : <span className="sel2__soon">준비 중인 지구입니다</span>}
+            {d.open && <span className="hint">{READY.length}차시 열림</span>}
+          </div>
+        </motion.aside>
       </div>
-      <p className="src-line">임시: 지구 · 현장 이름은 가칭, 이번 시안에서는 비전 지구만 열림</p>
+      <p className="src-line sel2__src">임시: 지구 · 현장 이름은 가칭, 이번 시안에서는 비전 지구만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
     </section>
   );
 }

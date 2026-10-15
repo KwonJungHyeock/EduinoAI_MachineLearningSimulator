@@ -294,3 +294,64 @@ button { font: inherit; color: inherit; }
 .brief__role { background: var(--surface) !important; box-shadow: inset 0 0 0 1px var(--hair) !important; border: 0 !important; }
 .brief__roleText b { color: color-mix(in srgb, var(--k) 70%, #fff); }
 .brief__asset img { box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px var(--hair); }
+
+/* ── 학습 신경망 지도(지구 선택 · 첫 화면 아래) ── */
+.nmap { width: 100%; height: 100%; display: block; overflow: visible; }
+.nmap__deep path { stroke: rgba(165, 180, 252, 0.07); stroke-width: 1; fill: none; }
+.nmap__deep circle { fill: rgba(165, 180, 252, 0.18); }
+.nmap__edge path { fill: none; stroke: color-mix(in srgb, var(--k) 45%, #3b3f63); stroke-width: 1.2; opacity: 0.55; transition: opacity .35s, stroke-width .35s; }
+.nmap__edge.hot path { stroke: var(--k); stroke-width: 2.2; opacity: 1; filter: drop-shadow(0 0 6px var(--k)); }
+.nmap__edge.dim path { opacity: 0.16; }
+.nmap__sig { fill: #e0e7ff; filter: drop-shadow(0 0 4px var(--k)); }
+.nmap__edge.dim .nmap__sig { opacity: 0.15; }
+.nmap__edge.hot .nmap__sig { fill: #fff; }
+.nmap__out circle { fill: #05070d; stroke: color-mix(in srgb, var(--k) 70%, #fff); stroke-width: 1.4; transition: opacity .35s; }
+.nmap__out text { font: 500 12.5px var(--kr); fill: #9aa6b8; transition: opacity .35s, fill .35s; }
+.nmap__out.dim { opacity: 0.4; }
+.nmap__out:not(.dim) text { fill: #dfe6f1; }
+.nmap__n { cursor: pointer; outline: none; transition: opacity .35s; }
+.nmap__n.dim { opacity: 0.5; }
+.nmap__hit { fill: transparent; }
+.nmap__halo { fill: color-mix(in srgb, var(--k) 14%, transparent); stroke: color-mix(in srgb, var(--k) 45%, transparent); stroke-width: 1; transition: r .35s var(--ease); }
+.nmap__core { fill: var(--k); transition: r .35s var(--ease); }
+.nmap__n.is-on .nmap__halo { animation: nPulse 2s ease-in-out infinite; }
+@keyframes nPulse { 50% { stroke-opacity: 0.2; fill-opacity: 0.4; } }
+.nmap__n:focus-visible .nmap__halo { stroke: #fff; stroke-width: 2; }
+.nmap__no { font: 600 10.5px var(--en); letter-spacing: 0.12em; fill: color-mix(in srgb, var(--k) 75%, #fff); }
+.nmap__t { font: 700 15px var(--kr); fill: #eef2f8; }
+.nmap__layer text { font: 600 10.5px var(--en); letter-spacing: 0.18em; fill: #4f5d78; }
+/* 지구 선택(신경망) */
+.sel2 { background: var(--bg); }
+.sel2__bg { position: absolute; inset: 0; background: radial-gradient(760px 520px at 40% 55%, rgba(99, 102, 241, 0.12), transparent 65%), radial-gradient(520px 420px at 86% 40%, color-mix(in srgb, var(--k) 10%, transparent), transparent 65%); transition: background .6s; }
+.sel2__body { position: relative; z-index: 1; flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: clamp(16px, 3vw, 48px); padding: 6px clamp(20px, 4vw, 64px) 0; }
+.sel2__map { min-height: 0; display: flex; flex-direction: column; }
+.sel2__map .nmap { flex: 1; min-height: 0; }
+.sel2__how { margin: 0 0 4px; font-size: 12px; color: #5f6f8c; }
+.sel2__info { align-self: center; display: flex; flex-direction: column; }
+.act { position: relative; width: 168px; height: 168px; margin-bottom: 22px; }
+.act__cv { position: absolute; inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); border-radius: 50%; background: #05070d; }
+.act__ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--k) 60%, transparent); box-shadow: 0 0 40px -6px var(--k), inset 0 0 30px -10px var(--k); }
+.act__ring--2 { inset: -12px; border-color: rgba(165, 180, 252, 0.12); box-shadow: none; animation: spinRing 18s linear infinite; border-style: dashed; }
+@keyframes spinRing { to { transform: rotate(360deg); } }
+.sel2__t { margin: 0; font-size: clamp(30px, 2.8vw, 44px); font-weight: 800; letter-spacing: -0.035em; }
+.sel2__en { margin: 4px 0 0; font: 500 13px var(--en); color: #7d8aa1; letter-spacing: 0.04em; }
+.sel2__dl { margin: 22px 0 0; display: grid; gap: 4px 0; }
+.sel2__dl dt { font: 600 10.5px var(--en); letter-spacing: 0.16em; color: var(--label); text-transform: uppercase; margin-top: 12px; }
+.sel2__dl dd { margin: 0; font-size: 14px; line-height: 1.65; color: #cfd8e6; display: grid; gap: 2px; }
+.sel2__dl dd b { font: 600 10.5px var(--en); color: var(--k); letter-spacing: 0.08em; margin-right: 10px; }
+.sel2__cta { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+.sel2__soon { font-size: 13px; color: #6f7c93; border-top: 1px solid var(--hair); padding-top: 12px; }
+.sel2__src { position: relative; z-index: 1; }
+/* 첫 화면 아래: 신경망 지도 */
+.h3__net { margin-top: 34px; }
+.h3__net .nmap { height: min(62vh, 560px); }
+.h3__netcap { margin: 10px 0 0; min-height: 3.2em; font-size: 14px; line-height: 1.6; color: #9aa6b8; }
+.h3__netcap em { font-style: normal; color: #6f7c93; margin-left: 8px; font-size: 12.5px; }
+@media (max-width: 900px) {
+  .sel2 { overflow-y: auto; display: block; }
+  .sel2__body { display: block; padding: 6px 16px 0; }
+  .sel2__map .nmap { height: 62vh; }
+  .sel2__info { padding: 24px 4px 40px; }
+  .nmap__t { font-size: 18px; } .nmap__out text { font-size: 15px; }
+}
+@media (max-width: 640px) { .topbar__crumb { display: none; } .act { width: 120px !important; height: 120px !important; flex: none; } .sel2__map .nmap { height: 46vh; } }
