@@ -48,7 +48,7 @@ export function TrackFinal({ onExit, onHome }: { onExit: () => void; onHome: () 
               <p className="pdfbox__tag">학습 리포트 (8차시 + 종합 평가)</p>
               <input className="as-in" value={student} placeholder="이름 (리포트에 표시)" onChange={(e) => { setName(e.target.value); setStudent(e.target.value); }} />
               <div className="ctrl__row">
-                <button className="rbtn rbtn--key" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load()); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
+                <button className="rbtn rbtn--key" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load(), 'vision'); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
                 <button className="rbtn" onClick={() => setAgain((n) => n + 1)}>다시 풀기</button>
                 <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
               </div>

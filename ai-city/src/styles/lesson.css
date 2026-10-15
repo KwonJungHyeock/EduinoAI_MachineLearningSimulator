@@ -533,3 +533,26 @@
 .final__list li { background: var(--surface); box-shadow: inset 0 0 0 1px var(--hair); }
 .final__list li.is-done { background: var(--surface); box-shadow: inset 2px 0 0 #14b8a6, inset 0 0 0 1px var(--hair); }
 .final__n { font: 600 12px var(--en); letter-spacing: 0.08em; padding-top: 3px; }
+
+/* ── Foundation 1차시: 선별 라인 ── */
+.fl1 { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+.fl1__pic { position: relative; width: 100%; max-height: calc(100% - 78px); margin: 0 auto; border-radius: 12px; overflow: hidden; background: #0b0f16; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+.fl1__pic > img:first-child { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fl1__it { position: absolute; height: auto; pointer-events: none; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.5)); }
+.fl1__gate { position: absolute; transform: translateX(-50%); font: 700 10.5px var(--kr); padding: 2px 8px; border-radius: 999px; background: rgba(6, 10, 16, 0.75); color: #6f7c93; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); transition: all .15s; }
+.fl1__gate.robot { color: #9aa6b8; box-shadow: inset 0 0 0 1px rgba(47, 191, 138, 0.5); }
+.fl1__gate.on { background: #2fbf8a; color: #04130d; box-shadow: 0 0 18px #2fbf8a; }
+.fl1__bin { position: absolute; transform: translateX(-50%); display: grid; justify-items: center; gap: 2px; font-size: 11px; color: #e8edf7; white-space: nowrap; }
+.fl1__bin b { font-size: 11px; padding: 1px 7px; border-radius: 4px; background: color-mix(in srgb, var(--c) 70%, #000); }
+.fl1__bin em { font-style: normal; font: 700 11.5px var(--en); background: rgba(6, 10, 16, 0.8); padding: 1px 6px; border-radius: 4px; }
+.fl1__bin .ok { color: #2fbf8a; font-style: normal; } .fl1__bin .no { color: #ef4444; font-style: normal; }
+.fl1__strip { flex: 0 0 64px; display: grid; grid-template-columns: repeat(30, 1fr); gap: 3px; align-items: stretch; }
+.fl1__cell { position: relative; display: grid; place-items: end center; border-radius: 5px; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); overflow: hidden; padding-bottom: 3px; }
+.fl1__cell img { max-height: 48px; max-width: 80%; }
+.fl1__cell.ok { box-shadow: inset 0 -3px 0 #2fbf8a, inset 0 0 0 1px rgba(47, 191, 138, 0.35); }
+.fl1__cell.no { box-shadow: inset 0 -3px 0 #ef4444, inset 0 0 0 1px rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); }
+.fl1__empty { grid-column: 1 / -1; align-self: center; text-align: center; color: #6f7c93; font-size: 13px; }
+.fl1__bins { position: absolute; right: 10px; top: 10px; display: grid; gap: 4px; }
+.fl1__bin { position: static; transform: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 128px; padding: 4px 8px 4px 6px; border-radius: 8px; background: rgba(6, 10, 16, 0.78); box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.fl1__bin b { background: none; padding: 0 0 0 4px; font-size: 11.5px; }
+.fl1__bin em { background: none; padding: 0; }

@@ -2,7 +2,7 @@
 // 학습 리포트 PDF — 저장된 진도(계산값 · 학생 답)만으로 만든다. 한글 글꼴은 누를 때만 불러옴(TrueType 부분집합).
 import type { Progress } from '../store/progress';
 import { ASSESS } from '../data/assess';
-import { VISION_LESSONS } from '../data/districts';
+import { LAB_PLAN, DISTRICTS } from '../data/districts';
 
 async function fontB64(url: string) {
   const buf = await (await fetch(url)).arrayBuffer();
@@ -13,7 +13,8 @@ async function fontB64(url: string) {
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 const day = (t?: number) => (t ? new Date(t).toLocaleDateString('ko-KR') : '-');
 
-export async function downloadReport(p: Progress, track = 'AI 영상처리') {
+export async function downloadReport(p: Progress, lab = 'vision') {
+  const plan = LAB_PLAN[lab] ?? LAB_PLAN.vision, VISION_LESSONS = plan.lessons, track = plan.track, pre = plan.prefix, labName = DISTRICTS.find((d) => d.id === lab)?.district ?? 'Vision Lab';
   const { jsPDF } = await import('jspdf');
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const [r, b] = await Promise.all([fontB64('./fonts/NotoSansKR-400.ttf'), fontB64('./fonts/NotoSansKR-700.ttf')]);
@@ -28,7 +29,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
 
   // 머리
   font('bold', 18); doc.text(`${track} 학습 리포트`, M, y); y += 8;
-  font('normal', 10, '#4b5552'); doc.text(`학생: ${p.student || '(이름 미입력)'}   ·   발행일: ${new Date().toLocaleDateString('ko-KR')}   ·   EDUINO AI · AI LabCity · Vision Lab`, M, y); y += 4;
+  font('normal', 10, '#4b5552'); doc.text(`학생: ${p.student || '(이름 미입력)'}   ·   발행일: ${new Date().toLocaleDateString('ko-KR')}   ·   EDUINO AI · AI LabCity · ${labName}`, M, y); y += 4;
   doc.setDrawColor('#18201d'); doc.setLineWidth(0.8); doc.line(M, y, W - M, y); y += 8;
 
   // 차시 요약 표
@@ -38,14 +39,14 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
   ['차시', '제목', '상태', '평가 (OX · 단답 · 서술 핵심어)', ''].forEach((h, i) => doc.text(h, cols[i], y));
   y += 6;
   for (const l of VISION_LESSONS) {
-    const rec = p.lessons[`vision-${l.n}`]; const a = rec?.assess;
+    const rec = p.lessons[`${pre}-${l.n}`]; const a = rec?.assess;
     font('normal', 9);
     doc.text(String(l.n), cols[0], y); doc.text(l.title, cols[1], y);
     doc.text(rec?.status === 'done' ? `완료 ${day(rec.updatedAt)}` : rec ? '열림 (아직 안 함)' : '잠김', cols[2], y);
     doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
     doc.setDrawColor('#c9cfcc'); doc.setLineWidth(0.2); doc.line(M, y + 2, W - M, y + 2); y += 6.5;
   }
-  { const f = p.lessons['vision-final'], a = f?.assess; font('bold', 9);
+  { const f = p.lessons[`${pre}-final`], a = f?.assess; font('bold', 9);
     doc.text('종합', cols[0], y); doc.text('Lab 종합 평가', cols[1], y); font('normal', 9);
     doc.text(f?.status === 'done' ? `완료 ${day(f.updatedAt)}` : f ? '열림 (아직 안 함)' : '잠김', cols[2], y);
     doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
@@ -70,7 +71,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
 
   // 차시 상세 (완료한 차시만)
   for (const l of VISION_LESSONS) {
-    const rec = p.lessons[`vision-${l.n}`]; if (!rec || rec.status !== 'done') continue;
+    const rec = p.lessons[`${pre}-${l.n}`]; if (!rec || rec.status !== 'done') continue;
     need(60);
     font('bold', 12); doc.text(`${l.n}차시 · ${l.title}`, M, y); y += 7;
     // 내 실험 그래프 (카메라 수 – 놓친 비율)
@@ -106,7 +107,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     const rep = rec.report as { conclusion?: string } | undefined;
     if (rep?.conclusion) { font('bold', 10); doc.text('결론 (내 실험값으로 자동 작성)', M, y); y += 5; font('normal', 9.5); text(rep.conclusion, M); y += 2; }
     // 평가 답
-    const a = rec.assess, set = ASSESS[`vision-${l.n}`];
+    const a = rec.assess, set = ASSESS[`${pre}-${l.n}`];
     if (a && set) {
       need(40); font('bold', 10); doc.text('차시 평가', M, y); y += 5;
       answers(a, set.items);
@@ -114,7 +115,7 @@ export async function downloadReport(p: Progress, track = 'AI 영상처리') {
     y += 6;
   }
   // 트랙 종합 평가
-  { const f = p.lessons['vision-final'], set = ASSESS['vision-final'];
+  { const f = p.lessons[`${pre}-final`], set = ASSESS[`${pre}-final`];
     if (f?.assess && set) { need(40); font('bold', 12); doc.text('Lab 종합 평가', M, y); y += 7; answers(f.assess, set.items); } }
   font('normal', 7.5, '#6b7280');
   doc.text('수치는 모두 시뮬레이션 계산값 · 서술형은 핵심어 자동 확인 후 교사가 최종 확인 · 가정은 임시', M, 290);

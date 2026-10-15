@@ -9,7 +9,7 @@ import { TopBar } from '../components/TopBar';
 import { MagneticButton } from '../components/Interactive';
 import { Roadmap } from '../components/Roadmap';
 import { load, lesson } from '../store/progress';
-import { VISION_LESSONS } from '../data/districts';
+import { LAB_PLAN } from '../data/districts';
 import { READY } from './Brief';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -20,6 +20,7 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
   // 오른쪽 정보 · 버튼은 '누른 것'만 따라감(마우스가 지나가는 뉴런으로 바뀌지 않게). 지나가는 뉴런은 지도 아래 미리보기 한 줄로.
   const d = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
   const sel = DISTRICTS.find((x) => x.id === selected) ?? DISTRICTS[0];
+  const plan = LAB_PLAN[d.id];
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
@@ -55,17 +56,17 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
             <dt>배우는 기술</dt><dd>{d.keywords.join('  ·  ')}</dd>
             <dt>해결할 사건</dt><dd>{d.situations.map((s, i) => <span key={s}><b>CASE {String(i + 1).padStart(2, '0')}</b>{s}</span>)}</dd>
             <dt>현장 · 역할</dt><dd>{d.site} — {d.role}</dd>
-            {d.id === 'vision' && (() => { const p = load(), done = VISION_LESSONS.filter((l) => lesson(p, `vision-${l.n}`)?.status === 'done').length; return <><dt>내 진도</dt><dd><span className="sel2__bar"><i style={{ width: `${(done / VISION_LESSONS.length) * 100}%` }} /></span>{done} / {VISION_LESSONS.length}차시 완료</dd></>; })()}
+            {plan && (() => { const p = load(), done = plan.lessons.filter((l) => lesson(p, `${plan.prefix}-${l.n}`)?.status === 'done').length; return <><dt>내 진도</dt><dd><span className="sel2__bar"><i style={{ width: `${(done / plan.lessons.length) * 100}%` }} /></span>{done} / {plan.lessons.length}차시 완료 · 화면 {plan.ready.length}차시 제작</dd></>; })()}
           </dl>
           <div className="sel2__cta">
             {d.open
               ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 합류 →</MagneticButton>
               : <span className="sel2__soon">준비 중인 Lab입니다</span>}
-            {d.open && (() => { const p = load(), nx = VISION_LESSONS.find((l) => lesson(p, `vision-${l.n}`)?.status === 'open' || (l.n === 1 && !lesson(p, 'vision-1'))); return <span className="hint">{nx ? `다음 학습 · ${nx.n}차시 ${nx.title}` : '모든 차시 완료'}</span>; })()}
+            {d.open && plan && (() => { const p = load(), nx = plan.lessons.find((l) => plan.ready.includes(l.n) && (lesson(p, `${plan.prefix}-${l.n}`)?.status === 'open' || (l.n === 1 && !lesson(p, `${plan.prefix}-1`)))); return <span className="hint">{nx ? `다음 학습 · ${nx.n}차시 ${nx.title}` : '만들어진 차시를 모두 마쳤습니다'}</span>; })()}
           </div>
         </motion.aside>
       </div>
-      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Vision Lab만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
+      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Foundation Lab(1차시) · Vision Lab만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
     </section>
   );
 }

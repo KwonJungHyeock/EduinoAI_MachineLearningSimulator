@@ -3,7 +3,7 @@
 // 가로축 = 난이도(L1 진입 → L5 상황 해결). 뉴런 하나 = 차시(차시표가 있는 Lab) 또는 배우는 기술(차시표 준비 중인 Lab).
 // 뉴런 크기 · 밝기는 난이도를 따라 커지고, 실제 진도(완료 · 다음 · 잠김)가 켜진다. 신호는 쉬운 쪽에서 어려운 쪽으로 흐른다.
 import { useMemo, useState } from 'react';
-import { ARC, DISTRICTS, VISION_LESSONS, FOUNDATION_LESSONS } from '../data/districts';
+import { ARC, DISTRICTS, VISION_LESSONS, FOUNDATION_LESSONS, LAB_PLAN } from '../data/districts';
 import { load, lesson } from '../store/progress';
 
 const W = 1100, H = 660;
@@ -12,13 +12,14 @@ const LV = (arc: string) => Math.max(0, (ARC as readonly string[]).indexOf(arc))
 export interface Node { id: string; lab: string; x: number; y: number; lv: number; label: string; sub: string; st: 'done' | 'next' | 'open' | 'locked' | 'plan'; n?: number }
 const curve = (x1: number, y1: number, x2: number, y2: number) => { const m = (x1 + x2) / 2; return `M ${x1} ${y1} C ${m} ${y1}, ${m} ${y2}, ${x2} ${y2}`; };
 
-export function Roadmap({ selected, onSelect, onLesson, ready }: { selected: string; onSelect: (lab: string) => void; onLesson?: (lab: string, n: number) => void; ready: number[] }) {
+export function Roadmap({ selected, onSelect, onLesson }: { selected: string; onSelect: (lab: string) => void; onLesson?: (lab: string, n: number) => void; ready?: number[] }) {
   const [hover, setHover] = useState<Node | null>(null);
   const g = useMemo(() => {
     const prog = load(), labs = DISTRICTS.slice(1), rowH = (H - 130) / labs.length;
-    const vst = (n: number): Node['st'] => { const s = lesson(prog, `vision-${n}`)?.status ?? (n === 1 ? 'open' : 'locked'); return s === 'done' ? 'done' : s === 'open' ? 'next' : 'locked'; };
+    const pst = (pre: string, rd: number[]) => (n: number): Node['st'] => { if (!rd.includes(n)) return 'plan'; const s = lesson(prog, `${pre}-${n}`)?.status ?? (n === 1 ? 'open' : 'locked'); return s === 'done' ? 'done' : s === 'open' ? 'next' : 'locked'; };
+    const vst = pst('vision', LAB_PLAN.vision.ready), fst = pst('found', LAB_PLAN.academy.ready);
     // 입력 줄기: Foundation 8차시(위 → 아래로 난이도 상승)
-    const fd = DISTRICTS[0], trunk: Node[] = FOUNDATION_LESSONS.map((l, i) => ({ id: `f${l.n}`, lab: fd.id, x: 90 + (i % 2) * 70, y: 110 + i * 62, lv: LV(l.arc), label: `${l.n}차시 · ${l.title}`, sub: `${fd.district} · ${l.arc} · 차시표 초안(제작 전)`, st: 'plan', n: l.n }));
+    const fd = DISTRICTS[0], trunk: Node[] = FOUNDATION_LESSONS.map((l, i) => ({ id: `f${l.n}`, lab: fd.id, x: 90 + (i % 2) * 70, y: 110 + i * 62, lv: LV(l.arc), label: `${l.n}차시 · ${l.title}`, sub: `${fd.district} · ${l.arc}${LAB_PLAN.academy.ready.includes(l.n) ? '' : ' · 준비 중'}`, st: fst(l.n), n: l.n }));
     const hub = { x: 330, y: 110 + 3.5 * 62 };
     const rows = labs.map((d, r) => {
       const y = 108 + r * rowH + rowH / 2;
@@ -37,7 +38,7 @@ export function Roadmap({ selected, onSelect, onLesson, ready }: { selected: str
   }, []);
   const R = (n: Node) => 4 + n.lv * 1.3;
   const tip = hover && (() => { const w = Math.max(hover.label.length, hover.sub.length * 0.9) * 8.2 + 26, x = Math.min(W - w - 6, Math.max(6, hover.x - w / 2)), y = hover.y - R(hover) - 56; return { w, x, y: y < 4 ? hover.y + 18 : y }; })();
-  const click = (n: Node) => { onSelect(n.lab); if (n.lab === 'vision' && n.n && n.st !== 'locked' && ready.includes(n.n)) onLesson?.(n.lab, n.n); };
+  const click = (n: Node) => { onSelect(n.lab); if (n.n && (n.st === 'done' || n.st === 'next')) onLesson?.(n.lab, n.n); };
   return (
     <svg className="rmap" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="group" aria-label="학습 로드맵" onPointerLeave={() => setHover(null)}>
       <defs>

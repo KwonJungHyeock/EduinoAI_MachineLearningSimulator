@@ -123,7 +123,7 @@ if (q.get('pedestal')) {
   import('./pedestal').then((m) => m.pedestal(Number(q.get('w') ?? 1200)))
     .then((d) => { window.__out = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
 } else if (q.get('recycle')) {
-  import('./recycle').then(async (m) => q.get('recycle') === 'item' ? m.itemShot((q.get('kind') ?? 'can') as never, Number(q.get('v') ?? 0), Number(q.get('w') ?? 480)) : m.line(Number(q.get('w') ?? 1600)))
+  import('./recycle').then(async (m) => q.get('recycle') === 'item' ? m.itemShot((q.get('kind') ?? 'can') as never, Number(q.get('v') ?? 0), Number(q.get('w') ?? 480)) : q.get('recycle') === 'sprite' ? m.sprite((q.get('kind') ?? 'can') as never, Number(q.get('v') ?? 0), Number(q.get('w') ?? 1600), q.get('lie') === '1') : m.line(Number(q.get('w') ?? 1600), (q.get('view') as 'hero' | 'side') ?? 'hero'))
     .then((d) => { window.__out = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
 } else if (q.get('control')) {
   import('./control').then(({ control }) => control(Number(q.get('w') ?? 1600)))

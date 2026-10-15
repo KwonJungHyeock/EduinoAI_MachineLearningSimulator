@@ -25,10 +25,10 @@ export const ARC = ['진입', '기초', '실습', '알고리즘 체험', '상황
 export const DISTRICTS: District[] = [
   {
     id: 'academy', order: 'LAB 00', tech: '머신러닝 기초', techEn: 'Machine Learning Basics',
-    district: 'Foundation Lab', site: 'AI 아카데미', color: '#2fbf8a', motif: 'split',
+    district: 'Foundation Lab', site: '아카데미 선별 라인', color: '#2fbf8a', motif: 'split',
     keywords: ['규칙 vs 학습', '데이터 · 라벨', '오차 · 평가', '편향'],
     situations: ['재활용 분류 로봇 규칙 만들기', '분류 로봇 학습시키기'],
-    role: '도시에 막 배치된 신입 AI 엔지니어', problem: '모든 랩이 쓰는 AI의 기본기를 먼저 익혀야 합니다', open: false
+    role: '아카데미에 막 들어온 신입 AI 엔지니어', problem: '선별 라인에 섞여 오는 캔 · 페트병 · 유리병을 기계가 자꾸 잘못 나눕니다', open: true
   },
   {
     id: 'vision', order: 'LAB 01', tech: 'AI 영상처리', techEn: 'Computer Vision',
@@ -97,3 +97,10 @@ export const FOUNDATION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: 
   { n: 7, arc: '상황 해결', title: '유리병만 자꾸 틀린다' },
   { n: 8, arc: '상황 해결', title: '도우미 로봇 설계 카드' }
 ];
+
+// Lab 별 차시 계획: 진도 키 접두어(found-1 · vision-1 …), 차시 흐름, 화면이 만들어진 차시
+export interface LabPlan { prefix: string; lessons: { n: number; arc: (typeof ARC)[number]; title: string }[]; ready: number[]; track: string }
+export const LAB_PLAN: Record<string, LabPlan> = {
+  academy: { prefix: 'found', lessons: FOUNDATION_LESSONS, ready: [1], track: '머신러닝 기초' },
+  vision: { prefix: 'vision', lessons: VISION_LESSONS, ready: [1, 2, 3, 4, 5, 6, 7, 8], track: 'AI 영상처리' }
+};

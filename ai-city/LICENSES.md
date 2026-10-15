@@ -14,3 +14,4 @@ author: eduino
 | public/vision/ds/* (거리 장면 낮 200 · 밤 80, 조각 · 흑백 장면) | 위와 같은 Kenney · Quaternius 모델로 직접 렌더 (tools/scene-render/dataset.ts) | Kenney · Quaternius | CC0 1.0 | 2026-10-15 | 비전 5~8차시 학습 · 탐지 자료 |
 | public/assets/vision_control.webp (관제실) | Kenney Furniture Kit 2.0 (https://kenney.nl/assets/furniture-kit) + Quaternius 사람 + 1차시 CCTV 렌더로 직접 렌더 (tools/scene-render/control.ts) | Kenney · Quaternius | CC0 1.0 | 2026-10-15 | 비전 지구 브리핑 현장 그림 |
 | public/assets/core_pedestal.webp (AI 코어 받침대) | three.js 기본 도형으로 직접 모델링 · 렌더 (tools/scene-render/pedestal.ts), 외부 에셋 없음 | eduino | 자체 제작 | 2026-10-15 | 첫 화면 AI 코어 |
+| public/found/* · public/assets/foundation_line.webp (선별 라인 · 물건) | three.js 기본 도형 · 회전체로 직접 모델링 · 렌더 (tools/scene-render/recycle.ts), 외부 에셋 없음 | eduino | 자체 제작 | 2026-10-15 | Foundation Lab 장면 · 브리핑 |

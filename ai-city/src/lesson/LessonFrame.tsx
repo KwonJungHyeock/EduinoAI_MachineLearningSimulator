@@ -19,7 +19,9 @@ export interface WrapDef {
 }
 
 export interface LessonDef {
-  id: string;                 // 'vision-2'
+  id: string;                 // 'vision-2' · 'found-1'
+  lab?: string;               // 상단 표기(기본 Vision Lab)
+  labId?: string;             // PDF 리포트용 Lab id(기본 vision)
   n: number; total: number;
   title: string; keyColor: string;
   place: string; problem: string;
@@ -94,7 +96,7 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
                 <p className="pdfbox__tag">학습 리포트</p>
                 <input className="as-in" value={student} placeholder="이름 (리포트에 표시)" onChange={(e) => { setStudentName(e.target.value); setStudent(e.target.value); }} />
                 <div className="ctrl__row">
-                  <button className="rbtn rbtn--key" disabled={pdfBusy} onClick={async () => { setPdfBusy(true); try { await downloadReport(load()); } finally { setPdfBusy(false); } }}>{pdfBusy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
+                  <button className="rbtn rbtn--key" disabled={pdfBusy} onClick={async () => { setPdfBusy(true); try { await downloadReport(load(), def.labId ?? 'vision'); } finally { setPdfBusy(false); } }}>{pdfBusy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
                   <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
                 </div>
               </div>
@@ -109,7 +111,7 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
   return (
     <LessonShell
       keyColor={def.keyColor}
-      top={<TopBar crumb={`Vision Lab · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">Vision Lab {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb={`${def.lab ?? 'Vision Lab'} · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">{def.lab ?? 'Vision Lab'} {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
       scene={def.scene(step)}
       band={def.band}
       drawer={drawer}
