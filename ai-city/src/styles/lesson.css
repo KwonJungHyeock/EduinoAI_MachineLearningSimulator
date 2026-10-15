@@ -526,3 +526,10 @@
 .tp__pt { fill: #f97316; } .tp__now { fill: #fff; stroke: #f97316; stroke-width: 2; }
 .tp__loss p { margin: 2px 0 0; font-size: 11px; color: #9aa6b8; }
 .tp__loss b { font-family: var(--en); color: #fff; }
+/* 디자인 결 통일: 수업 왼쪽 바탕 · 종합 평가 */
+.lesson-screen { background: radial-gradient(900px 500px at 30% 0%, rgba(99, 102, 241, 0.08), transparent 60%), #05070d; }
+.final { background: radial-gradient(1000px 560px at 20% 0%, rgba(99, 102, 241, 0.1), transparent 60%), var(--bg); }
+.final__left .eyebrow--key { --k: #14b8a6; }
+.final__list li { background: var(--surface); box-shadow: inset 0 0 0 1px var(--hair); }
+.final__list li.is-done { background: var(--surface); box-shadow: inset 2px 0 0 #14b8a6, inset 0 0 0 1px var(--hair); }
+.final__n { font: 600 12px var(--en); letter-spacing: 0.08em; padding-top: 3px; }
