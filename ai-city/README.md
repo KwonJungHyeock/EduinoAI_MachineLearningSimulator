@@ -1,4 +1,4 @@
-# AI 미래도시 (가칭) — 컨셉 시안
+# 에듀이노 AI 랩시티 (EDUINO AI LabCity)
 
 author: eduino
 

@@ -119,7 +119,10 @@ async function render(id: string, v: 'base' | 'event') {
 
 const q = new URLSearchParams(location.search);
 declare global { interface Window { __ds?: unknown } }
-if (q.get('recycle')) {
+if (q.get('pedestal')) {
+  import('./pedestal').then((m) => m.pedestal(Number(q.get('w') ?? 1200)))
+    .then((d) => { window.__out = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
+} else if (q.get('recycle')) {
   import('./recycle').then(async (m) => q.get('recycle') === 'item' ? m.itemShot((q.get('kind') ?? 'can') as never, Number(q.get('v') ?? 0), Number(q.get('w') ?? 480)) : m.line(Number(q.get('w') ?? 1600)))
     .then((d) => { window.__out = d; window.__done = true; }).catch((e) => { window.__err = String(e?.stack ?? e); window.__done = true; });
 } else if (q.get('control')) {

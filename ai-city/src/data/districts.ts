@@ -1,5 +1,5 @@
 // author: eduino
-// AI 미래도시의 지구(=트랙) 정의. 화면 문구는 모두 여기 한 곳에서 가져온다.
+// AI 랩시티의 지구(=트랙) 정의. 화면 문구는 모두 여기 한 곳에서 가져온다.
 // 지구 · 현장 이름과 차시 구성은 초안(가칭).
 
 export type MotifId = 'split' | 'vision' | 'language' | 'voice' | 'data' | 'physical' | 'generative';
