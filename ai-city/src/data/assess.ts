@@ -6,6 +6,18 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'vision-6': {
+    title: '객체 탐지',
+    items: [
+      { kind: 'ox', q: '객체 탐지는 장면에서 물체의 종류뿐 아니라 위치(상자)도 찾는다.', answer: true, why: '어디에(상자) + 무엇이(종류) + 확신도를 함께 냅니다.' },
+      { kind: 'ox', q: '조각 분류 정확도가 97%면 창 밀기 탐지의 정밀도도 97% 가까이 나온다.', answer: false, why: '한 장면에 1,600번 넘게 묻기 때문에 작은 오류도 수많은 헛탐지가 됩니다.' },
+      { kind: 'ox', q: '확신도 기준을 올리면 정밀도는 오르고 재현율은 내려가는 경향이 있다.', answer: true, why: '확신이 높은 상자만 남기니 헛탐지는 줄지만 놓치는 물체가 늘어요.' },
+      { kind: 'short', q: '같은 물체에 겹친 상자 중 가장 확신하는 하나만 남기는 방법의 영어 약자는?', accept: ['NMS', 'nms', '비최대억제', '비최대 억제'], why: 'NMS(Non-Maximum Suppression, 비최대 억제)입니다.' },
+      { kind: 'essay', q: '정밀도와 재현율을 모두 목표 이상으로 만들기 위해 무엇을 했는지, 5차시 모델의 문제와 함께 설명해 보세요.',
+        keys: [{ label: '헛탐지(배경) 문제', any: ['헛탐지', '배경', '문', '횡단보도', '착각'] }, { label: "헛탐지 조각을 '빈 곳'으로 다시 학습", any: ['빈 곳', '다시 학습', '재학습', '추가'] }, { label: 'NMS · 기준 조절', any: ['NMS', 'nms', '겹침', '기준'] }],
+        model: "5차시 모델은 건물 문이나 횡단보도 같은 배경을 사람으로 착각해 정밀도가 7%였다. 학습 장면의 헛탐지 조각을 '빈 곳'으로 더해 다시 학습하고, NMS로 겹친 상자를 지운 뒤 기준을 0.5로 정하니 정밀도 89%, 재현율 76%가 되었다." }
+    ]
+  },
   'vision-5': {
     title: '분류 대결: kNN vs CNN',
     items: [
