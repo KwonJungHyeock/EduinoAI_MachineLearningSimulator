@@ -1,0 +1,32 @@
+{
+  "_note": "물건 특징값은 이 파일 한 곳에만 둔다. 모든 값은 임시(temp: true)이며 basis 에 근거를 적는다. 0-3 예외 물건은 set 을 '0-3' 으로 두고 items 에 추가한다.",
+  "kinds": {
+    "can":   { "name": "캔",     "bin": "캔 통" },
+    "pet":   { "name": "페트병", "bin": "페트 통" },
+    "glass": { "name": "유리병", "bin": "유리 통" }
+  },
+  "sensors": {
+    "metal":        { "name": "금속 감지", "unit": "",  "type": "bool", "labels": ["미감지", "감지"] },
+    "transparency": { "name": "투명도",   "unit": "%", "type": "number", "min": 0, "max": 100 },
+    "weight":       { "name": "무게",     "unit": "g", "type": "number", "min": 0, "max": 400 }
+  },
+  "basis": {
+    "metal": "임시 · 근접(유도형) 금속 센서 가정: 알루미늄·철 캔은 감지, 플라스틱·유리는 미감지. 실물 키트로 확인 필요",
+    "transparency": "임시 · 빛 투과 센서 가정(0 = 완전히 가림, 100 = 그대로 통과). 투명 PET·투명 유리는 둘 다 높게 나옴. 실측 필요",
+    "weight": "임시 · 빈 용기 일반 범위(알루미늄 캔 약 13~15 g, 철 캔 약 30~50 g, PET 500 mL~1.5 L 약 10~45 g, 유리병 약 150~350 g). 출처 확인 필요"
+  },
+  "items": [
+    { "id": "can-1",   "kind": "can",   "label": "알루미늄 캔 A", "set": "0-2", "temp": true, "values": { "metal": 1, "transparency": 0,  "weight": 14 } },
+    { "id": "can-2",   "kind": "can",   "label": "알루미늄 캔 B", "set": "0-2", "temp": true, "values": { "metal": 1, "transparency": 0,  "weight": 15 } },
+    { "id": "can-3",   "kind": "can",   "label": "알루미늄 캔 C", "set": "0-2", "temp": true, "values": { "metal": 1, "transparency": 0,  "weight": 13 } },
+    { "id": "can-4",   "kind": "can",   "label": "철 캔",         "set": "0-2", "temp": true, "values": { "metal": 1, "transparency": 0,  "weight": 33 } },
+    { "id": "pet-1",   "kind": "pet",   "label": "생수병(얇은)", "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 88, "weight": 12 } },
+    { "id": "pet-2",   "kind": "pet",   "label": "음료 페트병",   "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 90, "weight": 20 } },
+    { "id": "pet-3",   "kind": "pet",   "label": "탄산 페트병",   "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 86, "weight": 28 } },
+    { "id": "pet-4",   "kind": "pet",   "label": "큰 페트병",     "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 91, "weight": 42 } },
+    { "id": "glass-1", "kind": "glass", "label": "작은 유리병",   "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 85, "weight": 190 } },
+    { "id": "glass-2", "kind": "glass", "label": "음료 유리병",   "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 89, "weight": 210 } },
+    { "id": "glass-3", "kind": "glass", "label": "소스 유리병",   "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 87, "weight": 250 } },
+    { "id": "glass-4", "kind": "glass", "label": "큰 유리병",     "set": "0-2", "temp": true, "values": { "metal": 0, "transparency": 92, "weight": 330 } }
+  ]
+}

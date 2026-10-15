@@ -1,0 +1,279 @@
+{
+  "items": 12,
+  "steps": {
+    "transparency": 10,
+    "weight": 10
+  },
+  "ms": 5024,
+  "A": [
+    {
+      "sensors": [
+        "metal"
+      ],
+      "label": "금속 감지",
+      "count": 1,
+      "correct": 8,
+      "total": 12,
+      "all": false,
+      "rule": "금속 감지 미감지 → 페트병 / 아니면 → 캔",
+      "wrong": [
+        "작은 유리병(유리병)→페트병 통",
+        "음료 유리병(유리병)→페트병 통",
+        "소스 유리병(유리병)→페트병 통",
+        "큰 유리병(유리병)→페트병 통"
+      ],
+      "mixed": [
+        "페트병·유리병"
+      ]
+    },
+    {
+      "sensors": [
+        "transparency"
+      ],
+      "label": "투명도",
+      "count": 1,
+      "correct": 10,
+      "total": 12,
+      "all": false,
+      "rule": "투명도 < 42.5% → 캔 / 투명도 < 85.5% → 유리병 / 투명도 < 91.5% → 페트병 / 아니면 → 유리병",
+      "wrong": [
+        "음료 유리병(유리병)→페트병 통",
+        "소스 유리병(유리병)→페트병 통"
+      ],
+      "mixed": [
+        "페트병·유리병"
+      ]
+    },
+    {
+      "sensors": [
+        "weight"
+      ],
+      "label": "무게",
+      "count": 1,
+      "correct": 11,
+      "total": 12,
+      "all": false,
+      "rule": "무게 < 12.5g → 페트병 / 무게 < 17.5g → 캔 / 무게 < 116g → 페트병 / 아니면 → 유리병",
+      "wrong": [
+        "철 캔(캔)→페트병 통"
+      ],
+      "mixed": [
+        "캔·페트병"
+      ]
+    },
+    {
+      "sensors": [
+        "metal",
+        "transparency"
+      ],
+      "label": "금속 감지 + 투명도",
+      "count": 2,
+      "correct": 10,
+      "total": 12,
+      "all": false,
+      "rule": "금속 감지 감지 → 캔 / 투명도 < 85.5% → 유리병 / 투명도 < 91.5% → 페트병 / 아니면 → 유리병",
+      "wrong": [
+        "음료 유리병(유리병)→페트병 통",
+        "소스 유리병(유리병)→페트병 통"
+      ],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "metal",
+        "weight"
+      ],
+      "label": "금속 감지 + 무게",
+      "count": 2,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "금속 감지 감지 → 캔 / 무게 < 116g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "transparency",
+        "weight"
+      ],
+      "label": "투명도 + 무게",
+      "count": 2,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "투명도 < 42.5% → 캔 / 무게 < 116g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "metal",
+        "transparency",
+        "weight"
+      ],
+      "label": "금속 감지 + 투명도 + 무게",
+      "count": 3,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "금속 감지 감지 → 캔 / 무게 < 116g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    }
+  ],
+  "B": [
+    {
+      "sensors": [
+        "metal"
+      ],
+      "label": "금속 감지",
+      "count": 1,
+      "correct": 8,
+      "total": 12,
+      "all": false,
+      "rule": "금속 감지 미감지 → 페트병 / 아니면 → 캔",
+      "wrong": [
+        "작은 유리병(유리병)→페트병 통",
+        "음료 유리병(유리병)→페트병 통",
+        "소스 유리병(유리병)→페트병 통",
+        "큰 유리병(유리병)→페트병 통"
+      ],
+      "mixed": [
+        "페트병·유리병"
+      ]
+    },
+    {
+      "sensors": [
+        "transparency"
+      ],
+      "label": "투명도",
+      "count": 1,
+      "correct": 9,
+      "total": 12,
+      "all": false,
+      "rule": "투명도 < 10% → 캔 / 투명도 < 90% → 유리병 / 아니면 → 페트병",
+      "wrong": [
+        "생수병(얇은)(페트병)→유리병 통",
+        "탄산 페트병(페트병)→유리병 통",
+        "큰 유리병(유리병)→페트병 통"
+      ],
+      "mixed": [
+        "페트병·유리병"
+      ]
+    },
+    {
+      "sensors": [
+        "weight"
+      ],
+      "label": "무게",
+      "count": 1,
+      "correct": 10,
+      "total": 12,
+      "all": false,
+      "rule": "무게 < 20g → 캔 / 무게 < 50g → 페트병 / 아니면 → 유리병",
+      "wrong": [
+        "철 캔(캔)→페트병 통",
+        "생수병(얇은)(페트병)→캔 통"
+      ],
+      "mixed": [
+        "캔·페트병"
+      ]
+    },
+    {
+      "sensors": [
+        "metal",
+        "transparency"
+      ],
+      "label": "금속 감지 + 투명도",
+      "count": 2,
+      "correct": 9,
+      "total": 12,
+      "all": false,
+      "rule": "금속 감지 감지 → 캔 / 투명도 < 90% → 유리병 / 아니면 → 페트병",
+      "wrong": [
+        "생수병(얇은)(페트병)→유리병 통",
+        "탄산 페트병(페트병)→유리병 통",
+        "큰 유리병(유리병)→페트병 통"
+      ],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "metal",
+        "weight"
+      ],
+      "label": "금속 감지 + 무게",
+      "count": 2,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "금속 감지 감지 → 캔 / 무게 < 50g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "transparency",
+        "weight"
+      ],
+      "label": "투명도 + 무게",
+      "count": 2,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "투명도 < 10% → 캔 / 무게 < 50g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    },
+    {
+      "sensors": [
+        "metal",
+        "transparency",
+        "weight"
+      ],
+      "label": "금속 감지 + 투명도 + 무게",
+      "count": 3,
+      "correct": 12,
+      "total": 12,
+      "all": true,
+      "rule": "금속 감지 감지 → 캔 / 무게 < 50g → 페트병 / 아니면 → 유리병",
+      "wrong": [],
+      "mixed": []
+    }
+  ],
+  "depA": {
+    "metal": [],
+    "transparency": [],
+    "weight": [
+      "철 캔(33g)"
+    ]
+  },
+  "depB": {
+    "metal": [],
+    "transparency": [],
+    "weight": []
+  },
+  "vA": {
+    "c1": true,
+    "c2": true,
+    "pairsAll": [
+      "금속 감지 + 무게",
+      "투명도 + 무게"
+    ],
+    "pairsNot": [
+      "금속 감지 + 투명도"
+    ]
+  },
+  "vB": {
+    "c1": true,
+    "c2": true,
+    "pairsAll": [
+      "금속 감지 + 무게",
+      "투명도 + 무게"
+    ],
+    "pairsNot": [
+      "금속 감지 + 투명도"
+    ]
+  }
+}
