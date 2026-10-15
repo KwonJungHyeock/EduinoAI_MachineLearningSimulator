@@ -147,3 +147,51 @@
   .lesson-grid { grid-template-columns: 1fr; overflow: auto; }
   .rail { border-radius: 18px 18px 0 0; }
 }
+
+/* ── 칸 확대 화면 ── */
+.zoom { position: absolute; inset: 10px; z-index: 5; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 14px; background: rgba(6, 10, 16, 0.94); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 30px 80px rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); }
+.zoom__head { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.zoom__head span { color: var(--muted); font-family: var(--en); font-size: 12.5px; }
+.zoom__x { margin-left: auto; background: rgba(255, 255, 255, 0.08); border: 0; color: var(--ink); width: 28px; height: 28px; border-radius: 8px; cursor: pointer; }
+.zoom__body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(220px, 1fr); gap: 14px; }
+.zoom__pic { position: relative; min-height: 0; border-radius: 10px; overflow: hidden; background: #000; }
+.zoom__frame { position: absolute; inset: 0; }
+.zoom__frame img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92) contrast(1.04); }
+.zoom__heat { position: absolute; inset: 0; display: grid; pointer-events: none; }
+.zoom__heat i { background: #14b8a6; mix-blend-mode: screen; }
+.zoom__box { position: absolute; border: 2px solid #f97316; border-radius: 4px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.18), 0 0 16px rgba(249, 115, 22, 0.7); }
+.zoom__rec { position: absolute; left: 10px; top: 8px; font: 700 11px "Space Grotesk", sans-serif; color: #fff; background: rgba(0, 0, 0, 0.45); padding: 2px 7px; border-radius: 4px; }
+.zoom__rec::first-letter { color: #ef4444; }
+.zoom__views { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; }
+.zoom__views button { background: rgba(0, 0, 0, 0.6); color: #dfe6ef; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 8px; padding: 5px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+.zoom__views button.is-on { background: #f5c542; color: #18201d; border-color: #f5c542; font-weight: 700; }
+.zoom__views button:disabled { opacity: 0.4; cursor: default; }
+.zoom__info { min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 9px; font-size: 13.5px; line-height: 1.6; color: #cfd8e6; }
+.zoom__sit { margin: 0; font-size: 17px; font-weight: 700; color: #fff; }
+.zoom__detail { margin: 0; }
+.zoom__note { margin: 0; color: var(--dim); }
+.zoom__evs { display: flex; flex-wrap: wrap; gap: 6px; }
+.zoom__evs button { border: 1.5px solid; background: transparent; border-radius: 8px; padding: 4px 9px; font: inherit; font-size: 12px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.zoom__evs button.ok { color: #2fbf8a; border-color: rgba(47, 191, 138, 0.6); }
+.zoom__evs button.miss { color: #f97316; border-color: rgba(249, 115, 22, 0.6); }
+.zoom__evs button.is-future { color: var(--dim); border-color: rgba(255, 255, 255, 0.12); cursor: default; }
+.zoom__evs button.is-on { background: rgba(255, 255, 255, 0.1); }
+.zoom__why { margin: 0; padding: 9px 11px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); }
+.zoom__why b { display: inline-block; margin-right: 8px; font-size: 11.5px; color: #fff; border-radius: 4px; padding: 0 7px; }
+.zoom__why.ok b { background: #0f6b4c; }
+.zoom__why.miss b { background: #c2410c; }
+.tl { display: grid; gap: 4px; }
+.tl__row { display: grid; grid-template-columns: 116px 1fr; align-items: center; gap: 8px; font-size: 11.5px; color: var(--muted); }
+.tl__bar { position: relative; height: 12px; border-radius: 3px; background: rgba(255, 255, 255, 0.05); }
+.tl__bar i { position: absolute; top: 1px; bottom: 1px; border-radius: 2px; }
+.tl__bar i.w { background: rgba(233, 238, 246, 0.75); }
+.tl__bar i.ok { background: #2fbf8a; }
+.tl__bar i.miss { background: #f97316; }
+.tl__bar i.al { width: 2px; background: #14b8a6; }
+.tl__bar i.al.expired { background: #f97316; }
+.tl__bar i.al.false { background: rgba(20, 184, 166, 0.45); }
+.tl__bar em { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #f5c542; }
+.tl__chg { height: 26px; width: 100%; background: rgba(255, 255, 255, 0.04); border-radius: 3px; }
+.tl__chg .th { stroke: rgba(255, 255, 255, 0.5); stroke-dasharray: 2 2; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.tl__chg .ln { fill: none; stroke: #14b8a6; stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.tl__ticks { display: flex; justify-content: space-between; margin-left: 124px; font: 500 10px "Space Grotesk", sans-serif; color: var(--dim); }

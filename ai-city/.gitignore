@@ -2,3 +2,5 @@ node_modules/
 dist/
 _shots/
 *.tsbuildinfo
+# 받은 Kenney 모델(CC0)은 tools/scene-render/fetch_kenney.sh 로 다시 받음
+tools/scene-render/public/models/

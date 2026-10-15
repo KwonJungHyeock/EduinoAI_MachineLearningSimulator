@@ -5,6 +5,7 @@
 import { useCallback, useRef } from 'react';
 import { useCanvas } from '../../motion/useCanvas';
 import { watching, type Result } from '../../sim/surveillance';
+import { sceneOf, flipped, camLabel, img, preload } from './scenes';
 
 export interface WallState {
   cameras: number;
@@ -28,9 +29,14 @@ function grid(C: number, W: number, H: number) {
   return best;
 }
 
-export function MonitorWall({ state, className }: { state: WallState; className?: string }) {
+export function MonitorWall({ state, className, selected, onPick }: { state: WallState; className?: string; selected?: number | null; onPick?: (cam: number) => void }) {
   const ref = useRef(state);
   ref.current = state;
+  const selRef = useRef(selected ?? null);
+  selRef.current = selected ?? null;
+  const layout = useRef({ pad: 0, gap: 0, cols: 1, rows: 1, tw: 0, th: 0, C: 0 });
+  const hover = useRef(-1);
+  if (typeof window !== 'undefined') preload();
   const cache = useRef<{ res: Result | null; byCam: number[][] }>({ res: null, byCam: [] });
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, now: number, w: number, h: number) => {
@@ -47,24 +53,32 @@ export function MonitorWall({ state, className }: { state: WallState; className?
     const { cols, rows } = grid(C, W, H);
     const tw = (W - gap * (cols - 1)) / cols, th = (H - gap * (rows - 1)) / rows;
     const res = s.res, trace = res?.trace;
+    layout.current = { pad, gap, cols, rows, tw, th, C };
 
     for (let c = 0; c < C; c++) {
       const x = pad + (c % cols) * (tw + gap), y = pad + Math.floor(c / cols) * (th + gap);
       const watched = !s.ai && watching(c, res ? sec : 0, C, s.operators);
-      // 칸 바탕 + 아주 옅은 주사선
-      ctx.fillStyle = '#0a1018'; ctx.fillRect(x, y, tw, th);
-      ctx.fillStyle = 'rgba(255,255,255,0.025)';
-      for (let k = 2; k < th; k += 4) ctx.fillRect(x, y + k, tw, 1);
-
-      // 사건 진행 중이면 칸이 빛남
+      // 사건 진행 중이면 그 칸 장면이 '사건 장면'으로 바뀜
       let active = -1;
       if (res) for (const i of byCam[c] ?? []) { const e = res.list[i]; if (t >= e.start && t < e.end) { active = i; break; } }
-      if (active >= 0) {
-        const pulse = 0.35 + 0.25 * Math.sin(now * 9);
-        const g = ctx.createRadialGradient(x + tw / 2, y + th / 2, 2, x + tw / 2, y + th / 2, Math.max(tw, th) * 0.7);
-        g.addColorStop(0, `rgba(255,255,255,${pulse})`); g.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = g; ctx.fillRect(x, y, tw, th);
+      // 칸 = CCTV 장면 (렌더 이미지, 12대 넘으면 좌우 반전)
+      const sc = sceneOf(c), pic = img(sc.id, active >= 0 ? 'event' : 'base');
+      ctx.fillStyle = '#0a1018'; ctx.fillRect(x, y, tw, th);
+      if (pic) {
+        ctx.save(); ctx.beginPath(); ctx.rect(x, y, tw, th); ctx.clip();
+        const r = Math.max(tw / pic.naturalWidth, th / pic.naturalHeight), iw = pic.naturalWidth * r, ih = pic.naturalHeight * r;
+        if (flipped(c)) { ctx.translate(x + tw, y); ctx.scale(-1, 1); ctx.drawImage(pic, (tw - iw) / 2, (th - ih) / 2, iw, ih); }
+        else ctx.drawImage(pic, x + (tw - iw) / 2, y + (th - ih) / 2, iw, ih);
+        ctx.restore();
+        ctx.fillStyle = 'rgba(8,14,22,0.28)'; ctx.fillRect(x, y, tw, th); // CCTV 톤
       }
+      ctx.fillStyle = 'rgba(0,0,0,0.12)';
+      for (let k = 2; k < th; k += 3) ctx.fillRect(x, y + k, tw, 1);
+      if (tw > 46) {
+        ctx.font = `600 ${Math.max(8, Math.min(11, tw / 10))}px "Space Grotesk", sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillText(tw > 90 ? `${camLabel(c)} ${sc.name}` : camLabel(c), x + 4, y + 11);
+      }
+      if (active >= 0) { const pulse = 0.5 + 0.5 * Math.sin(now * 9); ctx.strokeStyle = `rgba(255,255,255,${0.35 + pulse * 0.4})`; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, tw - 2, th - 2); }
 
       // AI 모드: 변화량 막대 + 기준값 선
       if (s.ai && trace) {
@@ -113,6 +127,9 @@ export function MonitorWall({ state, className }: { state: WallState; className?
         }
       }
 
+      // 선택(확대 중) · 마우스 올린 칸
+      if (selRef.current === c) { ctx.strokeStyle = '#f5c542'; ctx.lineWidth = 3; ctx.strokeRect(x - 1, y - 1, tw + 2, th + 2); }
+      else if (hover.current === c) { ctx.strokeStyle = 'rgba(245,197,66,0.6)'; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, tw, th); }
       // 사람 시선
       if (watched) {
         ctx.save(); ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 12;
@@ -125,5 +142,20 @@ export function MonitorWall({ state, className }: { state: WallState; className?
   }, []);
 
   const canvasRef = useCanvas(draw, { fps: 30, essential: true });
-  return <canvas ref={canvasRef} className={className} aria-label="관제 모니터 벽" />;
+  const hit = (e: { currentTarget: HTMLCanvasElement; clientX: number; clientY: number }) => {
+    const r = e.currentTarget.getBoundingClientRect(), L = layout.current;
+    const cx = e.clientX - r.left - L.pad, cy = e.clientY - r.top - L.pad;
+    const col = Math.floor(cx / (L.tw + L.gap)), row = Math.floor(cy / (L.th + L.gap));
+    if (cx < 0 || cy < 0 || col >= L.cols || row >= L.rows) return -1;
+    if (cx - col * (L.tw + L.gap) > L.tw || cy - row * (L.th + L.gap) > L.th) return -1;
+    const c = row * L.cols + col;
+    return c < L.C ? c : -1;
+  };
+  return (
+    <canvas ref={canvasRef} className={className} aria-label="관제 모니터 벽 — 칸을 누르면 확대"
+      style={{ cursor: onPick ? 'zoom-in' : undefined }}
+      onPointerMove={(e) => { hover.current = onPick ? hit(e) : -1; }}
+      onPointerLeave={() => { hover.current = -1; }}
+      onClick={(e) => { const c = hit(e); if (c >= 0 && onPick) onPick(c); }} />
+  );
 }

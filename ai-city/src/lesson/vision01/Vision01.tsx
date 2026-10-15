@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 import { simulate, BASIS, ASSUME, type Params } from '../../sim/surveillance';
 import { LessonShell, MissionCard, NowBand, StepBar, ConceptBox, Question, Feedback, Nav, type Drawer } from '../ui';
 import { MonitorWall } from './MonitorWall';
+import { CamZoom } from './CamZoom';
 import { GraphDrawer, CodeDrawer, LogDrawer, type Run } from './drawers';
-import { AssetSlot } from '../../components/AssetSlot';
 import { TopBar } from '../../components/TopBar';
 import { update } from '../../store/progress';
 
@@ -36,6 +36,9 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   const [drawer, setDrawer] = useState<Drawer>('graph');
   const [mc, setMc] = useState<number | null>(null);
   const [saved, setSaved] = useState(false);
+  const [zoomCam, setZoomCam] = useState<number | null>(null);
+  const [seenMiss, setSeenMiss] = useState(false);
+  const onSeen = useCallback((k: 'found' | 'missed') => { if (k === 'missed') setSeenMiss(true); }, []);
   const nextId = useRef(1);
   const reportRef = useRef<HTMLDivElement>(null);
 
@@ -78,10 +81,10 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   const lastApply = [...done].reverse().find((r) => r.kind === 'apply') ?? null;
   const goals = [
     { text: '요원 1명이 몇 건을 놓치는지 확인하기', done: exp.length > 0 },
-    { text: '카메라가 늘면 어떻게 되는지 확인하기', done: !!(obs1Run && obs2Run) },
+    { text: '카메라가 늘면 어떻게 되는지 확인하기', done: !!(obs1Run && obs2Run && seenMiss) },
     { text: '카메라 64대 · 놓침 10% 이하 · 요원 1명 달성하기', done: !!applyOk }
   ];
-  const canNext = [true, predict !== null, !!(obs1Run && obs2Run), conceptSeen, !!applyOk, false][step] && playing === null;
+  const canNext = [true, predict !== null, !!(obs1Run && obs2Run && seenMiss), conceptSeen, !!applyOk, false][step] && playing === null;
 
   // 정리 질문 정답: 사람 눈만으로 64대 · 놓침 10% 이하에 필요한 요원 수 (계산)
   const need = useMemo(() => {
@@ -93,6 +96,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
 
   const go = (n: number) => {
     if (n < 0 || n > 5) return;
+    setZoomCam(null);
     setStep(n); setReached((r) => Math.max(r, n));
     if (n === 2) setDrawer('graph');
     if (n === 4) setDrawer('code');
@@ -176,7 +180,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   const now = playing !== null ? '근무가 끝날 때까지 모니터 벽을 지켜보세요'
     : step === 0 ? '작업 지시서를 읽고 [다음]을 누르세요'
     : step === 1 ? (predict === null ? '보기 하나를 골라 예측하세요' : '[다음]을 눌러 실험으로 가세요')
-    : step === 2 ? (exp.length === 0 ? '카메라 4대로 [근무 시작]을 누르세요' : !obs1Run ? '카메라를 4대나 8대로 두고 근무를 돌려 보세요' : !obs2Run ? '카메라를 32대 이상으로 늘려 근무를 돌려 보세요' : '[다음]을 눌러 개념으로 가세요')
+    : step === 2 ? (exp.length === 0 ? '카메라 4대로 [근무 시작]을 누르세요' : !obs1Run ? '카메라를 4대나 8대로 두고 근무를 돌려 보세요' : !obs2Run ? '카메라를 32대 이상으로 늘려 근무를 돌려 보세요' : !seenMiss ? '주황 점이 있는 칸을 눌러 왜 놓쳤는지 확인하세요' : '[다음]을 눌러 개념으로 가세요')
     : step === 3 ? (conceptSeen ? '[다음]을 눌러 적용으로 가세요' : '[AI 보조 켜고 보기]를 누르세요')
     : step === 4 ? (applyOk ? '[다음]을 눌러 정리하세요' : '코드 서랍의 노란 칸을 바꾸고 [실행]을 누르세요')
     : !mcFb?.ok ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : '[브리핑으로]를 눌러 2차시를 확인하세요';
@@ -201,6 +205,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
             <ul className="obs-check">
               <li className={obs1Run ? 'done' : ''}><i>{obs1Run ? '✓' : ''}</i>카메라가 적을 때 놓친 사건 수 확인</li>
               <li className={obs2Run ? 'done' : ''}><i>{obs2Run ? '✓' : ''}</i>카메라가 많을 때 놓친 사건 수 확인</li>
+              <li className={seenMiss ? 'done' : ''}><i>{seenMiss ? '✓' : ''}</i>놓친 칸을 눌러 이유 확인</li>
             </ul>
             {obs2Run && predict !== null && (
               <div className="compare">
@@ -245,10 +250,10 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
 
   const scene = (
     <motion.div className="scene__cam" initial={{ scale: 1.35, opacity: 0 }} animate={{ scale: CAM_SCALE[step], opacity: 1 }} transition={{ duration: step === 0 ? 1.4 : 0.8, ease: [0.22, 1, 0.36, 1] }}>
-      <AssetSlot src="assets/vision_control.webp" label="관제실 렌더" className="scene__bg" />
-      <MonitorWall state={wall} className="scene__wall" />
-      <div className="scene__cap"><span className="scene__tag">관제 모니터 벽</span>{wall.ai ? `AI 보조 · 기준값 ${wall.threshold}` : `요원 ${wall.operators}명 · 흰 테두리 = 지금 보는 화면`}</div>
-      {bubble && <motion.div className="obs" key={bubble} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}><span className="obs__tag">관찰</span>{bubble}</motion.div>}
+      <MonitorWall state={wall} className="scene__wall" selected={zoomCam} onPick={(c) => setZoomCam(c)} />
+      <div className="scene__cap"><span className="scene__tag">관제 모니터 벽</span>{wall.ai ? `AI 보조 · 기준값 ${wall.threshold}` : `요원 ${wall.operators}명 · 흰 테두리 = 지금 보는 화면`} · 칸을 누르면 확대</div>
+      {bubble && zoomCam === null && <motion.div className="obs" key={bubble} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}><span className="obs__tag">관찰</span>{bubble}</motion.div>}
+      {zoomCam !== null && zoomCam < wall.cameras && <CamZoom key={`${zoomCam}-${view?.id ?? 0}`} cam={zoomCam} p={view?.p ?? null} res={view?.res ?? null} t={shownT} onClose={() => setZoomCam(null)} onSeen={onSeen} />}
     </motion.div>
   );
 
