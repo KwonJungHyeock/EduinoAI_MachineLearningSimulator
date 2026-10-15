@@ -10,8 +10,9 @@ GW, GH = 32, 20  # 변화량 격자 (AI가 보는 숫자)
 meta = re.findall(r"id: '(cam\d+)', name: '([^']+)', situation: '([^']+)',\s*detail: '([^']+)'", (ROOT / 'tools/scene-render/scenes.ts').read_text(encoding='utf-8'))
 scenes = []
 for sid, name, situation, detail in meta:
-    a = Image.open(SRC / f'{sid}-base.png').convert('RGB'); b = Image.open(SRC / f'{sid}-event.png').convert('RGB')
-    for v, im in (('base', a), ('event', b)): im.save(OUT / f'{sid}-{v}.webp', 'WEBP', quality=80, method=6)
+    A = Image.open(SRC / f'{sid}-base.png').convert('RGB'); B = Image.open(SRC / f'{sid}-event.png').convert('RGB')
+    for v, im in (('base', A), ('event', B)): im.save(OUT / f'{sid}-{v}.webp', 'WEBP', quality=78, method=6)  # 큰 그림(1920) — 확대 화면용
+    a, b = A.resize((960, 600), Image.LANCZOS), B.resize((960, 600), Image.LANCZOS)  # 변화량은 960 기준
     a.resize((320, 200), Image.LANCZOS).save(OUT / f'{sid}-base-s.webp', 'WEBP', quality=72)
     b.resize((320, 200), Image.LANCZOS).save(OUT / f'{sid}-event-s.webp', 'WEBP', quality=72)
     d = ImageChops.difference(a, b).convert('L').filter(ImageFilter.MaxFilter(3))

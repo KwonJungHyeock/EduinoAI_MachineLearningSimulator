@@ -10,3 +10,12 @@ get suburban https://kenney.nl/media/pages/assets/city-kit-suburban/2c871b7af2-1
 get car-kit https://kenney.nl/media/pages/assets/car-kit/1a312ec241-1775131960/kenney_car-kit.zip
 get characters https://kenney.nl/media/pages/assets/mini-characters/bfc7e272b4-1774770718/kenney_mini-characters.zip
 rm -rf "$TMP"; echo "done: $OUT"
+
+# 사람: Quaternius Ultimate Modular Men / Women (CC0) — Google Drive 공개 폴더의 glTF
+OUTP="$(dirname "$0")/public/models/people"; mkdir -p "$OUTP"
+q() { curl -sL -o "$OUTP/$2.gltf" "https://drive.usercontent.google.com/download?id=$1&export=download&confirm=t"; }
+q 1Jn7kULNmrtqP8BUUL19h8MhbdOnwPFhv m-casual-2; q 1em1So1xwwQNfHJYMvzKcXkZllvtxpKP5 m-casual-hoodie; q 1NhXHnGU0zK9hBrT5FoZp8nTz_EmvTPg5 m-suit
+q 14d8n7IDnnlnGt_uiATnNg3uvi_4dyd9V m-worker; q 1fzSq1Rr037f7QkfXPWEAzmbLMNx-FpPA m-adventurer; q 1yHWu5ezXq4dYBcn4sWiNd16YN9fMtXo0 m-punk
+q 18b3WwlrwrFYWAM7BcnjWeIxKJyxAQiGh f-casual; q 1iayBzVv_zLjuPtaNPouw_auwKlQLLmes f-formal; q 1GjWtofxjmPku25cXJxHrzLLeUbXw7A_s f-suit
+q 1iwF_fqDErPH9uyol6NmS-MnzGgsZ5ejV f-worker; q 1uxAFnDp73NO1c16LvHHjAYh1-deMNk5I f-adventurer
+echo "people done: $OUTP"

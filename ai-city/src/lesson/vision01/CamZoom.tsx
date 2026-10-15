@@ -19,6 +19,7 @@ export function CamZoom({ cam, p, res, t, onClose, onSeen }: {
   const cur = evs.find((x) => x.i === pick) ?? null;
   const [view, setView] = useState<'event' | 'base'>('event');
   const [heat, setHeat] = useState(!!p?.aiAssist);
+  const [focus, setFocus] = useState(true);
   const showEvent = !!cur && view === 'event';
 
   // 놓친 · 찾은 이유 (계산)
@@ -65,6 +66,13 @@ export function CamZoom({ cam, p, res, t, onClose, onSeen }: {
   const alerts = res?.trace?.alerts.filter((a) => a.cam === cam) ?? [];
 
   const box = sc.box;
+  // 사건 확대: 변화 영역 가운데로 당겨 크게 (1920 해상도 그림이라 확대해도 선명)
+  const focusStyle = (() => {
+    if (!focus || !box) return undefined;
+    const cx = (box[0] + box[2]) / 2, cy = (box[1] + box[3]) / 2;
+    const k = Math.max(1.4, Math.min(3, 0.55 / Math.max(box[2] - box[0], (box[3] - box[1]) * 0.9)));
+    return { transform: `scale(${k.toFixed(2)})`, transformOrigin: `${(cx * 100).toFixed(1)}% ${(cy * 100).toFixed(1)}%` };
+  })();
   return (
     <motion.div className="zoom" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
       <div className="zoom__head">
@@ -75,6 +83,7 @@ export function CamZoom({ cam, p, res, t, onClose, onSeen }: {
       <div className="zoom__body">
         <div className="zoom__pic">
           <div className="zoom__frame" style={{ transform: flip ? 'scaleX(-1)' : undefined }}>
+           <div className="zoom__inner" style={focusStyle}>
             <img src={src(sc.id, showEvent ? 'event' : 'base')} alt={`${sc.name} ${showEvent ? '사건' : '평소'} 장면`} />
             {showEvent && heat && (
               <div className="zoom__heat" style={{ gridTemplateColumns: `repeat(${GW}, 1fr)`, gridTemplateRows: `repeat(${GH}, 1fr)` }}>
@@ -82,11 +91,13 @@ export function CamZoom({ cam, p, res, t, onClose, onSeen }: {
               </div>
             )}
             {showEvent && box && <div className="zoom__box" style={{ left: `${box[0] * 100}%`, top: `${box[1] * 100}%`, width: `${(box[2] - box[0]) * 100}%`, height: `${(box[3] - box[1]) * 100}%` }} />}
+           </div>
           </div>
           <span className="zoom__rec">● REC {camLabel(cam)}</span>
           <div className="zoom__views">
             <button className={view === 'base' ? 'is-on' : ''} onClick={() => setView('base')}>평소 화면</button>
             <button className={view === 'event' ? 'is-on' : ''} onClick={() => setView('event')} disabled={!cur}>사건 화면</button>
+            <button className={focus ? 'is-on' : ''} onClick={() => setFocus((f) => !f)} disabled={!box}>사건 확대</button>
             <button className={heat ? 'is-on' : ''} onClick={() => setHeat((h) => !h)} disabled={!showEvent}>변화량 보기</button>
           </div>
         </div>

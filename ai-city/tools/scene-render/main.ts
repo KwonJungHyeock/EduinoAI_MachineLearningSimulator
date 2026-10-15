@@ -7,11 +7,12 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { SCENES, type Item } from './scenes';
 
-const W = 960, H = 600;
+const Q0 = new URLSearchParams(location.search);
+const W = Number(Q0.get('w') ?? 960), H = Math.round((W * 600) / 960);
 const loader = new GLTFLoader();
 const cache = new Map<string, Promise<{ scene: THREE.Group; animations: THREE.AnimationClip[] }>>();
 const load = (m: string) => {
-  if (!cache.has(m)) cache.set(m, loader.loadAsync(`/models/${m}.glb`).then((g) => ({ scene: g.scene, animations: g.animations })));
+  if (!cache.has(m)) cache.set(m, loader.loadAsync(`/models/${m}.${m.startsWith("people/") ? "gltf" : "glb"}`).then((g) => ({ scene: g.scene, animations: g.animations })));
   return cache.get(m)!;
 };
 declare global { interface Window { __done?: boolean; __out?: string; __probe?: unknown; __err?: string } }
@@ -33,7 +34,7 @@ async function place(scene: THREE.Scene, it: Item) {
   if (it.pose && g.animations.length) {
     const mixer = new THREE.AnimationMixer(o);
     const clip = g.animations.find((a) => a.name === it.pose) ?? g.animations[0];
-    mixer.clipAction(clip).play(); mixer.setTime(it.poseT ?? (it.pose === 'die' ? clip.duration - 0.01 : clip.duration * 0.35));
+    mixer.clipAction(clip).play(); mixer.setTime(it.poseT ?? (it.pose === 'die' || it.pose === 'Death' ? clip.duration - 0.01 : clip.duration * 0.35));
   }
   setup(o, it); scene.add(o);
 }

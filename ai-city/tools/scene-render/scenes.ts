@@ -1,6 +1,6 @@
 // author: eduino
 // 비전 지구 CCTV 장면 12종 (Kenney 로우폴리 CC0). 장면마다 평소(base) + 사건(event) 두 장을 렌더한다.
-// 축척: 1 단위 ≈ 1.75 m. 도로 칸 1개 = 4, 건물 · 소품 ×4, 차 ×1, 사람(blocky) ×0.6 (CCTV 거리에서 알아보도록 조금 크게).
+// 축척: 1 단위 ≈ 1.75 m. 도로 칸 1개 = 4, 건물 · 소품 ×4, 차 ×1, 사람 ×0.6 (키 1.8 → 약 1.9 m, CCTV 거리에서 알아보도록 조금 크게).
 export interface Item { m: string; x: number; z: number; y?: number; r?: number; s?: number; rx?: number; rz?: number; pose?: string; poseT?: number }
 export interface SceneDef {
   id: string; name: string; situation: string; detail: string; base: Item[]; event: Item[];
@@ -15,7 +15,10 @@ const shop = (m: string, x: number, z: number, r = 0): Item => ({ m: `commercial
 const home = (m: string, x: number, z: number, r = 0, s = T): Item => ({ m: `suburban/${m}`, x, z, r, s });
 const car = (m: string, x: number, z: number, r = 0): Item => ({ m: `car-kit/${m}`, x, z, r, s: 1 });
 const kit = (m: string, x: number, z: number, r = 0, s = 1, y = 0): Item => ({ m: `car-kit/${m}`, x, z, r, s, y });
-const man = (c: string, x: number, z: number, r = 0, pose = 'idle', poseT?: number): Item => ({ m: `blocky/character-${c}`, x, z, r, s: 0.6, pose, poseT });
+// 사람: Quaternius Ultimate Modular Men/Women (CC0, 실제 비율). 글자 하나로 옷차림을 고른다.
+const PEOPLE: Record<string, string> = { a: 'm-casual-2', b: 'f-casual', c: 'm-casual-hoodie', d: 'f-formal', e: 'm-suit', f: 'f-worker', g: 'm-worker', h: 'f-suit', i: 'm-adventurer', j: 'f-adventurer', k: 'm-punk', l: 'f-casual', m: 'm-casual-hoodie', n: 'm-casual-2', o: 'm-suit', p: 'f-casual', q: 'm-worker', r: 'm-casual-hoodie' };
+const POSE: Record<string, string> = { idle: 'Idle', walk: 'Walk', sprint: 'Run', die: 'Death', 'pick-up': 'Interact', 'emote-no': 'Wave', 'holding-right': 'Run', jump: 'Interact' };
+const man = (c: string, x: number, z: number, r = 0, pose = 'idle', poseT?: number, s = 0.7): Item => ({ m: `people/${PEOPLE[c] ?? 'm-casual-2'}`, x, z, r, s, pose: POSE[pose] ?? pose, poseT });
 
 // 동서로 뻗은 길 + 양쪽 보도 (gx: -n..n)
 function street(n = 3, crossingAt: number | null = null): Item[] {
@@ -54,7 +57,7 @@ export const SCENES: SceneDef[] = [
       man('b', 4.5, 4.8, 200, 'idle'), man('h', -5, 5.5, 160, 'walk')
     ],
     event: [car('sedan-sports', 0.4, 0.2, 140)],
-    cam: [11, 9, 12], look: [0, 0, 0], fov: 50
+    cam: [8.8, 7.2, 9.6], look: [0, 0, 0], fov: 50
   },
   {
     id: 'cam02', name: '횡단보도', situation: '무단횡단',
@@ -67,7 +70,7 @@ export const SCENES: SceneDef[] = [
       car('van', -7.5, 0.9, 90)
     ],
     event: [man('n', 0.2, -0.3, 15, 'sprint'), car('sedan', -4.2, 0.9, 90)],
-    cam: [7, 8, 10], look: [0, 0, -1], fov: 50
+    cam: [5.6, 6.4, 7.8], look: [0, 0, -1], fov: 50
   },
   {
     id: 'cam03', name: '상가 골목', situation: '쓰러진 사람',
@@ -80,7 +83,7 @@ export const SCENES: SceneDef[] = [
       man('d', -1.5, -8, 0, 'walk')
     ],
     event: [man('q', 0.8, -0.5, 70, 'die')],
-    cam: [2, 9, 10], look: [0, 0, -1.5], fov: 50
+    cam: [1.6, 7.2, 7.7], look: [0, 0, -1.5], fov: 50
   },
   {
     id: 'cam04', name: '주차장', situation: '접촉 사고',
@@ -93,7 +96,7 @@ export const SCENES: SceneDef[] = [
       man('a', 9, 6.5, 210, 'walk')
     ],
     event: [car('suv-luxury', 1.2, 2.6, 155), kit('debris-bumper', -0.3, 1.1, 30, 1.2), kit('debris-plate-a', 0.6, 0.4, 70, 1.2)],
-    cam: [9, 10, 12], look: [0, 0, 0], fov: 50
+    cam: [7.2, 8.0, 9.6], look: [0, 0, 0], fov: 50
   },
   {
     id: 'cam05', name: '버스정류장', situation: '방치된 가방',
@@ -106,7 +109,7 @@ export const SCENES: SceneDef[] = [
       car('truck', 4, 0.9, 270)
     ],
     event: [kit('box', 1.2, -2.6, 20, 0.7)],
-    cam: [5, 7, 8.5], look: [0, 0, -2.2], fov: 50
+    cam: [4.0, 5.6, 6.36], look: [0, 0, -2.2], fov: 50
   },
   {
     id: 'cam06', name: '학교 앞', situation: '차도로 뛰어든 아이',
@@ -118,8 +121,8 @@ export const SCENES: SceneDef[] = [
       prop('road-sign-object-warning', 3.5, 2.4), home('tree-small', -9, 3),
       man('i', -5, -2.8, 90, 'walk'), car('sedan', 7, -0.9, 90)
     ],
-    event: [{ m: 'blocky/character-p', x: 1.0, z: -0.6, r: 170, s: 0.45, pose: 'sprint' }, car('hatchback-sports', 3.6, -0.9, 270)],
-    cam: [-6, 7.5, 10], look: [1, 0, -1], fov: 50
+    event: [man('p', 1.0, -0.6, 170, 'sprint', undefined, 0.48), car('hatchback-sports', 3.6, -0.9, 270)],
+    cam: [-4.6, 6.0, 7.8], look: [1, 0, -1], fov: 50
   },
   {
     id: 'cam07', name: '공사장', situation: '쓰러진 공사 펜스',
@@ -132,7 +135,7 @@ export const SCENES: SceneDef[] = [
       car('truck-flat', -8, -0.9, 90)
     ],
     event: [prop('construction-fence', 1.2, -1.0, 18), prop('construction-barrier', -0.6, -0.6, 70), { m: 'city-kit-roads/construction-cone', x: 0.2, z: 0.6, y: 0.2, r: 0, rz: 1.5, s: T }, car('sedan', -3.5, 0.9, 90)],
-    cam: [8, 7.5, 9], look: [0, 0, -1.5], fov: 50
+    cam: [6.4, 6.0, 6.9], look: [0, 0, -1.5], fov: 50
   },
   {
     id: 'cam08', name: '주택가', situation: '담을 넘는 사람',
@@ -144,8 +147,8 @@ export const SCENES: SceneDef[] = [
       home('tree-large', -9.5, -5), home('tree-small', 3.6, -5), prop('light-curved', -2.5, -2.4, 90),
       car('suv', 6, 0.9, 270)
     ],
-    event: [{ m: 'blocky/character-r', x: 1.6, z: -3.5, y: 0.9, r: 200, s: 0.6, pose: 'pick-up' }],
-    cam: [4, 6.5, 7.5], look: [0, 0.4, -3], fov: 52, sky: '#5d7393', exposure: 0.92, sun: [4, 8, 8]
+    event: [{ ...man('r', 1.6, -3.5, 200, 'pick-up'), y: 0.75 }],
+    cam: [3.2, 5.28, 5.4], look: [0, 0.4, -3], fov: 52, sky: '#5d7393', exposure: 0.92, sun: [4, 8, 8]
   },
   {
     id: 'cam09', name: '공원 입구', situation: '쓰러진 노인',
@@ -157,7 +160,7 @@ export const SCENES: SceneDef[] = [
       man('l', 2.2, -7, 180, 'walk')
     ],
     event: [man('o', -0.6, 0.4, 110, 'die')],
-    cam: [3, 7, 8], look: [0, 0, -1], fov: 50, ground: '#6f9a55'
+    cam: [2.4, 5.6, 6.2], look: [0, 0, -1], fov: 50, ground: '#6f9a55'
   },
   {
     id: 'cam10', name: '큰길', situation: '역주행 차량',
@@ -168,7 +171,7 @@ export const SCENES: SceneDef[] = [
       car('sedan', -6, 0.9, 90), car('van', 8, -0.9, 270), car('taxi', -12, 0.9, 90)
     ],
     event: [car('suv', 2, 0.9, 270), car('hatchback-sports', -1.6, 0.9, 80)],
-    cam: [10, 8, 9], look: [0, 0, -1], fov: 50
+    cam: [8.0, 6.4, 7.0], look: [0, 0, -1], fov: 50
   },
   {
     id: 'cam11', name: '외곽 도로', situation: '고장으로 멈춘 트럭',
@@ -180,7 +183,7 @@ export const SCENES: SceneDef[] = [
       car('sedan', 9, -0.9, 270)
     ],
     event: [car('truck', 0, 0.9, 80), kit('cone', -3.2, 0.9, 0, 1), car('taxi', -8, 0.9, 90)],
-    cam: [9, 6.5, 9], look: [0, 0.3, 0], fov: 52, exposure: 0.95
+    cam: [7.2, 5.26, 7.2], look: [0, 0.3, 0], fov: 52, exposure: 0.95
   },
   {
     id: 'cam12', name: '시장 거리', situation: '가방을 낚아채 달아나는 사람',
@@ -192,6 +195,6 @@ export const SCENES: SceneDef[] = [
       man('a', -5, -1.6, 180, 'idle'), man('e', -3.6, 0.5, 90, 'walk'), man('g', 4.5, 1.2, 270, 'walk'), man('j', 6, -1.4, 200, 'idle')
     ],
     event: [man('m', 0.8, 0.6, 80, 'sprint'), man('c', -1.8, 1.4, 60, 'emote-no')],
-    cam: [4, 8.5, 10], look: [0, 0, -1], fov: 52
+    cam: [3.2, 6.8, 7.8], look: [0, 0, -1], fov: 52
   }
 ];
