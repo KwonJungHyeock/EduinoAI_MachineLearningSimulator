@@ -297,29 +297,46 @@ button { font: inherit; color: inherit; }
 
 /* ── 학습 신경망 지도(지구 선택 · 첫 화면 아래) ── */
 .nmap { width: 100%; height: 100%; display: block; overflow: visible; }
+.nmap > g, .nmap__deep { transition: transform .5s var(--ease); }
+.nmap__layer line { stroke: rgba(255, 255, 255, 0.05); stroke-dasharray: 2 6; }
+.nmap__layer text { font: 500 10.5px var(--kr); fill: #4f5d78; letter-spacing: 0.04em; }
+.nmap__layer .a { font: 700 10.5px var(--en); letter-spacing: 0.2em; fill: #6b7a96; }
 .nmap__deep path { stroke: rgba(165, 180, 252, 0.07); stroke-width: 1; fill: none; }
-.nmap__deep circle { fill: rgba(165, 180, 252, 0.18); }
+.nmap__deep circle { fill: rgba(165, 180, 252, 0.2); }
+.nmap__lane rect { stroke: color-mix(in srgb, var(--k) 18%, transparent); stroke-width: 1; transition: stroke .35s, opacity .35s; }
+.nmap__lane.on rect { stroke: color-mix(in srgb, var(--k) 60%, transparent); filter: drop-shadow(0 0 14px color-mix(in srgb, var(--k) 35%, transparent)); }
+.nmap__lane.dim { opacity: 0.45; }
+.nmap__lanetag { font: 600 9.5px var(--en); letter-spacing: 0.14em; fill: color-mix(in srgb, var(--k) 70%, #8d9bb8); text-transform: uppercase; }
 .nmap__edge path { fill: none; stroke: color-mix(in srgb, var(--k) 45%, #3b3f63); stroke-width: 1.2; opacity: 0.55; transition: opacity .35s, stroke-width .35s; }
 .nmap__edge.hot path { stroke: var(--k); stroke-width: 2.2; opacity: 1; filter: drop-shadow(0 0 6px var(--k)); }
 .nmap__edge.dim path { opacity: 0.16; }
 .nmap__sig { fill: #e0e7ff; filter: drop-shadow(0 0 4px var(--k)); }
 .nmap__edge.dim .nmap__sig { opacity: 0.15; }
-.nmap__edge.hot .nmap__sig { fill: #fff; }
-.nmap__out circle { fill: #05070d; stroke: color-mix(in srgb, var(--k) 70%, #fff); stroke-width: 1.4; transition: opacity .35s; }
-.nmap__out text { font: 500 12.5px var(--kr); fill: #9aa6b8; transition: opacity .35s, fill .35s; }
+.nmap__wave { fill: #fff; filter: drop-shadow(0 0 8px var(--k)) drop-shadow(0 0 3px #fff); }
+.nmap__out { cursor: pointer; transition: opacity .35s; }
+.nmap__out rect { fill: #05070d; stroke: color-mix(in srgb, var(--k) 70%, #fff); stroke-width: 1.4; transition: fill .35s; }
+.nmap__out.hot rect { fill: var(--k); filter: drop-shadow(0 0 6px var(--k)); }
+.nmap__out text { font: 500 13px var(--kr); fill: #9aa6b8; transition: fill .35s; }
+.nmap__out.hot text { fill: #fff; font-weight: 700; }
 .nmap__out.dim { opacity: 0.4; }
-.nmap__out:not(.dim) text { fill: #dfe6f1; }
 .nmap__n { cursor: pointer; outline: none; transition: opacity .35s; }
 .nmap__n.dim { opacity: 0.5; }
 .nmap__hit { fill: transparent; }
-.nmap__halo { fill: color-mix(in srgb, var(--k) 14%, transparent); stroke: color-mix(in srgb, var(--k) 45%, transparent); stroke-width: 1; transition: r .35s var(--ease); }
-.nmap__core { fill: var(--k); transition: r .35s var(--ease); }
+.nmap__halo { fill: color-mix(in srgb, var(--k) 12%, transparent); stroke: color-mix(in srgb, var(--k) 35%, transparent); stroke-width: 1; transition: r .35s var(--ease); }
+.nmap__ring { fill: #070a14; stroke: var(--k); stroke-width: 1.6; transition: r .35s var(--ease), fill .35s; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--k) 70%, transparent)); }
+.nmap__n.is-on .nmap__ring { fill: color-mix(in srgb, var(--k) 28%, #070a14); stroke-width: 2.2; }
+.nmap__glyph { fill: none; stroke: color-mix(in srgb, var(--k) 80%, #fff); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .35s var(--ease); pointer-events: none; }
+.nmap__glyph circle { fill: color-mix(in srgb, var(--k) 80%, #fff); stroke: none; }
+
+.nmap__n.is-on .nmap__glyph { stroke: #fff; }
 .nmap__n.is-on .nmap__halo { animation: nPulse 2s ease-in-out infinite; }
-@keyframes nPulse { 50% { stroke-opacity: 0.2; fill-opacity: 0.4; } }
-.nmap__n:focus-visible .nmap__halo { stroke: #fff; stroke-width: 2; }
+.nmap__halo--in { animation: nPulse 3s ease-in-out infinite; }
+@keyframes nPulse { 50% { stroke-opacity: 0.15; fill-opacity: 0.4; } }
+.nmap__fire { fill: none; stroke: var(--k); stroke-width: 2; animation: nFire .9s var(--ease) forwards; pointer-events: none; }
+@keyframes nFire { from { r: 18; opacity: 1; stroke-width: 3; } to { r: 70; opacity: 0; stroke-width: 0.5; } }
+.nmap__n:focus-visible .nmap__ring { stroke: #fff; stroke-width: 2.6; }
 .nmap__no { font: 600 10.5px var(--en); letter-spacing: 0.12em; fill: color-mix(in srgb, var(--k) 75%, #fff); }
 .nmap__t { font: 700 15px var(--kr); fill: #eef2f8; }
-.nmap__layer text { font: 600 10.5px var(--en); letter-spacing: 0.18em; fill: #4f5d78; }
 /* 지구 선택(신경망) */
 .sel2 { background: var(--bg); }
 .sel2__bg { position: absolute; inset: 0; background: radial-gradient(760px 520px at 40% 55%, rgba(99, 102, 241, 0.12), transparent 65%), radial-gradient(520px 420px at 86% 40%, color-mix(in srgb, var(--k) 10%, transparent), transparent 65%); transition: background .6s; }
