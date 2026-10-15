@@ -6,6 +6,18 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'vision-7': {
+    title: '상황 해결① 교차로 위험 감지',
+    items: [
+      { kind: 'ox', q: '탐지 모델은 "이 사람이 위험한가"까지 스스로 판단해 준다.', answer: false, why: '모델은 무엇이 어디에 있는지(상자)만 알려 주고, 위험 판단은 사람이 정한 규칙이 합니다.' },
+      { kind: 'ox', q: '사람이 차도 위에 있는지 볼 때는 상자 가운데보다 상자 아래(발)가 더 정확하다.', answer: true, why: '사람이 땅을 딛는 곳은 상자 아래이기 때문입니다.' },
+      { kind: 'ox', q: '탐지 모델이 놓친 사람도 규칙을 잘 정하면 경보를 울릴 수 있다.', answer: false, why: '규칙은 탐지된 상자만 판단할 수 있어 모델의 놓침은 그대로 남습니다.' },
+      { kind: 'short', q: '화면에서 감시할 영역만 정해 두는 것을 영어 약자로 무엇이라 할까? (관심 구역)', accept: ['ROI', 'roi', '관심구역', '관심 구역'], why: 'ROI(Region of Interest, 관심 구역)입니다.' },
+      { kind: 'essay', q: '헛경보와 놓친 위험을 모두 줄이기 위해 규칙을 어떻게 정했는지, 각 설정이 무엇을 바꿨는지 설명해 보세요.',
+        keys: [{ label: '발(상자 아래) 기준점', any: ['발', '아래', 'feet'] }, { label: '횡단보도 예외', any: ['횡단보도', '예외', '제외'] }, { label: '차도 구역 · 탐지 기준', any: ['구역', '차도', '기준'] }],
+        model: '상자 가운데를 쓰면 보도 위 사람이 차도로 들어와 헛경보가, 차도 위 사람은 빠져 놓침이 생겼다. 발(상자 아래)을 기준점으로 쓰고, 횡단보도를 예외로 빼고, 차도 구역을 0.44~0.7로 정하니 헛경보 1장, 놓친 위험 3장이 되었다. 남은 놓침은 탐지 모델이 사람을 못 찾은 경우였다.' }
+    ]
+  },
   'vision-6': {
     title: '객체 탐지',
     items: [

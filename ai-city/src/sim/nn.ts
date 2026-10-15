@@ -86,3 +86,7 @@ export function accuracy(pred: (x: Float32Array) => { cls: number }, data: DataS
   data.X.forEach((x, i) => { const c = pred(x).cls; conf[data.y[i]][c]++; if (c === data.y[i]) ok++; });
   return { acc: ok / Math.max(1, data.y.length), conf };
 }
+// 저장된 모델(JSON 숫자 배열) → CNN
+export function unpack(j: { S: number; F: number; w1: number[]; b1: number[]; w2: number[]; b2: number[] }): CNN {
+  return { S: j.S, F: j.F, w1: Float32Array.from(j.w1), b1: Float32Array.from(j.b1), w2: Float32Array.from(j.w2), b2: Float32Array.from(j.b2) };
+}

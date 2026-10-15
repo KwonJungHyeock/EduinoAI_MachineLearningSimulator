@@ -448,3 +448,27 @@
 .v6--mined { align-items: center; justify-content: center; padding: 20px 28px; }
 .v6__gal { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; width: 100%; max-width: 760px; }
 .v6__gal .cg__big { width: 100%; height: auto; aspect-ratio: 1; border-radius: 3px; }
+
+/* ── 7차시: 교차로 위험 감지 ── */
+.v7__pic.is-drag { cursor: ns-resize; }
+.v7__road { position: absolute; left: 0; right: 0; background: rgba(239, 68, 68, 0.16); border-top: 2px solid rgba(239, 68, 68, 0.85); border-bottom: 2px solid rgba(239, 68, 68, 0.85); pointer-events: none; }
+.v7__cross { position: absolute; background: repeating-linear-gradient(90deg, rgba(47, 191, 138, 0.28) 0 6px, rgba(47, 191, 138, 0.12) 6px 12px); border-left: 1.5px dashed #2fbf8a; border-right: 1.5px dashed #2fbf8a; pointer-events: none; }
+.v7__handle { position: absolute; left: 0; right: 0; height: 14px; margin-top: -7px; cursor: ns-resize; z-index: 3; }
+.v7__handle::after { content: ""; position: absolute; left: 50%; top: 3px; width: 46px; height: 8px; margin-left: -23px; border-radius: 4px; background: #ef4444; box-shadow: 0 0 0 2px #fff; }
+.v7__handle i { position: absolute; right: 8px; top: -16px; font: 700 10px var(--kr); font-style: normal; color: #fff; background: rgba(239, 68, 68, 0.9); padding: 0 5px; border-radius: 3px; }
+.v7__pt { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #2fbf8a; box-shadow: 0 0 0 2px #fff; pointer-events: none; z-index: 2; }
+.v7__pt.in { background: #ef4444; }
+.v7__alarm { position: absolute; right: 10px; top: 8px; display: grid; justify-items: end; gap: 1px; font: 700 12px var(--kr); color: #dfe6ef; background: rgba(6, 10, 16, 0.72); padding: 5px 10px; border-radius: 8px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.v7__alarm.on { color: #fff; background: rgba(220, 38, 38, 0.9); box-shadow: 0 0 18px rgba(239, 68, 68, 0.6); }
+.v7__alarm em { font-style: normal; font-weight: 600; font-size: 10.5px; opacity: 0.9; }
+.v7__who { font-size: 11.5px; }
+.v7__grid { flex: 0 0 auto; display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; }
+.v7__th { position: relative; border: 0; padding: 0; aspect-ratio: 16 / 10; border-radius: 3px; overflow: hidden; cursor: pointer; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.v7__th img { width: 100%; height: 100%; object-fit: cover; opacity: 0.55; display: block; }
+.v7__th.tp { box-shadow: 0 0 0 2px #2fbf8a; } .v7__th.fp { box-shadow: 0 0 0 2px #ef4444; } .v7__th.fn { box-shadow: 0 0 0 2px #f5c542; }
+.v7__th.tp img, .v7__th.fp img, .v7__th.fn img { opacity: 0.9; }
+.v7__th.is-on { outline: 2px solid #fff; outline-offset: 1px; }
+.v7__th i { position: absolute; left: 0; bottom: 0; font: 700 8.5px var(--kr); font-style: normal; color: #fff; background: rgba(0, 0, 0, 0.6); padding: 0 3px; border-radius: 0 3px 0 0; }
+.v7__zone { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.v7__zone span { font: 700 13px var(--en); min-width: 62px; color: #18201d; }
+.v7__zone button { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid #d5dad7; background: #fff; font: 700 15px var(--en); cursor: pointer; }
