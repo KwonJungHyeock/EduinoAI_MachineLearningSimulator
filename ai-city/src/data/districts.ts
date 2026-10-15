@@ -85,3 +85,15 @@ export const VISION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: stri
   { n: 7, arc: '상황 해결', title: '교차로 위험 감지' },
   { n: 8, arc: '상황 해결', title: '밤의 교차로 — 데이터 편향' }
 ];
+
+// Foundation Lab(공통 기초) 차시 흐름 (기획 초안 — 8차시, 화면 제작 전)
+export const FOUNDATION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: string }[] = [
+  { n: 1, arc: '진입', title: 'AI 로봇은 무엇이 다를까' },
+  { n: 2, arc: '기초', title: '규칙으로 판단하기' },
+  { n: 3, arc: '기초', title: '규칙의 한계' },
+  { n: 4, arc: '실습', title: '데이터에 이름표 붙이기' },
+  { n: 5, arc: '알고리즘 체험', title: '학습으로 판단하기' },
+  { n: 6, arc: '알고리즘 체험', title: '얼마나 잘 맞혔을까' },
+  { n: 7, arc: '상황 해결', title: '유리병만 자꾸 틀린다' },
+  { n: 8, arc: '상황 해결', title: '도우미 로봇 설계 카드' }
+];

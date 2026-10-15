@@ -34,7 +34,7 @@ export default function App() {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         {screen === 'hero' && <Hero onEnter={enterCity} />}
-        {screen === 'select' && <Select selected={selected} onSelect={setSelected} onEnter={enterDistrict} onHome={home} />}
+        {screen === 'select' && <Select selected={selected} onSelect={setSelected} onEnter={enterDistrict} onHome={home} onLesson={(_, n) => { setLessonN(n); setScreen('lesson'); }} />}
         {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} onStart={(n) => { setLessonN(n); setScreen('lesson'); }} onFinal={() => setScreen('final')} />}
         {screen === 'final' && <TrackFinal onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonN === 1 && <Vision01 onExit={() => setScreen('brief')} onHome={home} />}
