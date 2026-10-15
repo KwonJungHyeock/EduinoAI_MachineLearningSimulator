@@ -1,0 +1,149 @@
+/* author: eduino */
+/* 수업 화면 — 왼쪽(장면 · 수치 띠 · 서랍)은 어둡게, 오른쪽 레일은 밝게. 문구 7종 색은 공통 양식 v2 고정 */
+.lesson-screen { background: radial-gradient(80% 60% at 30% 0%, #0b1322 0%, var(--bg) 60%); }
+.lesson-screen .topbar { height: 56px; flex-basis: 56px; }
+.lesson-prog { font-family: var(--en); font-size: 13px; color: var(--muted); margin-right: 6px; }
+.lesson-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+.lesson-left { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 0 14px 0 clamp(14px, 2vw, 28px); }
+
+/* 장면 */
+.scene { position: relative; flex: 0 0 auto; height: clamp(340px, calc(100vh - 400px), 640px); border-radius: 16px; overflow: hidden; background: radial-gradient(120% 120% at 50% 30%, #0c1626 0%, #05080d 75%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07); }
+.scene__cam { position: absolute; inset: 0; transform-origin: 50% 55%; }
+.scene__bg { position: absolute; inset: 0; border: 0; border-radius: 0; opacity: 0.35; }
+.scene__bg.empty { place-items: end start; padding: 0 0 10px 16px; }
+.scene__wall { position: absolute; inset: 40px 0 0; width: 100%; height: calc(100% - 40px); display: block; }
+.scene__cap { position: absolute; left: 16px; top: 12px; display: flex; gap: 10px; align-items: center; font-size: 12.5px; color: #cfd8e6; }
+.scene__tag { background: var(--k); color: #05080d; font-weight: 700; font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+/* 관찰: 장면 속 주황 말풍선 (시각 + 값 + 상태) */
+.obs { position: absolute; right: 16px; top: 7px; max-width: 60%; background: #c2410c; color: #fff; font-size: 13.5px; line-height: 1.5; padding: 8px 13px; border-radius: 14px 14px 4px 14px; box-shadow: 0 12px 30px -12px rgba(194, 65, 12, 0.8); }
+.obs__tag { display: inline-block; font-size: 11px; font-weight: 700; background: rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 0 6px; margin-right: 8px; }
+
+/* 수치 띠 1줄 */
+.band { flex: 0 0 34px; display: flex; align-items: center; gap: 18px; padding: 0 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.035); font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; font-variant-numeric: tabular-nums; }
+.band b { color: var(--ink); font-family: var(--en); font-weight: 700; }
+.band .ok b { color: #2fbf8a; }
+.band .miss b { color: #f97316; }
+.band__clock { font-family: var(--en); color: var(--ink); font-weight: 700; }
+.band__clock i { font-style: normal; color: var(--dim); font-weight: 500; }
+.band__idle { overflow: hidden; text-overflow: ellipsis; }
+.band__skip { margin-left: auto; flex: none; background: rgba(255, 255, 255, 0.08); color: var(--ink); border: 0; border-radius: 8px; padding: 5px 12px; font: inherit; font-size: 12.5px; cursor: pointer; }
+.band__skip:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* 서랍 [그래프 | 코드 | 기록] */
+.drawer { flex: 1; min-height: 120px; display: flex; flex-direction: column; border-radius: 14px; background: rgba(255, 255, 255, 0.025); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); overflow: hidden; }
+.drawer__tabs { display: flex; gap: 2px; padding: 6px 8px 0; }
+.drawer__tab { background: none; border: 0; padding: 7px 14px; font-size: 13px; color: var(--muted); cursor: pointer; border-radius: 8px; }
+.drawer__tab:hover { color: var(--ink); }
+.drawer__tab.is-on { color: var(--ink); background: rgba(255, 255, 255, 0.07); }
+.drawer__body { flex: 1; min-height: 0; overflow: auto; padding: 8px 14px 10px; }
+.lesson-src { margin: 0 0 8px; font-size: 11.5px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.gdrawer { height: 100%; display: flex; flex-direction: column; }
+.gdrawer__svg { width: 100%; flex: 1; min-height: 0; }
+.gdrawer__cap { margin: 2px 0 0; font-size: 12px; color: var(--dim); }
+.g-grid { stroke: rgba(255, 255, 255, 0.07); }
+.g-mid { stroke: rgba(255, 255, 255, 0.2); stroke-dasharray: 4 4; }
+.g-axis { fill: #8b97a9; font: 500 11px "Space Grotesk", sans-serif; }
+.g-line { fill: none; stroke: var(--k); stroke-width: 2; }
+.g-dot { fill: var(--k); stroke: #05080d; stroke-width: 2; }
+.g-val { fill: #e9eef6; font: 700 11.5px "Space Grotesk", sans-serif; }
+.g-goal { fill: rgba(47, 191, 138, 0.13); }
+
+.cdrawer { position: relative; }
+.cdrawer--locked, .ldrawer--empty { color: var(--dim); font-size: 13.5px; padding: 10px 0; }
+.cdrawer--locked b { color: var(--muted); }
+.code { margin: 0; font-family: "Space Grotesk", ui-monospace, monospace; font-size: 13.5px; line-height: 2.05; color: #cfd8e6; white-space: pre; }
+.code .c { color: #5d6879; }
+.cell { display: inline-flex; align-items: center; background: #f5c542; color: #18201d; border-radius: 6px; padding: 0 2px; line-height: 1.6; vertical-align: middle; }
+.cell button { border: 0; background: transparent; font: inherit; font-weight: 700; width: 22px; cursor: pointer; color: #18201d; border-radius: 4px; }
+.cell button:hover { background: rgba(0, 0, 0, 0.08); }
+.cell b { min-width: 30px; text-align: center; }
+.cell--toggle button { width: auto; padding: 0 8px; }
+.run-btn { position: absolute; right: 0; top: 4px; background: var(--k); color: #05080d; border: 0; border-radius: 10px; padding: 10px 20px; font: inherit; font-weight: 700; cursor: pointer; }
+.run-btn:disabled { opacity: 0.5; cursor: default; }
+.ldrawer { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; font-size: 12.5px; color: #b7c2d3; font-variant-numeric: tabular-nums; }
+.ldrawer b { color: var(--k); font-family: var(--en); margin-right: 6px; }
+
+/* ── 레일 (밝게) ── */
+.rail { min-height: 0; overflow: auto; background: #fbfbf9; color: #18201d; border-radius: 18px 0 0 0; padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: -20px 0 60px -30px rgba(0, 0, 0, 0.6); }
+.mission { background: #18201d; color: #fff; border-radius: 12px; padding: 11px 13px; display: grid; gap: 5px; font-size: 13px; line-height: 1.5; }
+.mission__row { display: grid; grid-template-columns: 34px 1fr; gap: 6px; }
+.mission__row > span { font-size: 11.5px; color: #9fd8c2; font-weight: 700; padding-top: 1px; }
+.mission__row b { font-weight: 500; }
+.mission__row ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.mission__row li { display: flex; gap: 7px; align-items: flex-start; color: #d7dedb; }
+.mission__row li i { flex: 0 0 15px; height: 15px; margin-top: 2px; border-radius: 50%; border: 1.5px solid #5d6b66; font-style: normal; font-size: 10px; display: grid; place-items: center; }
+.mission__row li.done { color: #fff; }
+.mission__row li.done i { background: #2fbf8a; border-color: #2fbf8a; color: #0b2a1f; font-weight: 700; }
+.now { display: flex; align-items: center; gap: 8px; background: #0f6b4c; color: #fff; border-radius: 10px; padding: 9px 12px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.now__tag { flex: none; font-size: 11px; font-weight: 500; background: rgba(255, 255, 255, 0.18); border-radius: 4px; padding: 1px 7px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; }
+.steps li { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; color: #9aa3a0; }
+.steps li span { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #c9cfcc; display: grid; place-items: center; font: 700 11px "Space Grotesk", sans-serif; background: #fff; }
+.steps li.is-reached span { border-color: #0f6b4c; color: #0f6b4c; }
+.steps li.is-on { color: #18201d; font-weight: 700; }
+.steps li.is-on span { background: #0f6b4c; border-color: #0f6b4c; color: #fff; }
+.rail__body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.lead-text { margin: 0; font-size: 14px; line-height: 1.65; color: #2b3330; }
+
+.question { background: #f1f3f2; border: 1.5px solid #9aa3a0; border-radius: 12px; padding: 11px 12px; }
+.question__q { margin: 0 0 9px; font-size: 14px; font-weight: 700; line-height: 1.5; }
+.question__opts { display: grid; gap: 6px; border-radius: 10px; }
+.opt { display: flex; gap: 9px; align-items: center; text-align: left; background: #fff; border: 1.5px solid #d5dad7; border-radius: 9px; padding: 8px 10px; font: inherit; font-size: 13.5px; color: #18201d; cursor: pointer; }
+.opt span { font-family: var(--en); font-weight: 700; color: #6b7280; width: 14px; }
+.opt:hover { border-color: #9aa3a0; }
+.opt.is-picked { border-color: #18201d; }
+.opt.is-right { border-color: #0f6b4c; background: #eaf6f0; }
+.opt.is-wrong { border-color: #c2410c; background: #fdf0ea; }
+.feedback { margin-top: 10px; border-radius: 10px; padding: 10px 12px; background: #fff; border: 1.5px solid; }
+.feedback.ok { border-color: #0f6b4c; }
+.feedback.retry { border-color: #c2410c; }
+.feedback b { font-size: 12px; color: #fff; border-radius: 4px; padding: 1px 8px; }
+.feedback.ok b { background: #0f6b4c; }
+.feedback.retry b { background: #c2410c; }
+.feedback p { margin: 6px 0 4px; font-size: 13.5px; line-height: 1.6; }
+.feedback small { font-size: 12px; color: #6b7280; }
+
+.concept { border: 1.5px solid #1d4ed8; border-radius: 12px; padding: 12px 14px; background: #f7f9ff; }
+.concept__tag { margin: 0; font-size: 11px; font-weight: 700; color: #1d4ed8; }
+.concept__term { margin: 2px 0 2px; font-size: 17px; font-weight: 700; color: #1d4ed8; }
+.concept__def { margin: 0 0 9px; font-size: 14px; line-height: 1.6; }
+.concept__formula { margin: 0 0 8px; font-family: var(--en); font-weight: 700; font-size: 14px; color: #1d4ed8; background: #e8eeff; border-radius: 8px; padding: 8px 10px; }
+.concept__note { margin: 0 0 10px; font-size: 13px; line-height: 1.6; color: #4b5552; }
+
+.ctrl__label { margin: 0 0 6px; font-size: 12px; font-weight: 700; color: #6b7280; }
+.seg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; border-radius: 10px; }
+.seg button { padding: 8px 0; border-radius: 8px; border: 1.5px solid #d5dad7; background: #fff; font: 700 14px "Space Grotesk", sans-serif; color: #18201d; cursor: pointer; }
+.seg button.is-on { background: #18201d; border-color: #18201d; color: #fff; }
+.seg button:disabled { opacity: 0.5; cursor: default; }
+.ctrl__row { display: flex; gap: 8px; margin-top: 10px; }
+.obs-check { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 5px; font-size: 13px; color: #6b7280; }
+.obs-check li { display: flex; gap: 8px; align-items: center; }
+.obs-check i { flex: 0 0 16px; height: 16px; border-radius: 50%; border: 1.5px solid #c9cfcc; font-style: normal; font-size: 10px; display: grid; place-items: center; }
+.obs-check li.done { color: #18201d; }
+.obs-check li.done i { background: #c2410c; border-color: #c2410c; color: #fff; font-weight: 700; }
+.compare { margin-top: 12px; border-radius: 10px; background: #fff; border: 1.5px solid #d5dad7; padding: 9px 12px; display: grid; gap: 4px; font-size: 13.5px; }
+.compare p { margin: 0; display: grid; grid-template-columns: 52px 1fr; }
+.compare span { font-size: 12px; color: #6b7280; font-weight: 700; padding-top: 1px; }
+
+.rbtn { appearance: none; border: 1.5px solid #c9cfcc; background: #fff; color: #18201d; border-radius: 10px; padding: 9px 14px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.rbtn:disabled { opacity: 0.45; cursor: default; }
+.rbtn--key { background: #0f6b4c; border-color: #0f6b4c; color: #fff; }
+.rbtn--next { background: #18201d; border-color: #18201d; color: #fff; }
+.rail-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; padding-top: 4px; }
+/* 눌러야 할 곳: 노란 테두리 반짝임 (box-shadow 만, 움직임 없음) */
+.is-target { animation: target 1.6s ease-in-out infinite; }
+@keyframes target { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 197, 66, 0); } 50% { box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.9); } }
+
+.report { background: #fff; border: 1.5px solid #18201d; border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.report__tag { margin: 0; font-size: 11.5px; font-weight: 700; color: #6b7280; }
+.report p { margin: 0; font-size: 13.5px; line-height: 1.7; }
+.report__saved { color: #0f6b4c; font-weight: 700; }
+.kit { font-size: 12.5px; color: #6b7280; }
+.kit summary { cursor: pointer; }
+.kit p { margin: 6px 0 0; }
+
+@media (max-width: 1100px) {
+  .lesson-grid { grid-template-columns: 1fr; overflow: auto; }
+  .rail { border-radius: 18px 18px 0 0; }
+}

@@ -26,7 +26,15 @@ export const ASSUME = {
 
 export const BASIS = '임시 가정 — 근무 60분, 카메라당 시간당 사건 2건, 사건 10초, 요원 1명이 동시에 보는 화면 4개 · 5초마다 넘김, 알림 확인 3초 · 15초 뒤 사라짐. 실제 관제 자료로 확인 필요';
 
+export type Cause = 'notWatched' | 'aiMissed' | 'overload';
+export interface EventDetail { found: boolean; at: number; cause: Cause | null } // at: 찾은 시각(초), 못 찾았으면 -1
+export interface Alert { t: number; cam: number; ev: number; outcome: 'found' | 'repeat' | 'false' | 'expired'; at: number } // ev: 사건 번호, 없으면 -1
+export interface Trace { change: Float32Array; alerts: Alert[] } // change[t * cameras + cam] = 그 초의 화면 변화량
+
 export interface Result {
+  list: Event[];          // 사건 목록 (detail 과 같은 순서)
+  detail: EventDetail[];
+  trace?: Trace;          // AI 보조일 때만, trace 를 요청하면
   events: number;
   detected: number;
   missed: number;
@@ -82,53 +90,63 @@ export function watching(cam: number, t: number, cameras: number, operators: num
   return Math.floor(idx / ASSUME.watchAtOnce) === g;
 }
 
-export function simulate(p: Params): Result {
+export function simulate(p: Params, opt: { trace?: boolean } = {}): Result {
   const seed = p.seed ?? 7;
   const T = ASSUME.minutes * 60;
   const events = makeEvents(p.cameras, seed);
-  const res: Result = { events: events.length, detected: 0, missed: 0, missRate: 0, alerts: 0, falseAlerts: 0, expiredAlerts: 0, load: 0, cause: { notWatched: 0, aiMissed: 0, overload: 0 } };
+  const detail: EventDetail[] = events.map(() => ({ found: false, at: -1, cause: null }));
+  const res: Result = { list: events, detail, events: events.length, detected: 0, missed: 0, missRate: 0, alerts: 0, falseAlerts: 0, expiredAlerts: 0, load: 0, cause: { notWatched: 0, aiMissed: 0, overload: 0 } };
 
   if (!p.aiAssist) {
     // 사람만: 사건이 보이는 10초 동안 한 번이라도 그 화면을 보고 있었으면 찾음
-    for (const e of events) {
-      let seen = false;
-      for (let t = e.start; t < e.end && !seen; t++) seen = watching(e.cam, t, p.cameras, p.operators);
-      if (seen) res.detected++; else res.cause.notWatched++;
-    }
+    events.forEach((e, i) => {
+      let at = -1;
+      for (let t = e.start; t < e.end && at < 0; t++) if (watching(e.cam, t, p.cameras, p.operators)) at = t;
+      if (at >= 0) { res.detected++; detail[i] = { found: true, at, cause: null }; }
+      else { res.cause.notWatched++; detail[i] = { found: false, at: -1, cause: 'notWatched' }; }
+    });
   } else {
     // AI 보조: 매초 카메라마다 화면 변화량을 재서 기준값을 넘으면 알림 → 요원이 하나씩 확인
     const r = rng(seed * 7919 + p.cameras * 31 + Math.round(p.threshold));
-    const byCam: Event[][] = Array.from({ length: p.cameras }, () => []);
-    for (const e of events) byCam[e.cam].push(e);
-    const found = new Set<Event>(), alerted = new Set<Event>();
+    const byCam: number[][] = Array.from({ length: p.cameras }, () => []);
+    events.forEach((e, i) => byCam[e.cam].push(i));
+    const alerted = new Set<number>();
     const cool = new Array(p.cameras).fill(-1e9);
-    const queue: { t: number; ev: Event | null }[] = [];
+    const queue: Alert[] = [];
+    const alerts: Alert[] = [];
+    const change = opt.trace ? new Float32Array(T * p.cameras) : null;
     const freeAt = new Array(p.operators).fill(0);
     for (let t = 0; t < T; t++) {
       for (let c = 0; c < p.cameras; c++) {
-        const ev = byCam[c].find((e) => t >= e.start && t < e.end) ?? null;
-        const change = ev ? ASSUME.eventChange + gauss(r) * ASSUME.noiseSigma : Math.abs(gauss(r)) * ASSUME.noiseSigma;
-        if (change > p.threshold && t - cool[c] >= ASSUME.alertCooldownSec) {
+        const ev = byCam[c].find((i) => t >= events[i].start && t < events[i].end) ?? -1;
+        const ch = ev >= 0 ? ASSUME.eventChange + gauss(r) * ASSUME.noiseSigma : Math.abs(gauss(r)) * ASSUME.noiseSigma;
+        if (change) change[t * p.cameras + c] = ch;
+        if (ch > p.threshold && t - cool[c] >= ASSUME.alertCooldownSec) {
           cool[c] = t; res.alerts++;
-          if (!ev) res.falseAlerts++; else alerted.add(ev);
-          queue.push({ t, ev });
+          if (ev < 0) res.falseAlerts++; else alerted.add(ev);
+          const a: Alert = { t, cam: c, ev, outcome: 'expired', at: -1 };
+          queue.push(a); alerts.push(a);
         }
       }
       for (let o = 0; o < p.operators; o++) {
         while (freeAt[o] <= t && queue.length) {
           const a = queue.shift()!;
-          if (t - a.t > ASSUME.alertExpireSec) { res.expiredAlerts++; continue; }
+          if (t - a.t > ASSUME.alertExpireSec) { res.expiredAlerts++; a.at = t; continue; }
           freeAt[o] = t + ASSUME.reviewSec;
-          if (a.ev) found.add(a.ev);
+          a.at = t;
+          if (a.ev < 0) a.outcome = 'false';
+          else if (detail[a.ev].found) a.outcome = 'repeat';
+          else { a.outcome = 'found'; detail[a.ev] = { found: true, at: t, cause: null }; }
         }
       }
     }
     res.expiredAlerts += queue.length;
-    for (const e of events) {
-      if (found.has(e)) res.detected++;
-      else if (!alerted.has(e)) res.cause.aiMissed++;
-      else res.cause.overload++;
-    }
+    events.forEach((_, i) => {
+      if (detail[i].found) res.detected++;
+      else if (!alerted.has(i)) { res.cause.aiMissed++; detail[i].cause = 'aiMissed'; }
+      else { res.cause.overload++; detail[i].cause = 'overload'; }
+    });
+    if (change) res.trace = { change, alerts };
     res.load = (res.alerts * ASSUME.reviewSec) / (p.operators * T);
   }
   res.missed = res.events - res.detected;

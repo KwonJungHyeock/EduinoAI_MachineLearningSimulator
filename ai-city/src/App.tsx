@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Hero } from './screens/Hero';
 import { Select } from './screens/Select';
 import { Brief } from './screens/Brief';
+import { Vision01 } from './lesson/vision01/Vision01';
 
-type Screen = 'hero' | 'select' | 'brief';
+type Screen = 'hero' | 'select' | 'brief' | 'lesson';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('hero');
@@ -25,7 +26,8 @@ export default function App() {
       >
         {screen === 'hero' && <Hero onEnter={enterCity} />}
         {screen === 'select' && <Select selected={selected} onSelect={setSelected} onEnter={enterDistrict} onHome={home} />}
-        {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} />}
+        {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} onStart={() => setScreen('lesson')} />}
+        {screen === 'lesson' && <Vision01 onExit={() => setScreen('brief')} onHome={home} />}
       </motion.div>
     </AnimatePresence>
   );

@@ -155,6 +155,9 @@ button { font: inherit; color: inherit; }
 .lesson__n em { font-style: normal; font-family: var(--kr); font-size: 11px; color: var(--muted); margin-left: 7px; }
 .lesson__title { font-size: 13.5px; font-weight: 700; line-height: 1.4; color: #d5dce7; }
 .lesson.is-case .lesson__node { border-color: var(--k); }
+.lesson__st { font-size: 11px; color: var(--dim); }
+.lesson.is-done .lesson__node { background: #2fbf8a; border-color: #2fbf8a; }
+.lesson.is-done .lesson__st { color: #2fbf8a; }
 .lesson.is-next .lesson__node { border-color: var(--k); background: var(--k); animation: beacon 2.2s ease-in-out infinite; }
 .lesson.is-next .lesson__n { color: var(--k); }
 .lesson.is-next .lesson__title { color: var(--ink); }

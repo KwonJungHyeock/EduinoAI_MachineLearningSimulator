@@ -8,12 +8,13 @@ export type Draw = (ctx: CanvasRenderingContext2D, t: number, w: number, h: numb
 interface Options {
   fps?: number;    // 저사양 기준 30
   still?: boolean; // 정지 화면 한 장만
+  essential?: boolean; // 수업 화면처럼 정보를 보여 주는 캔버스: 움직임 줄이기 설정이어도 계속 갱신
 }
 
 const REDUCE = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const IDLE: P = { x: 0, y: 0, in: 0, click: -1 };
 
-export function useCanvas(draw: Draw, { fps = 30, still = false }: Options = {}) {
+export function useCanvas(draw: Draw, { fps = 30, still = false, essential = false }: Options = {}) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function useCanvas(draw: Draw, { fps = 30, still = false }: Options = {})
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const start = performance.now();
-    const frozen = REDUCE || still;
+    const frozen = (REDUCE && !essential) || still;
     const follow = createFollower();
     let w = 0, h = 0, raf = 0, last = 0, visible = true;
 
@@ -56,7 +57,7 @@ export function useCanvas(draw: Draw, { fps = 30, still = false }: Options = {})
     if (!frozen) raf = requestAnimationFrame(loop);
 
     return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
-  }, [draw, fps, still]);
+  }, [draw, fps, still, essential]);
 
   return ref;
 }
