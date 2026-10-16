@@ -14,6 +14,7 @@ import { Vision06 } from './lesson/vision06/Vision06';
 import { Vision07 } from './lesson/vision07/Vision07';
 import { Vision08 } from './lesson/vision08/Vision08';
 import { Found01 } from './lesson/found01/Found01';
+import { Found02 } from './lesson/found02/Found02';
 
 type Screen = 'hero' | 'select' | 'brief' | 'lesson' | 'final';
 
@@ -39,6 +40,7 @@ export default function App() {
         {screen === 'select' && <Select selected={selected} onSelect={setSelected} onEnter={enterDistrict} onHome={home} onLesson={(lab, n) => { setLessonLab(lab); setSelected(lab); setLessonN(n); setScreen('lesson'); }} />}
         {screen === 'brief' && <Brief id={selected} onBack={() => setScreen('select')} onHome={home} onStart={(n) => { setLessonLab(selected); setLessonN(n); setScreen('lesson'); }} onFinal={() => setScreen('final')} />}
         {screen === 'lesson' && lessonLab === 'academy' && lessonN === 1 && <Found01 onExit={() => setScreen('brief')} onHome={home} />}
+        {screen === 'lesson' && lessonLab === 'academy' && lessonN === 2 && <Found02 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'final' && <TrackFinal onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonLab === 'vision' && lessonN === 1 && <Vision01 onExit={() => setScreen('brief')} onHome={home} />}
         {screen === 'lesson' && lessonLab === 'vision' && lessonN === 2 && <Vision02 onExit={() => setScreen('brief')} onHome={home} />}

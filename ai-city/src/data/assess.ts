@@ -6,6 +6,14 @@ export interface Essay { kind: 'essay'; q: string; keys: { label: string; any: s
 export type Item = OX | Short | Essay;
 
 export const ASSESS: Record<string, { title: string; items: Item[] }> = {
+  'found-2': {
+    title: '규칙 vs 학습',
+    items: [
+      { kind: 'ox', q: '규칙은 사람이 기준을 정하고, 학습은 정답이 붙은 예시로 컴퓨터가 기준을 찾는다.', answer: true, why: '규칙과 학습의 가장 큰 차이는 기준을 누가 정하느냐입니다.' },
+      { kind: 'ox', q: '보통 물건에 맞춘 규칙은 예외 물건이 섞여도 정확도가 그대로다.', answer: false, why: '예외가 섞이자 규칙의 정확도가 떨어졌습니다.' },
+      { kind: 'short', q: '컴퓨터가 정답이 붙은 예시로 기준을 스스로 찾는 것을 무엇이라 할까?', accept: ['학습', '기계학습', '머신러닝', '머신 러닝', 'machine learning'], why: '학습(머신러닝)입니다.' }
+    ]
+  },
   'found-1': {
     title: 'AI 로봇은 무엇이 다를까',
     items: [

@@ -107,6 +107,6 @@ export const FOUNDATION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: 
 // Lab 별 차시 계획: 진도 키 접두어(found-1 · vision-1 …), 차시 흐름, 화면이 만들어진 차시
 export interface LabPlan { prefix: string; lessons: { n: number; arc: (typeof ARC)[number]; title: string }[]; ready: number[]; track: string }
 export const LAB_PLAN: Record<string, LabPlan> = {
-  academy: { prefix: 'found', lessons: FOUNDATION_LESSONS, ready: [1], track: '머신러닝 기초' },
+  academy: { prefix: 'found', lessons: FOUNDATION_LESSONS, ready: [1, 2], track: '머신러닝 기초' },
   vision: { prefix: 'vision', lessons: VISION_LESSONS, ready: [1, 2, 3, 4, 5, 6, 7, 8], track: 'AI 영상처리' }
 };

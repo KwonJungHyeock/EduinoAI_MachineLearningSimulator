@@ -10,7 +10,8 @@ export interface Item { id: number; kind: Kind; variant: 'normal' | 'crushed' | 
 // 값의 근거(임시 · 교육용 단순화): 캔 = 금속 탐지 강함 · 빛 거의 안 통함, 페트 = 금속 없음 · 빛 잘 통함, 유리 = 금속 없음 · 빛 중간(두꺼운 유리 · 색)
 export const BASIS = '센서 값은 교육용 단순화(임시): 금속 반응 · 빛 투과 0~1, 종류별 평균 + 정규 잡음 σ=0.06';
 const MEAN: Record<Kind, [number, number]> = { can: [0.88, 0.05], pet: [0.05, 0.84], glass: [0.06, 0.52] };
-const VAR: Record<Item['variant'], [number, number] | null> = { normal: null, crushed: [0.62, 0.05], colorglass: [0.06, 0.24], labeled: [0.05, 0.47] };
+// 예외 물건(2차시): 찌그러진 캔 = 금속 면이 작아 금속 반응이 약함, 라벨 붙은 페트 = 라벨이 빛을 가림, 색 유리 = 빛이 더 적게 통함
+const VAR: Record<Item['variant'], [number, number] | null> = { normal: null, crushed: [0.4, 0.05], colorglass: [0.06, 0.3], labeled: [0.05, 0.66] };
 export const SIGMA = 0.06;
 
 export function rng(seed: number) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -47,4 +48,21 @@ export function run(items: Item[], decide: (it: Item, i: number) => Kind) {
   const res = items.map((it, i) => { const got = decide(it, i); return { it, got, ok: got === it.kind }; });
   const ok = res.filter((r) => r.ok).length;
   return { res, ok, acc: ok / Math.max(1, items.length), wrong: KINDS.map((k) => res.filter((r) => r.it.kind === k && !r.ok).length) };
+}
+
+// ── 2차시: 규칙 vs 학습 ──
+// 규칙 = 기준선 두 개: 금속 > m 이면 캔, 아니면 빛 > l 이면 페트, 나머지 유리
+export const rule = (m: number, l: number) => (it: Item): Kind => (it.metal > m ? 'can' : it.light > l ? 'pet' : 'glass');
+export const acc = (items: Item[], m: number, l: number) => run(items, rule(m, l)).acc;
+// 학습 = 정답이 붙은 예시로 기준선을 하나씩 훑어 보며 가장 많이 맞히는 자리를 찾는다(같은 점수면 가운데 자리).
+// 돌려줌: 훑는 과정(화면 애니메이션용)과 최종 기준선
+export const STEP = 0.02;
+export function learn(train: Item[], m0 = 0.5, l0 = 0.5) {
+  const grid = Array.from({ length: Math.round(1 / STEP) + 1 }, (_, i) => +(i * STEP).toFixed(2));
+  const frames: { m: number; l: number; acc: number; phase: 'm' | 'l' }[] = [];
+  const best = (vals: number[]) => { const mx = Math.max(...vals); const idx = vals.map((v, i) => (v === mx ? i : -1)).filter((i) => i >= 0); return grid[idx[Math.floor(idx.length / 2)]]; };
+  let m = m0, l = l0;
+  const am = grid.map((g) => { const a = acc(train, g, l); frames.push({ m: g, l, acc: a, phase: 'm' }); return a; }); m = best(am);
+  const al = grid.map((g) => { const a = acc(train, m, g); frames.push({ m, l: g, acc: a, phase: 'l' }); return a; }); l = best(al);
+  return { frames, m, l, acc: acc(train, m, l) };
 }

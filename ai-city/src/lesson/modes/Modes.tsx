@@ -88,7 +88,7 @@ function TheoryDeck({ meta, slides, onExit }: { meta: LessonMeta; slides: Slide[
           : s.practice ? (
             <div className={`mprac ${done[i] ? 'is-done' : ''}`}>
               <p className="mprac__label">{s.practice.label}{done[i] && <b> ✓ 완료</b>}</p>
-              {s.practice.render(() => setDone((d) => ({ ...d, [i]: true })))}
+              {s.practice.render(() => setDone((d) => (d[i] ? d : { ...d, [i]: true })))}
             </div>)
           : <p className="lead-text">이 슬라이드는 읽고 넘어가면 됩니다. → 키나 [다음]을 누르세요.</p>}
       </aside>
