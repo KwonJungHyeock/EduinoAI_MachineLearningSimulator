@@ -183,8 +183,8 @@ export async function line(W: number, view: 'hero' | 'side' = 'hero') {
   }
   return finish(renderer, scene, cam, W, H);
 }
-// 물건 스프라이트: 수업 장면 카메라와 같은 각도 · 빛, 투명 배경. 물건은 x=0 벨트 위(z=0)
-export function sprite(kind: Kind, v: number, W: number, lie: boolean) {
+// 물건 스프라이트: 수업 장면 카메라와 같은 각도 · 빛, 투명 배경. 물건은 x=0 벨트 위(z=0). zoom>1 = 이름표 붙이기 · 슬라이드용 큰 그림
+export function sprite(kind: Kind, v: number, W: number, lie: boolean, zoom = 1) {
   const H = Math.round(W * SIDE.aspect);
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
   renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.setClearColor(0x000000, 0);
@@ -196,7 +196,7 @@ export function sprite(kind: Kind, v: number, W: number, lie: boolean) {
   const rim = new THREE.DirectionalLight('#9fd8ff', 0.8); rim.position.set(-1, 1.5, -2); scene.add(rim);
   const it = makeItem(kind, v + 1); if (lie) { it.rotation.z = Math.PI / 2; it.position.y = 0.033; }
   const R = rng(v * 31 + 9); it.rotation.y = R() * Math.PI * 2;
-  const holder = new THREE.Group(); holder.add(it); holder.scale.setScalar(1.8); holder.position.set(0.25, 0.84, 0); scene.add(holder); // 수업 장면에서 잘 보이도록 1.8배
+  const holder = new THREE.Group(); holder.add(it); holder.scale.setScalar(1.8 * zoom); holder.position.set(0.25, 0.84, 0); scene.add(holder); // 수업 장면에서 잘 보이도록 1.8배(zoom = 크게 보여 줄 때 고해상도용)
   const cam = sideCam(W, H);
   const v0 = new THREE.Vector3(0.25, 0.84, 0).project(cam);
   window.__meta = { anchor: [(v0.x + 1) / 2 * W, (1 - v0.y) / 2 * H], w: W, h: H };

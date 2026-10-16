@@ -66,7 +66,7 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
           </div>
         </motion.aside>
       </div>
-      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Foundation Lab(1차시) · Vision Lab만 열림</p>
+      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭 · 이번 시안에서는 Foundation Lab(4차시) · Vision Lab(8차시)만 열림</p>
     </section>
   );
 }

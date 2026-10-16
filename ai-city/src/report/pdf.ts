@@ -11,6 +11,7 @@ async function fontB64(url: string) {
   return btoa(s);
 }
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+const score = (a: { ox: number[]; short: number[]; essay: { hit: boolean }[] }) => `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]}${a.essay.length ? ` · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : ''}`;
 const day = (t?: number) => (t ? new Date(t).toLocaleDateString('ko-KR') : '-');
 
 export async function downloadReport(p: Progress, lab = 'vision') {
@@ -43,13 +44,13 @@ export async function downloadReport(p: Progress, lab = 'vision') {
     font('normal', 9);
     doc.text(String(l.n), cols[0], y); doc.text(l.title, cols[1], y);
     doc.text(rec?.status === 'done' ? `완료 ${day(rec.updatedAt)}` : rec ? '열림 (아직 안 함)' : '잠김', cols[2], y);
-    doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
+    doc.text(a ? score(a) : '-', cols[3], y);
     doc.setDrawColor('#c9cfcc'); doc.setLineWidth(0.2); doc.line(M, y + 2, W - M, y + 2); y += 6.5;
   }
   { const f = p.lessons[`${pre}-final`], a = f?.assess; font('bold', 9);
     doc.text('종합', cols[0], y); doc.text('단원 종합평가', cols[1], y); font('normal', 9);
     doc.text(f?.status === 'done' ? `완료 ${day(f.updatedAt)}` : f ? '열림 (아직 안 함)' : '잠김', cols[2], y);
-    doc.text(a ? `OX ${a.ox[0]}/${a.ox[1]} · 단답 ${a.short[0]}/${a.short[1]} · 핵심어 ${a.essay.filter((e) => e.hit).length}/${a.essay.length}` : '-', cols[3], y);
+    doc.text(a ? score(a) : '-', cols[3], y);
     y += 6.5; }
   y += 4;
 
@@ -82,11 +83,16 @@ export async function downloadReport(p: Progress, lab = 'vision') {
       doc.setDrawColor('#9aa3a0'); doc.setLineWidth(0.2); doc.rect(gx, gy, gw, gh);
       font('normal', 7, '#4b5552'); [0, 0.5, 1].forEach((v) => doc.text(pct(v), gx - 9, gy + gh - v * gh + 1));
       const pts = ch.y.map((v, i) => [gx + (i / (n - 1)) * gw, gy + gh - v * gh, v] as const);
-      ch.x.forEach((lab, i) => doc.text(lab, gx + (i / (n - 1)) * gw - 3, gy + gh + 4));
-      doc.setDrawColor('#0f6b4c'); doc.setLineWidth(0.6);
-      for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
-      doc.setFillColor('#0f6b4c'); font('bold', 7, '#0f6b4c');
-      pts.forEach(([x, yy, v]) => { doc.circle(x, yy, 1, 'F'); doc.text(pct(v), x - 2, yy - 2); });
+      if (ch.bar) { // 항목 비교 = 막대(칸 가운데)
+        const cw = gw / ch.x.length, bw = Math.min(18, cw * 0.5);
+        ch.y.forEach((v, i) => { const cx = gx + cw * (i + 0.5); doc.setFillColor('#0f6b4c'); doc.rect(cx - bw / 2, gy + gh - v * gh, bw, v * gh, 'F'); font('bold', 7, '#0f6b4c'); doc.text(pct(v), cx, gy + gh - v * gh - 1.5, { align: 'center' }); font('normal', 7, '#4b5552'); doc.text(ch.x[i], cx, gy + gh + 4, { align: 'center' }); });
+      } else {
+        ch.x.forEach((lab, i) => doc.text(lab, gx + (i / (n - 1)) * gw - 3, gy + gh + 4));
+        doc.setDrawColor('#0f6b4c'); doc.setLineWidth(0.6);
+        for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+        doc.setFillColor('#0f6b4c'); font('bold', 7, '#0f6b4c');
+        pts.forEach(([x, yy, v]) => { doc.circle(x, yy, 1, 'F'); doc.text(pct(v), x - 2, yy - 2); });
+      }
       y = gy + gh + 12;
     }
     const exp = (rec.exp ?? []).slice().sort((a, b) => a.cameras - b.cameras);
@@ -118,7 +124,7 @@ export async function downloadReport(p: Progress, lab = 'vision') {
   { const f = p.lessons[`${pre}-final`], set = ASSESS[`${pre}-final`];
     if (f?.assess && set) { need(40); font('bold', 12); doc.text('단원 종합평가', M, y); y += 7; answers(f.assess, set.items); } }
   font('normal', 7.5, '#6b7280');
-  doc.text('수치는 모두 시뮬레이션 계산값 · 서술형은 핵심어 자동 확인 후 교사가 최종 확인 · 가정은 임시', M, 290);
+  doc.text('수치는 모두 시뮬레이션 계산값 · 서술형은 핵심어 자동 확인 후 교사가 최종 확인', M, 290);
   // 파일 이름을 확실히 붙이려고 직접 링크로 내려받기
   const url = URL.createObjectURL(doc.output('blob'));
   const a = document.createElement('a');

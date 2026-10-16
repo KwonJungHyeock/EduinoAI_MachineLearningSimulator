@@ -5,49 +5,51 @@ import { useRef, type PointerEvent } from 'react';
 import { rule, KO, type Item, type Kind } from '../../sim/recycle';
 
 export const KC: Record<Kind, string> = { can: '#9aa4ae', pet: '#3b82f6', glass: '#2f9e5f' };
-const P = 8, S = 84; // 안쪽 여백 · 크기(viewBox 100)
-const X = (v: number) => P + v * S, Y = (v: number) => P + (1 - v) * S;
+const P = 8, S = 84, I = 4; // 바깥 여백 · 틀 크기(viewBox 100) · 틀 안쪽 여백(물건 그림이 틀 밖으로 나가지 않게)
+const X = (v: number) => P + I + v * (S - 2 * I), Y = (v: number) => P + I + (1 - v) * (S - 2 * I), E = P + S;
 
-export function SensorPlane({ items, m, l, onChange, showWrong = true, dark = false, hint }: { items: Item[]; m: number; l: number; onChange?: (m: number, l: number) => void; showWrong?: boolean; dark?: boolean; hint?: string }) {
+export function SensorPlane({ items, m, l, onChange, showWrong = true, dark = false, hint, decide, noLines = false, hi }: { items: Item[]; m: number; l: number; onChange?: (m: number, l: number) => void; showWrong?: boolean; dark?: boolean; hint?: string; decide?: (it: Item, i: number) => Kind; noLines?: boolean; hi?: (it: Item, i: number) => boolean }) {
   const svg = useRef<SVGSVGElement>(null), drag = useRef<'m' | 'l' | null>(null);
-  const dec = rule(m, l);
+  const r0 = rule(m, l), dec = (it: Item, i = 0) => (decide ? decide(it, i) : r0(it));
   // 화면 좌표 → viewBox 좌표(가로 · 세로 여백이 생겨도 정확하게)
-  const at = (e: PointerEvent) => { const el = svg.current!, pt = el.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(el.getScreenCTM()!.inverse()); return [(q.x - P) / S, 1 - (q.y - P) / S]; };
+  const at = (e: PointerEvent) => { const el = svg.current!, pt = el.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(el.getScreenCTM()!.inverse()); return [(q.x - P - I) / (S - 2 * I), 1 - (q.y - P - I) / (S - 2 * I)]; };
   const move = (e: PointerEvent) => {
     if (!drag.current || !onChange) return; const [vx, vy] = at(e), c = (v: number) => Math.round(Math.max(0.02, Math.min(0.98, v)) * 50) / 50;
     if (drag.current === 'm') onChange(c(vx), l); else onChange(m, c(vy));
   };
   return (
     <svg ref={svg} className={`splane ${dark ? 'splane--dark' : ''} ${onChange ? 'is-edit' : ''}`} viewBox="0 0 100 100" onPointerMove={move} onPointerUp={() => (drag.current = null)} onPointerLeave={() => (drag.current = null)} role="img" aria-label={`센서 평면 · 금속 기준 ${m} · 빛 기준 ${l}`}>
-      {/* 구역 */}
-      <rect x={X(m)} y={P} width={X(1) - X(m)} height={S} fill={KC.can} className="splane__zone" />
+      {!noLines && <>{/* 구역 */}
+      <rect x={X(m)} y={P} width={E - X(m)} height={S} fill={KC.can} className="splane__zone" />
       <rect x={P} y={P} width={X(m) - P} height={Y(l) - P} fill={KC.pet} className="splane__zone" />
-      <rect x={P} y={Y(l)} width={X(m) - P} height={Y(0) - Y(l)} fill={KC.glass} className="splane__zone" />
-      <text x={X(m) + (X(1) - X(m)) / 2} y={P + 6} className="splane__zt" textAnchor="middle">캔 구역</text>
-      <text x={P + (X(m) - P) / 2} y={P + 6} className="splane__zt" textAnchor="middle">페트 구역</text>
-      <text x={P + (X(m) - P) / 2} y={Y(0) - 3} className="splane__zt" textAnchor="middle">유리 구역</text>
+      <rect x={P} y={Y(l)} width={X(m) - P} height={E - Y(l)} fill={KC.glass} className="splane__zone" /></>}
       {/* 축 */}
       <rect x={P} y={P} width={S} height={S} className="splane__frame" />
       <text x={P + S / 2} y={99} className="splane__ax" textAnchor="middle">금속 반응 → 클수록 금속</text>
       <text x={3} y={P + S / 2} className="splane__ax" textAnchor="middle" transform={`rotate(-90 3 ${P + S / 2})`}>빛 투과 → 클수록 투명</text>
       {/* 물건(직접 렌더한 3D 모델 그림) — 바닥 고리 색 = 실제 종류, 빨간 고리 = 잘못 나눔 */}
-      {items.map((it) => { const ok = dec(it) === it.kind, x = X(it.metal), y = Y(it.light), sz = it.variant === 'normal' ? 7 : 8;
+      {items.map((it, idx) => { const ok = dec(it, idx) === it.kind, x = X(it.metal), y = Y(it.light), sz = it.variant === 'normal' ? 7 : 8;
         const name = it.variant === 'normal' ? `${it.kind}${it.v}` : `${it.variant}0`; return (
-        <g key={it.id} className={`splane__it ${it.variant !== 'normal' ? 'ex' : ''} ${showWrong && !ok ? 'no' : ''}`}>
+        <g key={it.id} className={`splane__it ${it.variant !== 'normal' ? 'ex' : ''} ${showWrong && !ok ? 'no' : ''} ${hi ? (hi(it, idx) ? 'hi' : 'lo') : ''}`}>
           <ellipse cx={x} cy={y + sz * 0.42} rx={2.3} ry={0.8} fill={KC[it.kind]} className="splane__base" />
           {showWrong && !ok && <circle cx={x} cy={y} r={sz * 0.56} className="splane__wrong" />}
           <image href={`./found/sprites/${name}.webp`} x={x - sz / 2} y={y - sz / 2} width={sz} height={sz} preserveAspectRatio="xMidYMid meet" className="splane__img" />
-          <title>{`${KO[it.kind]}${it.variant !== 'normal' ? `(${it.variant === 'crushed' ? '찌그러짐' : it.variant === 'labeled' ? '라벨' : '색 유리'})` : ''} · 금속 ${it.metal} · 빛 ${it.light} → ${KO[dec(it)]}`}</title>
+          <title>{`${KO[it.kind]}${it.variant !== 'normal' ? `(${it.variant === 'crushed' ? '찌그러짐' : it.variant === 'labeled' ? '라벨' : '색 유리'})` : ''} · 금속 ${it.metal} · 빛 ${it.light} → ${KO[dec(it, idx)]}`}</title>
         </g>); })}
-      {/* 기준선 */}
+      {!noLines && <g className="splane__zts">{/* 구역 이름(물건 위에 · 글자 테두리로 읽히게) */}
+        <text x={X(m) + (E - X(m)) / 2} y={P + 4.5} className="splane__zt" textAnchor="middle">캔 구역</text>
+        <text x={P + (X(m) - P) / 2} y={P + 4.5} className="splane__zt" textAnchor="middle">페트 구역</text>
+        <text x={P + (X(m) - P) / 2} y={E - 1.6} className="splane__zt" textAnchor="middle">유리 구역</text></g>}
+      {!noLines && <>{/* 기준선 */}
       <g className="splane__line" onPointerDown={(e) => { if (!onChange) return; e.preventDefault(); (e.target as Element).setPointerCapture?.(e.pointerId); drag.current = 'm'; }}>
-        <line x1={X(m)} x2={X(m)} y1={P} y2={P + S} className="splane__hit" /><line x1={X(m)} x2={X(m)} y1={P} y2={P + S} />
-        <rect x={X(m) - 6} y={P + S + 0.5} width={12} height={4.6} rx={1} /><text x={X(m)} y={P + S + 4} textAnchor="middle">{m.toFixed(2)}</text>
+        <line x1={X(m)} x2={X(m)} y1={P} y2={E} className="splane__hit" /><line x1={X(m)} x2={X(m)} y1={P} y2={E} />
+        <rect x={X(m) - 6} y={E + 0.5} width={12} height={4.6} rx={1} /><text x={X(m)} y={E + 4} textAnchor="middle">{m.toFixed(2)}</text>
       </g>
       <g className="splane__line" onPointerDown={(e) => { if (!onChange) return; e.preventDefault(); (e.target as Element).setPointerCapture?.(e.pointerId); drag.current = 'l'; }}>
         <line x1={P} x2={X(m)} y1={Y(l)} y2={Y(l)} className="splane__hit" /><line x1={P} x2={X(m)} y1={Y(l)} y2={Y(l)} />
         <rect x={P + 0.5} y={Y(l) - 5.3} width={12} height={4.6} rx={1} /><text x={P + 6.5} y={Y(l) - 1.9} textAnchor="middle">{l.toFixed(2)}</text>
       </g>
+      </>}
       {hint && <text x={50} y={54} className="splane__hint" textAnchor="middle">{hint}</text>}
     </svg>
   );

@@ -6,7 +6,7 @@ export interface LessonRecord {
   report?: Record<string, unknown>;
   exp?: { cameras: number; events: number; missed: number; missRate: number }[]; // 실험 근무 결과 (리포트 그래프용)
   assess?: AssessRecord;
-  chart?: { title: string; x: string[]; y: number[] };            // 리포트 그래프(0~1)
+  chart?: { title: string; x: string[]; y: number[]; bar?: boolean }; // 리포트 그래프(0~1) · bar = 항목 비교(막대)
   updatedAt?: number;
   _deleted?: boolean;
 }

@@ -15,13 +15,13 @@ const MKEY = 'ai_labcity_mode';
 const getMode = (): Mode => { try { return (localStorage.getItem(MKEY) as Mode) || 'content'; } catch { return 'content'; } };
 
 export interface Summary { keys: string[]; line: string }
-export interface LessonMeta { id: string; labId: string; lab: string; n: number; total: number; title: string; keyColor: string; nextId?: string; summary: Summary; conclusion: () => string; chart?: () => { title: string; x: string[]; y: number[] } }
+export interface LessonMeta { id: string; labId: string; lab: string; n: number; total: number; title: string; keyColor: string; nextId?: string; summary: Summary; conclusion: () => string; chart?: () => { title: string; x: string[]; y: number[]; bar?: boolean } }
 
 // ── 마무리: 1분 요약 → 차시 평가 → 저장 · PDF ──
 function Finish({ meta, onExit }: { meta: LessonMeta; onExit: () => void }) {
   const [assessed, setAssessed] = useState(false), [busy, setBusy] = useState(false), [name, setName] = useState(load().student ?? '');
   const save = () => {
-    update(meta.id, { status: 'done', report: { conclusion: meta.conclusion(), savedAt: Date.now() }, ...(meta.chart ? { chart: meta.chart() } : {}) });
+    update(meta.id, { status: 'done', report: { conclusion: meta.conclusion(), savedAt: Date.now() }, ...(meta.chart ? { chart: { bar: true, ...meta.chart() } } : {}) });
     if (meta.nextId) update(meta.nextId, { status: 'open' });
   };
   return (

@@ -66,3 +66,22 @@ export function learn(train: Item[], m0 = 0.5, l0 = 0.5) {
   const al = grid.map((g) => { const a = acc(train, m, g); frames.push({ m, l: g, acc: a, phase: 'l' }); return a; }); l = best(al);
   return { frames, m, l, acc: acc(train, m, l) };
 }
+
+// ── 3차시: 데이터와 이름표 ── 학습 재료의 '이름표(label)'가 실제 종류와 다를 수 있다
+export interface Labeled { it: Item; label: Kind }
+export const asTrain = (ls: Labeled[]): Item[] => ls.map(({ it, label }) => ({ ...it, kind: label }));
+// 재료 만들기: n 개, glassRate = 유리병 비율(0이면 섞인 그대로), noise = 이름표가 틀린 비율
+export function dataset(n: number, seed: number, glassRate: number | null, noise: number, swap?: { from: Kind; to: Kind; rate: number }): Labeled[] {
+  const R = rng(seed * 7 + 3), pool = stream(n * 4, 'mixed', seed, 0.45);
+  let pick = pool.slice(0, n);
+  if (glassRate !== null) { const g = pool.filter((x) => x.kind === 'glass'), o = pool.filter((x) => x.kind !== 'glass'), ng = Math.round(n * glassRate); pick = [...g.slice(0, ng), ...o.slice(0, n - ng)]; }
+  return pick.map((it) => { if (swap && it.kind === swap.from && R() < swap.rate) return { it, label: swap.to }; return { it, label: R() < noise ? KINDS[(KINDS.indexOf(it.kind) + 1 + Math.floor(R() * 2)) % 3] : it.kind }; });
+}
+// ── 4차시: 얼마나 잘 맞혔을까 ── 외우기 로봇(본 물건이면 정답, 처음 보면 찍기) vs 기준선 로봇, 혼동표
+export function memorize(train: Item[]) {
+  const key = (it: Item) => `${it.metal}|${it.light}`, book = new Map(train.map((t) => [key(t), t.kind]));
+  return (it: Item, i: number): Kind => book.get(key(it)) ?? KINDS[(i * 7 + 1) % 3];
+}
+export function confusion(items: Item[], decide: (it: Item, i: number) => Kind) {
+  const m = KINDS.map(() => KINDS.map(() => 0)); items.forEach((it, i) => { m[KINDS.indexOf(it.kind)][KINDS.indexOf(decide(it, i))]++; }); return m;
+}

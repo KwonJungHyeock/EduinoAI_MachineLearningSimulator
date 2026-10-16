@@ -55,7 +55,7 @@ export function Assessment({ lessonId, onDone, label = '형성평가' }: { lesso
       ))}
       {!result
         ? <button className={`rbtn rbtn--key ${ready ? 'is-target' : ''}`} disabled={!ready} onClick={submit}>평가 제출</button>
-        : <p className="as-sum">OX {result.ox[0]}/{result.ox[1]} · 단답 {result.short[0]}/{result.short[1]} · 서술 핵심어 {result.essay.filter((e) => e.hit).length}/{result.essay.length}</p>}
+        : <p className="as-sum">OX {result.ox[0]}/{result.ox[1]} · 단답 {result.short[0]}/{result.short[1]}{result.essay.length ? ` · 서술 핵심어 ${result.essay.filter((e) => e.hit).length}/${result.essay.length}` : ''}</p>}
     </div>
   );
 }

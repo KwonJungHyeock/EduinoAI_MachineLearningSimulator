@@ -21,7 +21,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
   const st = (n: number) => lesson(prog, `${plan.prefix}-${n}`)?.status ?? (n === 1 ? 'open' : 'locked');
   const next = VISION_LESSONS.find((l) => st(l.n) === 'open')?.n ?? null;
   const anyDone = VISION_LESSONS.some((l) => st(l.n) === 'done');
-  const allDone = VISION_LESSONS.every((l) => st(l.n) === 'done'), finalDone = lesson(prog, `${plan.prefix}-final`)?.status === 'done', hasFinal = d.id === 'vision';
+  const allDone = VISION_LESSONS.every((l) => st(l.n) === 'done'), finalDone = lesson(prog, `${plan.prefix}-final`)?.status === 'done', hasFinal = d.id === 'vision' || d.id === 'academy';
   const [busy, setBusy] = useState(false);
   const playable = (n: number) => st(n) !== 'locked' && READY.includes(n);
   return (
@@ -81,7 +81,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
           {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load(), d.id); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 결과 보고서 PDF'}</button>}
         </motion.div>
       </motion.div>
-      <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · Lab · 현장 이름은 가칭</p>
+      {d.id !== 'academy' && <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · Lab · 현장 이름은 가칭</p>}
     </section>
   );
 }

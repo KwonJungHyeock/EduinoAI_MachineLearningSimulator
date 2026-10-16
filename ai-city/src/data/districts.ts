@@ -96,17 +96,17 @@ export const VISION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: stri
   { n: 8, arc: '상황 해결', title: '밤의 교차로 — 데이터 편향' }
 ];
 
-export const FOUNDATION_LESSONS: { n: number; arc: (typeof ARC)[number]; title: string }[] = [
-  { n: 1, arc: '진입', title: 'AI 로봇은 무엇이 다를까' },
-  { n: 2, arc: '기초', title: '규칙 vs 학습' },
-  { n: 3, arc: '실습', title: '데이터와 이름표' },
-  { n: 4, arc: '상황 해결', title: '얼마나 잘 맞혔을까' }
+export const FOUNDATION_LESSONS: { n: number; arc: string; title: string }[] = [
+  { n: 1, arc: '도입', title: 'AI 로봇은 무엇이 다를까' },
+  { n: 2, arc: '개념', title: '규칙 vs 학습' },
+  { n: 3, arc: '탐구', title: '데이터와 이름표' },
+  { n: 4, arc: '적용', title: '얼마나 잘 맞혔을까' }
 ];
 // Foundation Lab: 4차시로 압축(기초는 짧게 — 기존 8차시 초안 1 · 2+3+5 · 4+7 · 6+8). 차시마다 이론 모드 · 콘텐츠 모드
 
 // Lab 별 차시 계획: 진도 키 접두어(found-1 · vision-1 …), 차시 흐름, 화면이 만들어진 차시
-export interface LabPlan { prefix: string; lessons: { n: number; arc: (typeof ARC)[number]; title: string }[]; ready: number[]; track: string }
+export interface LabPlan { prefix: string; lessons: { n: number; arc: string; title: string }[]; ready: number[]; track: string }
 export const LAB_PLAN: Record<string, LabPlan> = {
-  academy: { prefix: 'found', lessons: FOUNDATION_LESSONS, ready: [1, 2], track: '머신러닝 기초' },
+  academy: { prefix: 'found', lessons: FOUNDATION_LESSONS, ready: [1, 2, 3, 4], track: '머신러닝 기초' },
   vision: { prefix: 'vision', lessons: VISION_LESSONS, ready: [1, 2, 3, 4, 5, 6, 7, 8], track: 'AI 영상처리' }
 };
