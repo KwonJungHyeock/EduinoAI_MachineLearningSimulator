@@ -47,6 +47,29 @@ function Pick({ q, opts, correct, why, done }: { q: string; opts: string[]; corr
 // 조건이 처음 맞을 때 한 번만 done
 function When({ ok, done, children }: { ok: boolean; done: () => void; children: ReactNode }) { useEffect(() => { if (ok) done(); }, [ok]); return <>{children}</>; } // eslint-disable-line react-hooks/exhaustive-deps
 
+// 슬라이드용 움직이는 그림
+// ① 물건이 하나씩 평면 위로 떨어져 자리를 잡음(반복)
+function DropDemo({ items, m, l, wrong = false }: { items: typeof NORMAL; m: number; l: number; wrong?: boolean }) {
+  const [k, setK] = useState(0);
+  useEffect(() => { const id = setInterval(() => setK((v) => (v >= items.length + 12 ? 0 : v + 1)), 160); return () => clearInterval(id); }, [items.length]);
+  return <div className="slide__plane"><SensorPlane items={items.slice(0, Math.min(items.length, k))} m={m} l={l} showWrong={wrong} /><Legend /></div>;
+}
+// ② 기준선이 엉뚱한 자리에서 알맞은 자리로 천천히 움직임(사람이 규칙을 다듬는 모습, 반복)
+function RuleDemo() {
+  const [t, setT] = useState(0);
+  useEffect(() => { let raf = 0; const t0 = performance.now(); const f = (now: number) => { setT(((now - t0) / 1000) % 7); raf = requestAnimationFrame(f); }; raf = requestAnimationFrame(f); return () => cancelAnimationFrame(raf); }, []);
+  const e = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x)), k = e((t - 0.6) / 4);
+  const m = +(0.15 + (0.5 - 0.15) * k).toFixed(2), l = +(0.3 + (0.7 - 0.3) * k).toFixed(2);
+  return <div className="slide__plane"><SensorPlane items={NORMAL} m={m} l={l} /><p className="slide__live">맞게 나눔 <b>{pct(acc(NORMAL, m, l))}</b></p></div>;
+}
+// ③ 학습 과정을 저절로 반복 재생
+function LearnDemo() {
+  const L = useLearn();
+  useEffect(() => { L.start(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!L.done) return; const id = setTimeout(L.start, 2500); return () => clearTimeout(id); }, [L.done]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="slide__plane"><SensorPlane items={TRAIN} m={L.m} l={L.l} /><p className="slide__live">{L.done ? <>찾은 기준: 금속 &gt; {LEARNED.m} · 빛 &gt; {LEARNED.l} · 맞힘 <b>{pct(LEARNED.acc)}</b></> : <>{L.phase === 'm' ? '금속 기준선' : '빛 기준선'}을 옮겨 보는 중 · 맞힘 <b>{L.a !== null ? pct(L.a) : ''}</b></>}</p></div>;
+}
+
 export function Found02({ onExit, onHome }: { onExit: () => void; onHome: () => void }) {
   // 체험 학습 상태
   const [m, setM] = useState(0.15), [l, setL] = useState(0.3);
@@ -69,16 +92,18 @@ export function Found02({ onExit, onHome }: { onExit: () => void; onHome: () => 
 
   const slides: Slide[] = [
     { kicker: 'Foundation Lab · 2차시', title: '규칙 vs 학습', body: <><p className="slide__lead">1차시의 감지 로봇은 센서 값으로 판단했습니다.</p><p>그 판단 기준은 <b>누가</b>, <b>어떻게</b> 정할까요? 사람이 정하는 <b>규칙</b>과, 컴퓨터가 예시에서 찾는 <b>학습</b>을 비교합니다.</p></>,
-      visual: <div className="slide__plane"><SensorPlane items={NORMAL} m={0.5} l={0.7} showWrong={false} /><Legend /></div>, note: '센서 평면 읽는 법: 오른쪽일수록 금속, 위쪽일수록 투명. 점 하나가 물건 하나입니다.' },
+      visual: <DropDemo items={NORMAL} m={0.5} l={0.7} />, note: '센서 평면 읽는 법: 오른쪽일수록 금속, 위쪽일수록 투명. 점 하나가 물건 하나입니다.' },
     { kicker: '규칙', title: '사람이 기준선을 정한다', body: <><p>규칙은 <b>만약 ~이면</b>으로 씁니다.</p><p className="slide__code">만약 금속 &gt; <b>m</b> 이면 → 캔<br />아니고 빛 &gt; <b>l</b> 이면 → 페트병<br />나머지 → 유리병</p><p>평면에서는 기준선 두 개가 구역을 나눕니다.</p></>,
+      visual: <RuleDemo />,
       practice: { label: `기준선을 끌어 보통 물건 30개를 ${GOAL * 100}% 이상 나누기`, render: (done) => { const a = acc(NORMAL, tm, tl); return <When ok={a >= GOAL} done={done}><div className="mprac__plane"><SensorPlane items={NORMAL} m={tm} l={tl} onChange={(a2, b2) => { setTm(a2); setTl(b2); }} /><p className="lead-text">맞게 나눔 <b>{pct(a)}</b> {a >= GOAL ? '✓ 규칙 완성' : '· 선을 끌어 옮겨 보세요'}</p></div></When>; } } },
     { kicker: '예외', title: '규칙에 맞지 않는 물건', body: <><p>현장에는 <b>예외 물건</b>이 섞여 옵니다.</p>{Object.entries(EXAMPLE).map(([k, it]) => <p key={k}><b>{EXN[k]}</b> — 금속 {it.metal.toFixed(2)} · 빛 {it.light.toFixed(2)}</p>)}</>,
-      visual: <div className="sv-seq">{Object.keys(EXAMPLE).map((k) => <div key={k}><img src={`./found/sprites/${k}0.webp`} alt="" /><span>{EXN[k]}</span></div>)}</div>,
+      visual: <div className="sv-seq sv-seq--float">{Object.keys(EXAMPLE).map((k, i) => <div key={k} style={{ ['--i' as string]: i }}><img src={`./found/sprites/${k}0.webp`} alt="" /><span>{EXN[k]}</span></div>)}</div>,
       practice: { label: 'OX 확인', render: (done) => <Pick q="찌그러진 캔도 보통 캔처럼 금속 반응이 크게 나온다." opts={['O', 'X']} correct={1} why="금속 면이 작아져 금속 반응이 약하게 나옵니다(0.4 근처)." done={done} /> } },
     { kicker: '규칙의 한계', title: '예외가 섞이면 규칙이 무너진다', body: <><p>보통 물건에 맞춘 규칙(금속 &gt; 0.5 · 빛 &gt; 0.7)을 예외가 섞인 30개에 그대로 쓰면:</p><Bars rows={[{ label: '보통 물건', v: acc(NORMAL, 0.5, 0.7), c: KEY }, { label: '예외 섞임', v: ruleTest.acc, c: '#f97316' }]} /><p>예외마다 규칙을 덧붙이면 규칙이 점점 길고 복잡해집니다.</p></>,
-      visual: <div className="slide__plane"><SensorPlane items={TEST} m={0.5} l={0.7} /><Legend /></div>,
+      visual: <DropDemo items={TEST} m={0.5} l={0.7} wrong />,
       practice: { label: '확인 문제', render: (done) => <Pick q="예외 물건이 계속 늘어나면 규칙은?" opts={['저절로 고쳐진다', '사람이 계속 덧붙여야 해서 점점 복잡해진다', '예외와 상관없이 늘 맞는다']} correct={1} why="규칙은 사람이 정하므로 예외마다 사람이 고쳐야 합니다." done={done} /> } },
     { kicker: '학습', title: '예시를 보고 기준을 스스로 찾는다', body: <><p>정답 이름표가 붙은 <b>예시</b>를 보여 주면, 컴퓨터는 기준선을 조금씩 옮겨 보며 <b>가장 많이 맞히는 자리</b>를 찾습니다.</p><p className="slide__lead">이것이 머신러닝의 '학습'입니다.</p></>,
+      visual: <LearnDemo />,
       practice: { label: '학습시켜 보기', render: (done) => <When ok={L2.done} done={done}><div className="mprac__plane"><SensorPlane items={TRAIN} m={L2.m} l={L2.l} /><LearnBox L={L2} /><button className="rbtn rbtn--key" disabled={L2.running} onClick={L2.start}>{L2.done ? '다시 학습' : L2.running ? '학습 중…' : '예시로 학습시키기'}</button></div></When> } },
     { kicker: '비교', title: '규칙 vs 학습', body: <table className="slide__tbl"><tbody><tr><th></th><th>규칙</th><th>학습</th></tr><tr><td>기준을 정하는 쪽</td><td>사람</td><td>컴퓨터</td></tr><tr><td>필요한 것</td><td>사람의 생각</td><td>정답이 붙은 예시</td></tr><tr><td>예외가 늘면</td><td>사람이 계속 고침</td><td>예시를 더해 다시 학습</td></tr><tr><td>예외 섞인 30개</td><td>{pct(ruleTest.acc)}</td><td>{pct(lTest)}</td></tr></tbody></table>,
       practice: { label: '확인 문제', render: (done) => <Pick q="학습에 꼭 필요한 것은?" opts={['더 빠른 컴퓨터', '정답이 붙은 예시(데이터)', '더 긴 규칙']} correct={1} why="정답 이름표가 붙은 예시가 있어야 컴퓨터가 기준을 찾을 수 있습니다. 다음 차시에서 직접 이름표를 붙여 봅니다." done={done} /> } }

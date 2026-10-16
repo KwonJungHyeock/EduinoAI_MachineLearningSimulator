@@ -67,6 +67,13 @@ function LineScene({ S, r, play, onEnd }: { S: Scene; r: Run | null; play: numbe
 }
 
 
+// 슬라이드용: 같은 라인 장면을 저절로 반복 재생(움직이는 수업 자료)
+function AutoLine({ S, mach, order }: { S: Scene; mach: Mach; order: Order }) {
+  const r = useMemo(() => ({ id: 0, mach, order, sense: ALL, ...calc(mach, order) }), [mach, order]);
+  const [play, setPlay] = useState(1);
+  return <div className="slide__line"><LineScene S={S} r={r} play={play} onEnd={() => setTimeout(() => setPlay((p) => p + 1), 1600)} /></div>;
+}
+
 // 두 결과 막대(기계 vs 로봇 등)
 function Bars({ rows }: { rows: { label: string; v: number | null; c: string }[] }) {
   return <div className="fbar">{rows.map((r) => <div key={r.label}><span>{r.label}</span><i><b style={{ width: `${(r.v ?? 0) * 100}%`, background: r.c }} /></i><em>{r.v === null ? '—' : pct(r.v)}</em></div>)}</div>;
@@ -113,18 +120,20 @@ export function Found01({ onExit, onHome }: { onExit: () => void; onHome: () => 
 
   const choice = (q: string, opts: string[], correct: number, why: string) => (done: () => void) => <Pick q={q} opts={opts} correct={correct} why={why} done={done} />;
   const slides: Slide[] = [
-    { kicker: 'Foundation Lab · 1차시', title: 'AI 로봇은 무엇이 다를까', body: <><p className="slide__lead">아카데미 선별 라인에 캔 · 페트병 · 유리병이 섞여서 들어옵니다.</p><p>두 기계에게 같은 일을 맡겨 보고, <b>무엇이 다른지</b> 찾아봅시다.</p></>, visual: <img src="./assets/foundation_line.webp" alt="선별 라인" />, note: '선별 라인 사진을 보여 주며 “기계가 물건을 어떻게 알아볼까?”를 먼저 물어보세요.' },
-    { kicker: '기계 ①', title: '정해진 대로 움직이는 기계', body: <><p>이 기계는 물건을 <b>보지 않습니다.</b></p><p>캔 → 페트 → 유리 순서를 외워 두고, 그 순서대로 통을 바꿔 가며 밀어 넣어요.</p></>, visual: <div className="sv-seq">{KINDS.map((k, i) => <div key={k}><img src={`./found/sprites/${k}0.webp`} alt="" /><span>{i + 1}번째 → {KO[k]} 통</span></div>)}</div>,
+    { kicker: 'Foundation Lab · 1차시', title: 'AI 로봇은 무엇이 다를까', body: <><p className="slide__lead">아카데미 선별 라인에 캔 · 페트병 · 유리병이 섞여서 들어옵니다.</p><p>두 기계에게 같은 일을 맡겨 보고, <b>무엇이 다른지</b> 찾아봅시다.</p></>, visual: <AutoLine S={S} mach="robot" order="mixed" />, note: '선별 라인 사진을 보여 주며 “기계가 물건을 어떻게 알아볼까?”를 먼저 물어보세요.' },
+    { kicker: '기계 ①', title: '정해진 대로 움직이는 기계', body: <><p>이 기계는 물건을 <b>보지 않습니다.</b></p><p>캔 → 페트 → 유리 순서를 외워 두고, 그 순서대로 통을 바꿔 가며 밀어 넣어요.</p></>, visual: <div className="slide__stack"><AutoLine S={S} mach="fixed" order="cycle" /><div className="sv-seq sv-seq--anim">{KINDS.map((k, i) => <div key={k} style={{ ['--i' as string]: i }}><img src={`./found/sprites/${k}0.webp`} alt="" /><span>{i + 1}번째 → {KO[k]} 통</span></div>)}</div></div>,
       practice: { label: 'OX 확인', render: (done) => <Pick q="이 기계는 센서로 물건을 재서 통을 고른다." opts={['O', 'X']} correct={1} why="물건을 보지 않고 외운 순서대로만 움직입니다." done={done} /> } },
     { kicker: '실험', title: '물건 순서가 바뀌면?', body: <><p>물건이 <b>정해진 순서</b>로 올 때와 <b>섞여서</b> 올 때, 기계는 30개 중 몇 개를 맞게 나눌까요?</p>{shown3 && <Bars rows={[{ label: '정해진 순서', v: T.fc.acc, c: '#9aa4ae' }, { label: '섞여서', v: T.fm.acc, c: '#f97316' }]} />}</>,
+      visual: <AutoLine S={S} mach="fixed" order={shown3 ? 'mixed' : 'cycle'} />,
       practice: { label: '직접 돌려 보기', render: (done) => <div className="ctrl"><p className="lead-text">버튼을 눌러 두 경우를 계산해 보세요(같은 물건 30개).</p><button className="rbtn rbtn--key" onClick={() => { setShown3(true); done(); }}>섞어서 돌려 보기</button>{shown3 && <p className="lead-text">정해진 순서 <b>{pct(T.fc.acc)}</b> → 섞여서 <b>{pct(T.fm.acc)}</b>. 순서가 바뀌자 크게 틀렸어요.</p>}</div> },
       note: '왜 떨어졌는지 학생이 먼저 말하게 한 뒤 다음 슬라이드로.' },
-    { kicker: '핵심', title: '감지 → 판단 → 행동', body: <><p><b>감지</b> — 센서로 지금 상황을 잰다</p><p><b>판단</b> — 잰 값으로 무엇인지 정한다</p><p><b>행동</b> — 정한 대로 움직인다</p><p className="slide__lead">AI 로봇은 이 세 단계를 매번 되풀이합니다.</p></>, visual: <div className="sv-flow"><span>감지<small>센서 게이트</small></span><i>→</i><span>판단<small>규칙 · 학습</small></span><i>→</i><span>행동<small>로봇 팔</small></span></div>,
+    { kicker: '핵심', title: '감지 → 판단 → 행동', body: <><p><b>감지</b> — 센서로 지금 상황을 잰다</p><p><b>판단</b> — 잰 값으로 무엇인지 정한다</p><p><b>행동</b> — 정한 대로 움직인다</p><p className="slide__lead">AI 로봇은 이 세 단계를 매번 되풀이합니다.</p></>, visual: <div className="sv-flow sv-flow--anim"><span>감지<small>센서 게이트</small></span><i>→</i><span>판단<small>규칙 · 학습</small></span><i>→</i><span>행동<small>로봇 팔</small></span></div>,
       practice: { label: '확인 문제', render: choice('센서로 물건의 금속 반응을 재는 것은 어느 단계일까?', ['감지', '판단', '행동'], 0, '센서로 상황을 재는 것은 감지입니다.') } },
     { kicker: '감지', title: '센서 두 개로 물건 재기', body: <><p><b>금속 센서</b> — 캔처럼 금속이면 값이 크다</p><p><b>빛 센서</b> — 페트병은 빛이 잘 통하고, 유리병은 덜 통한다</p><p className="slide__lead">오른쪽에서 물건을 골라 로봇이 어떻게 판단하는지 확인해 보세요.</p></>,
-      visual: <div className="sv-sense">{PROBE.map((x) => <div key={x.kind}><img src={`./found/sprites/${sname(x)}.webp`} alt="" /><span>{KO[x.kind]}</span><p><em>금속</em><i><b style={{ width: `${x.metal * 100}%` }} /></i><small>{x.metal.toFixed(2)}</small></p><p><em>빛</em><i><b className="l" style={{ width: `${x.light * 100}%` }} /></i><small>{x.light.toFixed(2)}</small></p></div>)}</div>,
+      visual: <div className="sv-sense sv-sense--anim">{PROBE.map((x, j) => <div key={x.kind} style={{ ['--i' as string]: j }}><img src={`./found/sprites/${sname(x)}.webp`} alt="" /><span>{KO[x.kind]}</span><p><em>금속</em><i><b style={{ width: `${x.metal * 100}%` }} /></i><small>{x.metal.toFixed(2)}</small></p><p><em>빛</em><i><b className="l" style={{ width: `${x.light * 100}%` }} /></i><small>{x.light.toFixed(2)}</small></p></div>)}</div>,
       practice: { label: '물건 재 보기 (2개 이상)', render: (done) => <SensorProbe onTry={(n) => { if (n >= 2) done(); }} /> } },
     { kicker: '결과', title: '섞여서 와도 맞게 나눈다', body: <><p>같은 물건 30개(섞여서)를 두 기계에 맡긴 결과입니다.</p><Bars rows={[{ label: '정해진 대로 기계', v: T.fm.acc, c: '#f97316' }, { label: '감지 로봇', v: T.rm.acc, c: KEY }]} /></>,
+      visual: <AutoLine S={S} mach="robot" order="mixed" />,
       practice: { label: '확인 문제', render: choice('감지 로봇이 섞여 와도 맞게 나눈 이유는?', ['더 빨라서', '물건마다 센서로 재고 판단해서', '순서를 더 잘 외워서'], 1, '감지 로봇은 순서와 상관없이 매번 센서 값으로 판단합니다.') } }
   ];
 

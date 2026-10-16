@@ -30,11 +30,14 @@ export function SensorPlane({ items, m, l, onChange, showWrong = true, dark = fa
       <rect x={P} y={P} width={S} height={S} className="splane__frame" />
       <text x={P + S / 2} y={99} className="splane__ax" textAnchor="middle">금속 반응 → 클수록 금속</text>
       <text x={3} y={P + S / 2} className="splane__ax" textAnchor="middle" transform={`rotate(-90 3 ${P + S / 2})`}>빛 투과 → 클수록 투명</text>
-      {/* 점 */}
-      {items.map((it) => { const ok = dec(it) === it.kind; return (
-        <g key={it.id}>
-          {showWrong && !ok && <circle cx={X(it.metal)} cy={Y(it.light)} r={2.6} className="splane__wrong" />}
-          <circle cx={X(it.metal)} cy={Y(it.light)} r={it.variant === 'normal' ? 1.35 : 1.6} fill={KC[it.kind]} className={`splane__dot ${it.variant !== 'normal' ? 'ex' : ''}`}><title>{`${KO[it.kind]}${it.variant !== 'normal' ? `(${it.variant === 'crushed' ? '찌그러짐' : it.variant === 'labeled' ? '라벨' : '색 유리'})` : ''} · 금속 ${it.metal} · 빛 ${it.light} → ${KO[dec(it)]}`}</title></circle>
+      {/* 물건(직접 렌더한 3D 모델 그림) — 바닥 고리 색 = 실제 종류, 빨간 고리 = 잘못 나눔 */}
+      {items.map((it) => { const ok = dec(it) === it.kind, x = X(it.metal), y = Y(it.light), sz = it.variant === 'normal' ? 7 : 8;
+        const name = it.variant === 'normal' ? `${it.kind}${it.v}` : `${it.variant}0`; return (
+        <g key={it.id} className={`splane__it ${it.variant !== 'normal' ? 'ex' : ''} ${showWrong && !ok ? 'no' : ''}`}>
+          <ellipse cx={x} cy={y + sz * 0.42} rx={2.3} ry={0.8} fill={KC[it.kind]} className="splane__base" />
+          {showWrong && !ok && <circle cx={x} cy={y} r={sz * 0.56} className="splane__wrong" />}
+          <image href={`./found/sprites/${name}.webp`} x={x - sz / 2} y={y - sz / 2} width={sz} height={sz} preserveAspectRatio="xMidYMid meet" className="splane__img" />
+          <title>{`${KO[it.kind]}${it.variant !== 'normal' ? `(${it.variant === 'crushed' ? '찌그러짐' : it.variant === 'labeled' ? '라벨' : '색 유리'})` : ''} · 금속 ${it.metal} · 빛 ${it.light} → ${KO[dec(it)]}`}</title>
         </g>); })}
       {/* 기준선 */}
       <g className="splane__line" onPointerDown={(e) => { if (!onChange) return; e.preventDefault(); (e.target as Element).setPointerCapture?.(e.pointerId); drag.current = 'm'; }}>
@@ -50,5 +53,5 @@ export function SensorPlane({ items, m, l, onChange, showWrong = true, dark = fa
   );
 }
 export function Legend({ dark = false }: { dark?: boolean }) {
-  return <p className={`splane__lg ${dark ? 'dark' : ''}`}>{(['can', 'pet', 'glass'] as Kind[]).map((k) => <span key={k}><i style={{ background: KC[k] }} />{KO[k]}</span>)}<span><i className="ex" />예외 물건</span><span><i className="wr" />잘못 나눔</span></p>;
+  return <p className={`splane__lg ${dark ? 'dark' : ''}`}>{(['can', 'pet', 'glass'] as Kind[]).map((k) => <span key={k}><img src={`./found/sprites/${k}0.webp`} alt="" /><i style={{ background: KC[k] }} />{KO[k]}</span>)}<span><img src="./found/sprites/crushed0.webp" alt="" />예외 물건(찌그러짐 · 라벨 · 색 유리)</span><span><i className="wr" />잘못 나눔</span></p>;
 }
