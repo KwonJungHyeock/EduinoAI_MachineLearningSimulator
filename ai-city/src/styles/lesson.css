@@ -773,3 +773,67 @@
 .slide__in:has(.slide__line) { grid-template-columns: 0.85fr 1.35fr; }
 .sv-flow span { width: 10cqw; height: 10cqw; font-size: 2cqw; }
 .sv-flow { gap: 1cqw; }
+
+/* ── 개념 학습 레이아웃 v2: 같은 크기 카드 두 장 + 아래 넘기기 줄, 여백 · 줄바꿈 정리 ── */
+.theory { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 14px 16px; padding: 4px clamp(16px, 2vw, 28px) 14px; }
+.theory .slide { grid-column: 1; grid-row: 1; width: auto; aspect-ratio: auto; min-height: 0; height: 100%; display: flex; flex-direction: column; border-radius: 16px; padding: clamp(18px, 2.2vw, 30px); overflow: hidden; container-type: inline-size; word-break: keep-all; overflow-wrap: break-word; }
+.theory .slide:fullscreen { padding: 5vh 6vw; }
+.slide__head, .theory__railhead { flex: none; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.slide__head .slide__no { position: static; font: 700 12px var(--en); letter-spacing: 0.08em; color: #8a948f; }
+.slide__pg { font: 700 12px var(--en); color: #8a948f; }
+.theory .slide__in { position: relative; inset: auto; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(10px, 1.6cqi, 18px); padding: 0; align-items: stretch; }
+.theory .slide__in--text, .theory .slide__in--end { justify-content: center; }
+.theory .slide__text { flex: none; }
+.theory .slide__kick { font: 700 clamp(11px, 1.9cqi, 14px) var(--en); margin: 0 0 6px; }
+.theory .slide h2 { font-size: clamp(22px, 5.2cqi, 40px); margin: 0 0 10px; line-height: 1.22; text-wrap: balance; }
+.theory .slide__body p { font-size: clamp(13.5px, 2.75cqi, 19px); line-height: 1.62; margin: 0 0 6px; text-wrap: pretty; }
+.theory .slide__vis { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.theory .slide__vis > * { max-width: 100%; max-height: 100%; }
+.theory .slide__line { width: auto; height: auto; max-height: 100%; max-width: 100%; aspect-ratio: 1600 / 656; flex: 0 1 auto; width: 100%; border-radius: 12px; }
+.theory .slide__line .fl1__bins { transform: scale(0.72); }
+.theory .slide__line .fl1__gate, .theory .slide__line .zoom__rec { font-size: 10px; }
+.theory .slide__plane { height: 100%; max-width: 100%; width: auto; aspect-ratio: 1 / 1.1; max-height: 100%; }
+.theory .slide__stack { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+.theory .slide__stack .slide__line { flex: 1 1 auto; min-height: 0; }
+.theory .sv-seq, .theory .sv-sense, .theory .sv-flow { max-height: 100%; }
+.theory .sv-seq img { height: clamp(48px, 13cqi, 110px) !important; }
+.theory .sv-seq span, .theory .sv-sense span { font-size: clamp(11px, 2.1cqi, 15px) !important; white-space: nowrap; }
+.theory .sv-sense img { height: clamp(48px, 12cqi, 96px); }
+.theory .sv-sense p { font-size: clamp(10px, 1.8cqi, 13px); grid-template-columns: 2.4em 1fr 2.8em; gap: 6px; }
+.theory .sv-sense i { height: 8px; border-radius: 4px; }
+.theory .sv-sense small { font-size: clamp(10px, 1.8cqi, 13px); }
+.theory .sv-flow span { width: clamp(64px, 17cqi, 120px); height: clamp(64px, 17cqi, 120px); font-size: clamp(14px, 3.2cqi, 22px); }
+.theory .sv-flow span small { font-size: clamp(9px, 1.8cqi, 12px); white-space: nowrap; }
+.theory .sv-flow i { font-size: clamp(16px, 3.6cqi, 26px); }
+.theory .fbar div { grid-template-columns: minmax(5.5em, 30%) 1fr 3.2em; font-size: clamp(12.5px, 2.4cqi, 16px); gap: 10px; }
+.theory .slide .fbar i { height: 12px; border-radius: 6px; }
+.theory .slide .fbar em { font-size: clamp(13px, 2.6cqi, 18px); }
+.theory .slide__code { font-size: clamp(12px, 2.4cqi, 16px) !important; padding: 10px 14px; border-radius: 10px; }
+.theory .slide__tbl { font-size: clamp(12px, 2.4cqi, 16px); }
+.theory .slide__tbl th, .theory .slide__tbl td { padding: 7px 10px; }
+.theory .slide__keys { gap: 8px; margin: 8px 0 14px; }
+.theory .slide__keys span { font-size: clamp(14px, 3.4cqi, 24px); padding: 5px 16px; }
+.theory .slide__in--end .slide__lead { font-size: clamp(14px, 2.9cqi, 20px); max-width: 100%; }
+.theory .slide__live { font-size: clamp(11px, 2cqi, 14px); }
+.theory .slide__live b { font-size: clamp(13px, 2.4cqi, 17px); }
+.theory .slide .splane__lg { font-size: clamp(10px, 1.8cqi, 12.5px); gap: 8px; }
+.theory .slide .splane__lg img { height: 14px; }
+.theory .slide__fs { position: absolute; right: 14px; top: 12px; font-size: 11.5px; padding: 3px 9px; border-radius: 7px; }
+.theory .slide__head { padding-right: 70px; }
+.theory__rail { grid-column: 2; grid-row: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 16px; background: #fbfbf9; color: #18201d; padding: clamp(18px, 2.2vw, 30px); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08); word-break: keep-all; }
+.theory__railbody { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 2px; }
+.theory__railbody .mprac { gap: 12px; }
+.theory__railbody .mprac__label { font-size: 15px; }
+.theory__railbody .question__q { font-size: 15px; }
+.theory__railbody .opt { font-size: 14.5px; padding: 10px 12px; }
+.theory__railbody .lead-text { font-size: 14.5px; line-height: 1.65; text-wrap: pretty; }
+.theory__railbody .mprac__plane { max-width: 440px; width: 100%; margin: 0 auto; }
+.theory__railbody .probe { max-width: 460px; }
+.theory__bar { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; width: 100%; }
+.theory__mid { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.theory__note { width: auto; margin: 0; justify-content: center; font-size: 12px; text-align: center; }
+@media (max-width: 1100px) { .theory { grid-template-columns: 1fr; grid-template-rows: auto auto auto; overflow-y: auto; } .theory .slide { grid-row: 1; aspect-ratio: 4 / 3.4; height: auto; } .theory__rail { grid-column: 1; grid-row: 2; } .theory__bar { grid-row: 3; } }
+.theory .slide__fs { bottom: auto; top: 14px; right: 16px; height: auto; width: auto; line-height: 1.4; background: #fff; border: 1px solid #d5dad7; color: #4b5552; }
+.theory__railbody .mprac__plane .splane { max-height: calc(100vh - 360px); width: auto; max-width: 100%; margin: 0 auto; }
+.theory__railbody .mprac__plane { justify-items: center; }
+.theory .slide__body .fbar { margin: 10px 0 12px; }

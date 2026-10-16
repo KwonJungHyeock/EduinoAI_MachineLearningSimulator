@@ -62,36 +62,39 @@ function TheoryDeck({ meta, slides, onExit }: { meta: LessonMeta; slides: Slide[
   const allOk = slides.every((_, k) => ok(k));
   return (
     <div className="theory">
-      <div className="theory__stage">
-        <div className="slide" ref={box}>
-          {last ? (
-            <div className="slide__in slide__in--end"><p className="slide__kick">핵심 정리</p><h2>{meta.title}</h2><div className="slide__keys">{meta.summary.keys.map((k) => <span key={k}>{k}</span>)}</div><p className="slide__lead">{meta.summary.line}</p></div>
-          ) : (
-            <motion.div key={i} className={`slide__in ${s.visual ? '' : 'slide__in--text'}`} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
-              <div className="slide__text">{s.kicker && <p className="slide__kick">{s.kicker}</p>}<h2>{s.title}</h2><div className="slide__body">{s.body}</div></div>
-              {s.visual && <div className="slide__vis">{s.visual}</div>}
-            </motion.div>
-          )}
-          <span className="slide__no">{meta.lab} · {meta.n}차시 · {i + 1} / {total}</span>
-          <button className="slide__fs" onClick={() => { const el = box.current; if (!el) return; if (document.fullscreenElement) document.exitFullscreen(); else el.requestFullscreen?.(); }} aria-label="발표 화면(전체 화면)">⛶ 발표</button>
-        </div>
-        <div className="theory__bar">
-          <button className="btn btn--ghost" disabled={i === 0} onClick={() => go(-1)}>← 이전</button>
-          <div className="theory__dots">{Array.from({ length: total }, (_, k) => <button key={k} className={`${k === i ? 'on' : ''} ${k < slides.length && ok(k) ? 'ok' : ''}`} onClick={() => setI(k)} aria-label={`${k + 1}번 슬라이드`} />)}</div>
-          <button className="btn btn--primary" disabled={last} onClick={() => go(1)}>다음 →</button>
-        </div>
-        {!last && s.note && <p className={`theory__note ${note ? 'on' : ''}`}><button onClick={() => setNote((v) => !v)}>{note ? '교사 메모 숨기기' : '교사 메모 보기'}</button>{note && <span>{s.note}</span>}</p>}
+      {/* 왼쪽 = 수업 슬라이드, 오른쪽 = 활동 패널: 같은 크기 · 같은 높이의 카드 두 장. 아래 한 줄 = 넘기기 */}
+      <div className="slide" ref={box}>
+        <div className="slide__head"><span className="slide__no">{meta.lab} · {meta.n}차시</span><span className="slide__pg">{i + 1} / {total}</span></div>
+        {last ? (
+          <div className="slide__in slide__in--end"><div className="slide__text"><p className="slide__kick">핵심 정리</p><h2>{meta.title}</h2><div className="slide__keys">{meta.summary.keys.map((k) => <span key={k}>{k}</span>)}</div><p className="slide__lead">{meta.summary.line}</p></div></div>
+        ) : (
+          <motion.div key={i} className={`slide__in ${s.visual ? '' : 'slide__in--text'}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+            <div className="slide__text">{s.kicker && <p className="slide__kick">{s.kicker}</p>}<h2>{s.title}</h2><div className="slide__body">{s.body}</div></div>
+            {s.visual && <div className="slide__vis">{s.visual}</div>}
+          </motion.div>
+        )}
+        <button className="slide__fs" onClick={() => { const el = box.current; if (!el) return; if (document.fullscreenElement) document.exitFullscreen(); else el.requestFullscreen?.(); }} aria-label="발표 화면(전체 화면)">⛶ 발표</button>
       </div>
-      <aside className="rail theory__rail">
-        <p className="mrail__tag">활동 · {last ? '정리' : `${i + 1} / ${slides.length}`}</p>
-        {last ? (allOk ? <Finish meta={meta} onExit={onExit} /> : <p className="lead-text">아직 끝내지 않은 실습이 있어요. 아래 점 중 회색인 슬라이드로 돌아가 실습을 마치세요.</p>)
-          : s.practice ? (
-            <div className={`mprac ${done[i] ? 'is-done' : ''}`}>
-              <p className="mprac__label">{s.practice.label}{done[i] && <b> ✓ 완료</b>}</p>
-              {s.practice.render(() => setDone((d) => (d[i] ? d : { ...d, [i]: true })))}
-            </div>)
-          : <p className="lead-text">이 슬라이드는 읽고 넘어가면 됩니다. → 키나 [다음]을 누르세요.</p>}
+      <aside className="theory__rail">
+        <div className="theory__railhead"><span className="mrail__tag">활동</span><span className="slide__pg">{last ? '정리' : `${i + 1} / ${slides.length}`}</span></div>
+        <div className="theory__railbody">
+          {last ? (allOk ? <Finish meta={meta} onExit={onExit} /> : <p className="lead-text">아직 끝내지 않은 활동이 있어요. 아래 점 중 회색인 슬라이드로 돌아가 활동을 마치세요.</p>)
+            : s.practice ? (
+              <div className={`mprac ${done[i] ? 'is-done' : ''}`}>
+                <p className="mprac__label">{s.practice.label}{done[i] && <b> ✓ 완료</b>}</p>
+                {s.practice.render(() => setDone((d) => (d[i] ? d : { ...d, [i]: true })))}
+              </div>)
+            : <p className="lead-text">이 슬라이드는 읽고 넘어가면 됩니다. → 키나 [다음]을 누르세요.</p>}
+        </div>
       </aside>
+      <div className="theory__bar">
+        <button className="btn btn--ghost" disabled={i === 0} onClick={() => go(-1)}>← 이전</button>
+        <div className="theory__mid">
+          <div className="theory__dots">{Array.from({ length: total }, (_, k) => <button key={k} className={`${k === i ? 'on' : ''} ${k < slides.length && ok(k) ? 'ok' : ''}`} onClick={() => setI(k)} aria-label={`${k + 1}번 슬라이드`} />)}</div>
+          {!last && s.note && <p className="theory__note"><button onClick={() => setNote((v) => !v)}>{note ? '교사 메모 숨기기' : '교사 메모 보기'}</button>{note && <span>{s.note}</span>}</p>}
+        </div>
+        <button className="btn btn--primary" disabled={last} onClick={() => go(1)}>다음 →</button>
+      </div>
     </div>
   );
 }
