@@ -13,10 +13,10 @@ export interface District {
   site: string;         // 그 지구의 현장
   color: string;        // 키 컬러 (트랙 표시 · 진입 화면에만)
   motif: MotifId;
-  keywords: string[];   // 배우는 기술
+  keywords: string[];   // 핵심 개념
   situations: string[]; // 상황 해결 미션 예시
   role: string;         // 진입 브리핑: 내가 맡는 역할
-  problem: string;      // 진입 브리핑: 풀어야 할 문제
+  problem: string;      // 단원 안내: 탐구 질문
   open: boolean;        // 이번 시안에서 진입 가능
   level: number;        // 난이도 1~4 (추천 학습 순서의 근거)
   hours: string;        // 분량 표시
@@ -31,7 +31,7 @@ export const DISTRICTS: District[] = [
     district: 'Foundation Lab', site: '아카데미 선별 라인', color: '#2fbf8a', motif: 'split',
     keywords: ['감지 → 판단 → 행동', '규칙 vs 학습', '데이터 · 이름표', '평가 · 정확도'],
     situations: ['재활용 분류 로봇 규칙 만들기', '분류 로봇 학습시키기'],
-    role: '아카데미에 막 들어온 신입 AI 엔지니어', problem: '선별 라인에 섞여 오는 캔 · 페트병 · 유리병을 기계가 자꾸 잘못 나눕니다', open: true,
+    role: '아카데미에 막 들어온 신입 AI 엔지니어', problem: '섞여 오는 캔 · 페트병 · 유리병을 기계는 어떻게 알아보고 나눌 수 있을까요?', open: true,
     level: 1, hours: '4차시 · 필수', needs: '처음 시작하는 곳'
   },
   {
@@ -39,7 +39,7 @@ export const DISTRICTS: District[] = [
     district: 'Vision Lab', site: '도시 영상 관제센터', color: '#14b8a6', motif: 'vision',
     keywords: ['픽셀 · 색', '필터 · 에지', '이미지 분류 (CNN)', '객체 탐지'],
     situations: ['교차로 위험 감지', '밤의 교차로 — 데이터 편향'],
-    role: '관제센터의 AI 영상처리 엔지니어', problem: '도시 곳곳의 카메라 영상을 사람 눈으로는 다 볼 수 없습니다', open: true,
+    role: '관제센터의 AI 영상처리 엔지니어', problem: '수많은 카메라 영상 속 사건을 컴퓨터는 어떻게 찾아낼 수 있을까요?', open: true,
     level: 2, hours: '8차시', needs: 'Foundation Lab'
   },
   {
@@ -47,7 +47,7 @@ export const DISTRICTS: District[] = [
     district: 'Data Lab', site: '에너지 운영 센터', color: '#3b82f6', motif: 'data',
     keywords: ['데이터 정리', '회귀 · 분류', '군집', '이상 탐지'],
     situations: ['전력 수요 예측', '이상 사용 찾기'],
-    role: '운영 센터의 데이터 예측 엔지니어', problem: '내일 도시가 쓸 전기를 미리 알아야 합니다', open: false,
+    role: '운영 센터의 데이터 예측 엔지니어', problem: '내일 도시가 쓸 전기를 데이터로 어떻게 미리 알 수 있을까요?', open: false,
     level: 2, hours: '8차시(예정)', needs: 'Foundation Lab'
   },
   {
@@ -55,7 +55,7 @@ export const DISTRICTS: District[] = [
     district: 'Voice Lab', site: '도시 방송 · 음성 비서실', color: '#f59e0b', motif: 'voice',
     keywords: ['소리 파형', '스펙트로그램', '음성 인식 (STT)', '음성 합성 (TTS)'],
     situations: ['소음 속 명령어 인식', '긴급 호출 감지'],
-    role: '방송실의 음성 AI 엔지니어', problem: '시끄러운 도시에서도 사람의 말을 정확히 알아들어야 합니다', open: false,
+    role: '방송실의 음성 AI 엔지니어', problem: '시끄러운 도시에서 컴퓨터는 사람의 말을 어떻게 알아들을까요?', open: false,
     level: 3, hours: '8차시(예정)', needs: 'Vision Lab(필터 · 스펙트로그램 그림 읽기)'
   },
   {
@@ -63,7 +63,7 @@ export const DISTRICTS: District[] = [
     district: 'Language Lab', site: '시민 응답 센터', color: '#8b5cf6', motif: 'language',
     keywords: ['토큰', '임베딩 (단어 거리)', '다음 단어 예측', '프롬프트 · RAG'],
     situations: ['민원 자동 분류', '사실 확인 답변 봇'],
-    role: '응답 센터의 언어 모델 엔지니어', problem: '하루에도 수많은 민원 문장이 쏟아집니다', open: false,
+    role: '응답 센터의 언어 모델 엔지니어', problem: '쏟아지는 민원 문장을 컴퓨터는 어떻게 읽고 나눌까요?', open: false,
     level: 3, hours: '8차시(예정)', needs: 'Data Lab(숫자로 바꾸기 · 예측)'
   },
   {
@@ -71,7 +71,7 @@ export const DISTRICTS: District[] = [
     district: 'Creative Lab', site: '미디어 디자인 스튜디오', color: '#ec4899', motif: 'generative',
     keywords: ['노이즈 → 이미지 (디퓨전)', '잠재 공간', '생성 모델 직접 학습', '진짜 vs 생성 판별'],
     situations: ['도시 홍보 포스터 만들기', '가짜 이미지 판별'],
-    role: '스튜디오의 생성형 AI 엔지니어', problem: 'AI로 만든 이미지가 넘쳐나는 도시, 만들 줄도 가려낼 줄도 알아야 합니다', open: false,
+    role: '스튜디오의 생성형 AI 엔지니어', problem: 'AI는 어떻게 이미지를 만들고, 우리는 그것을 어떻게 가려낼까요?', open: false,
     level: 4, hours: '8차시(예정)', needs: 'Vision Lab · Language Lab'
   },
   {
@@ -79,7 +79,7 @@ export const DISTRICTS: District[] = [
     district: 'Robotics Lab', site: '자동화 물류 기지', color: '#84cc16', motif: 'physical',
     keywords: ['센서 융합', '제어', '강화학습 (보상)', '시뮬레이션 → 실물'],
     situations: ['창고 로봇 길 찾기', '집게 로봇 집기'],
-    role: '물류 기지의 로봇 AI 엔지니어', problem: '로봇이 처음 보는 창고에서도 스스로 길을 찾아야 합니다', open: false,
+    role: '물류 기지의 로봇 AI 엔지니어', problem: '로봇은 처음 보는 창고에서 어떻게 스스로 길을 찾을까요?', open: false,
     level: 4, hours: '8차시(예정)', needs: 'Data Lab(예측) · 센서 기초'
   }
 ];

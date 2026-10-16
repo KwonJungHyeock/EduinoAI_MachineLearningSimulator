@@ -676,3 +676,4 @@
 .sv-sense i { height: 1cqw; border-radius: 0.5cqw; background: #e5e7eb; overflow: hidden; display: block; }
 .sv-sense b { display: block; height: 100%; background: #6b7280; } .sv-sense b.l { background: #3b82f6; }
 .sv-sense small { font: 700 1.2cqw var(--en); text-align: right; }
+.mission__row { grid-template-columns: 58px 1fr !important; }

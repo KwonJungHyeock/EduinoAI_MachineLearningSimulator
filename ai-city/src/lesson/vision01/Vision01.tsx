@@ -192,7 +192,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
     : step === 2 ? (exp.length === 0 ? '카메라 4대로 [근무 시작]을 누르세요' : !obs1Run ? '카메라를 4대나 8대로 두고 근무를 돌려 보세요' : !obs2Run ? '카메라를 32대 이상으로 늘려 근무를 돌려 보세요' : !seenMiss ? '주황 점이 있는 칸을 눌러 왜 놓쳤는지 확인하세요' : '[다음]을 눌러 개념으로 가세요')
     : step === 3 ? (conceptSeen ? '[다음]을 눌러 적용으로 가세요' : '[AI 보조 켜고 보기]를 누르세요')
     : step === 4 ? (applyOk ? '[다음]을 눌러 정리하세요' : '코드 서랍의 노란 칸을 바꾸고 [실행]을 누르세요')
-    : !mcFb?.ok ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : !assessed ? '차시 평가 5문항에 답하고 [평가 제출]을 누르세요' : '리포트 PDF를 내려받거나 [브리핑으로]를 누르세요';
+    : !mcFb?.ok ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : !assessed ? '차시 평가 5문항에 답하고 [평가 제출]을 누르세요' : '리포트 PDF를 내려받거나 [단원 안내로]를 누르세요';
 
   const rail = (
     <>
@@ -252,11 +252,11 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
             {saved && <Assessment lessonId="vision-1" onDone={() => setAssessed(true)} />}
             {assessed && (
               <div className="pdfbox">
-                <p className="pdfbox__tag">학습 리포트</p>
+                <p className="pdfbox__tag">학습 결과 보고서</p>
                 <input className="as-in" value={student} placeholder="이름 (리포트에 표시)" onChange={(e) => { setStudentName(e.target.value); setStudent(e.target.value); }} />
                 <div className="ctrl__row">
                   <button className="rbtn rbtn--key" disabled={pdfBusy} onClick={async () => { setPdfBusy(true); try { await downloadReport(load()); } finally { setPdfBusy(false); } }}>{pdfBusy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
-                  <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
+                  <button className="rbtn is-target" onClick={onExit}>단원 안내로</button>
                 </div>
               </div>
             )}
@@ -280,7 +280,7 @@ export function Vision01({ onExit, onHome }: { onExit: () => void; onHome: () =>
   return (
     <LessonShell
       keyColor={KEY}
-      top={<TopBar crumb="Vision Lab · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">Vision Lab 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb="Vision Lab · 1차시 사람 눈으로는 다 못 본다" onHome={onHome} right={<><span className="lesson-prog">Vision Lab 1 / 8차시</span><button className="btn btn--ghost" onClick={onExit}>← 단원 안내</button></>} />}
       scene={scene}
       band={band}
       drawer={drawer}

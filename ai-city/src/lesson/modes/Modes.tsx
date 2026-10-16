@@ -27,19 +27,19 @@ function Finish({ meta, onExit }: { meta: LessonMeta; onExit: () => void }) {
   return (
     <div className="mfin">
       <div className="mfin__card" style={{ ['--k' as string]: meta.keyColor }}>
-        <p className="mfin__tag">1분 요약</p>
+        <p className="mfin__tag">핵심 정리</p>
         <div className="mfin__keys">{meta.summary.keys.map((k) => <span key={k}>{k}</span>)}</div>
         <p className="mfin__line">{meta.summary.line}</p>
-        <p className="mfin__mine"><b>내 결과</b>{meta.conclusion()}</p>
+        <p className="mfin__mine"><b>나의 탐구 결과</b>{meta.conclusion()}</p>
       </div>
-      <Assessment lessonId={meta.id} label="차시 확인" onDone={() => { save(); setAssessed(true); }} />
+      <Assessment lessonId={meta.id} label="형성평가" onDone={() => { save(); setAssessed(true); }} />
       {assessed && (
         <div className="pdfbox">
           <p className="pdfbox__tag">완료 · {meta.nextId ? '다음 차시가 열렸습니다' : '모든 차시를 마쳤습니다'}</p>
           <input className="as-in" value={name} placeholder="이름 (리포트에 표시)" onChange={(e) => { setName(e.target.value); setStudent(e.target.value); }} />
           <div className="ctrl__row">
             <button className="rbtn rbtn--key" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load(), meta.labId); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
-            <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
+            <button className="rbtn is-target" onClick={onExit}>단원 안내로</button>
           </div>
         </div>
       )}
@@ -65,7 +65,7 @@ function TheoryDeck({ meta, slides, onExit }: { meta: LessonMeta; slides: Slide[
       <div className="theory__stage">
         <div className="slide" ref={box}>
           {last ? (
-            <div className="slide__in slide__in--end"><p className="slide__kick">정리</p><h2>{meta.title}</h2><div className="slide__keys">{meta.summary.keys.map((k) => <span key={k}>{k}</span>)}</div><p className="slide__lead">{meta.summary.line}</p></div>
+            <div className="slide__in slide__in--end"><p className="slide__kick">핵심 정리</p><h2>{meta.title}</h2><div className="slide__keys">{meta.summary.keys.map((k) => <span key={k}>{k}</span>)}</div><p className="slide__lead">{meta.summary.line}</p></div>
           ) : (
             <motion.div key={i} className={`slide__in ${s.visual ? '' : 'slide__in--text'}`} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
               <div className="slide__text">{s.kicker && <p className="slide__kick">{s.kicker}</p>}<h2>{s.title}</h2><div className="slide__body">{s.body}</div></div>
@@ -83,7 +83,7 @@ function TheoryDeck({ meta, slides, onExit }: { meta: LessonMeta; slides: Slide[
         {!last && s.note && <p className={`theory__note ${note ? 'on' : ''}`}><button onClick={() => setNote((v) => !v)}>{note ? '교사 메모 숨기기' : '교사 메모 보기'}</button>{note && <span>{s.note}</span>}</p>}
       </div>
       <aside className="rail theory__rail">
-        <p className="mrail__tag">실습 패널 · {last ? '정리' : `${i + 1} / ${slides.length}`}</p>
+        <p className="mrail__tag">활동 · {last ? '정리' : `${i + 1} / ${slides.length}`}</p>
         {last ? (allOk ? <Finish meta={meta} onExit={onExit} /> : <p className="lead-text">아직 끝내지 않은 실습이 있어요. 아래 점 중 회색인 슬라이드로 돌아가 실습을 마치세요.</p>)
           : s.practice ? (
             <div className={`mprac ${done[i] ? 'is-done' : ''}`}>
@@ -98,7 +98,7 @@ function TheoryDeck({ meta, slides, onExit }: { meta: LessonMeta; slides: Slide[
 
 // ── 콘텐츠 모드(3단계) ──
 export interface ContentStep { title: string; ask: string; scene: ReactNode; panel: ReactNode; result?: ReactNode; ready: boolean }
-const CSTEPS = ['해보기', '알아보기', '확인하기'];
+const CSTEPS = ['체험하기', '개념 익히기', '형성평가'];
 function ContentFlow({ meta, steps, onExit }: { meta: LessonMeta; steps: [ContentStep, ContentStep]; onExit: () => void }) {
   const [st, setSt] = useState(0), cur = steps[st];
   return (
@@ -120,7 +120,7 @@ function ContentFlow({ meta, steps, onExit }: { meta: LessonMeta; steps: [Conten
         {st < 2 ? (
           <>
             {cur.panel}
-            <button className={`rbtn rbtn--key cflow__next ${cur.ready ? 'is-target' : ''}`} disabled={!cur.ready} onClick={() => setSt(st + 1)}>{st === 0 ? '알아보기로 →' : '확인하기로 →'}</button>
+            <button className={`rbtn rbtn--key cflow__next ${cur.ready ? 'is-target' : ''}`} disabled={!cur.ready} onClick={() => setSt(st + 1)}>{st === 0 ? '개념 익히기 →' : '형성평가 →'}</button>
           </>
         ) : <Finish meta={meta} onExit={onExit} />}
       </aside>
@@ -136,10 +136,10 @@ export function ModeLesson({ meta, slides, content, onExit, onHome }: { meta: Le
     <section className="screen lesson-screen mlesson" style={{ ['--k' as string]: meta.keyColor }}>
       <TopBar crumb={`${meta.lab} · ${meta.n}차시 ${meta.title}`} onHome={onHome} right={<>
         <div className="mswitch" role="tablist" aria-label="학습 모드">
-          {(['theory', 'content'] as Mode[]).map((m) => <button key={m} role="tab" aria-selected={mode === m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{m === 'theory' ? '이론으로 배우기' : '콘텐츠로 배우기'}</button>)}
+          {(['theory', 'content'] as Mode[]).map((m) => <button key={m} role="tab" aria-selected={mode === m} className={mode === m ? 'on' : ''} onClick={() => setMode(m)}>{m === 'theory' ? '개념 학습' : '체험 학습'}</button>)}
         </div>
         <span className="lesson-prog">{meta.lab} {meta.n} / {meta.total}차시</span>
-        <button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />
+        <button className="btn btn--ghost" onClick={onExit}>← 단원 안내</button></>} />
       <div className="lesson-mobile" role="note"><b>수업 화면은 넓은 화면용입니다</b><p>PC나 태블릿 가로 화면에서 열어 주세요.</p></div>
       {mode === 'theory' ? <TheoryDeck meta={meta} slides={slides} onExit={onExit} /> : <ContentFlow meta={meta} steps={content} onExit={onExit} />}
     </section>

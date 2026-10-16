@@ -28,20 +28,20 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
     <section className="screen brief" style={{ ['--k' as string]: d.color }}>
       <MotifCanvas motif={d.motif} color={d.color} className="brief__canvas" />
       <div className="brief__veil" aria-hidden="true" />
-      <TopBar crumb={`AI LabCity · ${d.district}`} onHome={onHome} right={<button className="btn btn--ghost" onClick={onBack}>← Lab 선택</button>} />
+      <TopBar crumb={`AI LabCity · ${d.district} 단원 안내`} onHome={onHome} right={<button className="btn btn--ghost" onClick={onBack}>← 학습 로드맵</button>} />
 
       <motion.div className="brief__body" initial="hidden" animate="show" transition={{ staggerChildren: 0.12, delayChildren: 0.15 }}>
         <div className="brief__main">
           <motion.p className="eyebrow eyebrow--key" variants={up}>{d.order} · {d.district} · {d.tech}</motion.p>
           <motion.h1 variants={up}>{d.site}</motion.h1>
           <motion.div className="brief__role" variants={up}>
-            <p className="dpanel__label">당신의 역할</p>
-            <p className="brief__roleText">오늘부터 당신은 <b>{d.role}</b>입니다.</p>
-            <p className="dpanel__label">풀어야 할 문제</p>
+            <p className="dpanel__label">학습 상황</p>
+            <p className="brief__roleText">여러분은 <b>{d.role}</b>가 되어 탐구합니다.</p>
+            <p className="dpanel__label">탐구 과제</p>
             <p>{d.problem}</p>
           </motion.div>
           <motion.div variants={up}>
-            <p className="dpanel__label">이 Lab에서 배우는 기술</p>
+            <p className="dpanel__label">이 과정의 핵심 개념</p>
             <ul className="chips">{d.keywords.map((k) => <li key={k}>{k}</li>)}</ul>
           </motion.div>
         </div>
@@ -59,7 +59,7 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
               <span className="lesson__node" />
               <span className="lesson__n">{String(l.n).padStart(2, '0')}<em>{l.arc}</em></span>
               <span className="lesson__title">{l.title}</span>
-              <span className="lesson__st">{st(l.n) === 'done' ? <>완료<i className="lesson__again">다시 하기 →</i></> : st(l.n) === 'open' ? '열림' : '잠김'}</span>
+              <span className="lesson__st">{st(l.n) === 'done' ? <>학습 완료<i className="lesson__again">복습하기 →</i></> : st(l.n) === 'open' ? '이번 차시' : '이전 차시 후 학습'}</span>
             </li>
           ))}
         </motion.ol>
@@ -67,18 +67,18 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
         <motion.div className="brief__cta" variants={up}>
           {next !== null && READY.includes(next) && d.id === 'academy'
             ? <>{/* Foundation Lab: 두 모드 중 골라 시작(차시 안에서도 바꿀 수 있음) */}
-                <MagneticButton className="btn btn--primary btn--key" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'content'); } catch { /* */ } onStart(next); }}>{next}차시 · 콘텐츠로 배우기</MagneticButton>
-                <button className="btn btn--ghost" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'theory'); } catch { /* */ } onStart(next); }}>이론으로 배우기(슬라이드)</button></>
+                <MagneticButton className="btn btn--primary btn--key" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'content'); } catch { /* */ } onStart(next); }}>{next}차시 · 체험 학습으로 시작</MagneticButton>
+                <button className="btn btn--ghost" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'theory'); } catch { /* */ } onStart(next); }}>개념 학습(슬라이드)으로 시작</button></>
             : next !== null && READY.includes(next)
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(next)}>{next}차시 시작</MagneticButton>
             : allDone && hasFinal
-            ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '종합 평가 다시 보기' : 'Lab 종합 평가'}</MagneticButton>
+            ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '단원 종합평가 다시 보기' : '단원 종합평가'}</MagneticButton>
             : next === null
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(1)}>처음부터 다시 하기</MagneticButton>
             : <MagneticButton className="btn btn--primary btn--key" disabled>{next}차시 준비 중</MagneticButton>}
-          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? 'Lab 수료 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
+          <span className="hint">{next ? `${next}차시 · ${VISION_LESSONS[next - 1].title}` : allDone ? (finalDone ? '과정 이수 · 종합 평가 완료' : '모든 차시를 마쳤습니다 · 종합 평가가 열렸습니다') : '모든 차시를 마쳤습니다'}</span>
           {anyDone && <span className="brief__sp" />}
-          {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load(), d.id); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 리포트 PDF'}</button>}
+          {anyDone && <button className="btn btn--ghost" disabled={busy} onClick={async () => { setBusy(true); try { await downloadReport(load(), d.id); } finally { setBusy(false); } }}>{busy ? 'PDF 만드는 중…' : '학습 결과 보고서 PDF'}</button>}
         </motion.div>
       </motion.div>
       <p className="src-line brief__src">임시: 차시 구성은 커리큘럼 초안 · Lab · 현장 이름은 가칭</p>

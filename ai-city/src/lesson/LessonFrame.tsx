@@ -68,7 +68,7 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
 
   const now = def.busy && step < 5 ? def.now[step]
     : step < 5 ? def.now[step]
-    : !mcOk ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : !assessed ? '차시 평가에 답하고 [평가 제출]을 누르세요' : '리포트 PDF를 내려받거나 [브리핑으로]를 누르세요';
+    : !mcOk ? '질문에 답하세요' : !saved ? '[보고서 저장]을 누르세요' : !assessed ? '형성평가에 답하고 [평가 제출]을 누르세요' : '리포트 PDF를 내려받거나 [단원 안내로]를 누르세요';
 
   const rail = (
     <>
@@ -93,11 +93,11 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
             {saved && <Assessment lessonId={def.id} onDone={() => setAssessed(true)} />}
             {assessed && (
               <div className="pdfbox">
-                <p className="pdfbox__tag">학습 리포트</p>
+                <p className="pdfbox__tag">학습 결과 보고서</p>
                 <input className="as-in" value={student} placeholder="이름 (리포트에 표시)" onChange={(e) => { setStudentName(e.target.value); setStudent(e.target.value); }} />
                 <div className="ctrl__row">
                   <button className="rbtn rbtn--key" disabled={pdfBusy} onClick={async () => { setPdfBusy(true); try { await downloadReport(load(), def.labId ?? 'vision'); } finally { setPdfBusy(false); } }}>{pdfBusy ? 'PDF 만드는 중…' : 'PDF 내려받기'}</button>
-                  <button className="rbtn is-target" onClick={onExit}>브리핑으로</button>
+                  <button className="rbtn is-target" onClick={onExit}>단원 안내로</button>
                 </div>
               </div>
             )}
@@ -111,7 +111,7 @@ export function LessonFrame({ def, onExit, onHome }: { def: LessonDef; onExit: (
   return (
     <LessonShell
       keyColor={def.keyColor}
-      top={<TopBar crumb={`${def.lab ?? 'Vision Lab'} · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">{def.lab ?? 'Vision Lab'} {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 브리핑</button></>} />}
+      top={<TopBar crumb={`${def.lab ?? 'Vision Lab'} · ${def.n}차시 ${def.title}`} onHome={onHome} right={<><span className="lesson-prog">{def.lab ?? 'Vision Lab'} {def.n} / {def.total}차시</span><button className="btn btn--ghost" onClick={onExit}>← 단원 안내</button></>} />}
       scene={def.scene(step)}
       band={def.band}
       drawer={drawer}

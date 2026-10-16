@@ -35,13 +35,13 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
   return (
     <section className="screen sel2" style={{ ['--k' as string]: d.color }}>
       <div className="sel2__bg" aria-hidden="true" />
-      <TopBar crumb="학습 로드맵 · Lab 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
+      <TopBar crumb="학습 로드맵 · 과정 선택" onHome={onHome} right={<button className="btn btn--ghost" disabled>교사 모드</button>} />
       <div className="sel2__body">
         <div className="sel2__map">
-          <p className="sel2__eye">LEARNING ROADMAP</p>
-          <h1 className="sel2__q">기초에서 시작해, <em>원하는 Lab</em>으로.</h1>
+          <p className="sel2__eye">LEARNING ROADMAP · 학습 로드맵</p>
+          <h1 className="sel2__q">기초 과정에서 시작해, <em>심화 과정</em>으로.</h1>
           <Roadmap selected={selected} onSelect={onSelect} onLesson={onLesson} />
-          <p className="sel2__how">기초(필수) → 기술 Lab(추천 순서, 난이도 ●) → 수료 · 깜빡이는 정거장 = 다음 학습(누르면 바로 시작)</p>
+          <p className="sel2__how">기초 과정(필수) → 심화 과정(권장 순서 · 난이도 ●) → 평가와 수료 · 깜빡이는 차시 = 이번 차시(누르면 바로 학습)</p>
         </div>
         <motion.aside key={d.id} className="sel2__info" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
           <div className="act">
@@ -52,17 +52,17 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
           <h2 className="sel2__t">{d.tech}</h2>
           <p className="sel2__en">{d.techEn}</p>
           <dl className="sel2__dl">
-            <dt>배우는 기술</dt><dd>{d.keywords.join('  ·  ')}</dd>
-            <dt>해결할 사건</dt><dd>{d.situations.map((s, i) => <span key={s}><b>CASE {String(i + 1).padStart(2, '0')}</b>{s}</span>)}</dd>
-            <dt>현장 · 역할</dt><dd>{d.site} — {d.role}</dd>
-            <dt>난이도 · 분량</dt><dd>{'●'.repeat(d.level)}{'○'.repeat(4 - d.level)} · {d.hours} · 먼저: {d.needs}</dd>
-            {plan && (() => { const p = load(), done = plan.lessons.filter((l) => lesson(p, `${plan.prefix}-${l.n}`)?.status === 'done').length; return <><dt>내 진도</dt><dd><span className="sel2__bar"><i style={{ width: `${(done / plan.lessons.length) * 100}%` }} /></span>{done} / {plan.lessons.length}차시 완료 · 화면 {plan.ready.length}차시 제작</dd></>; })()}
+            <dt>핵심 개념</dt><dd>{d.keywords.join('  ·  ')}</dd>
+            <dt>탐구 과제</dt><dd>{d.situations.map((s, i) => <span key={s}><b>과제 {i + 1}</b>{s}</span>)}</dd>
+            <dt>학습 상황</dt><dd>{d.site} · {d.role} 역할</dd>
+            <dt>난이도 · 차시 · 선수 학습</dt><dd>{'●'.repeat(d.level)}{'○'.repeat(4 - d.level)} · {d.hours} · {d.needs}</dd>
+            {plan && (() => { const p = load(), done = plan.lessons.filter((l) => lesson(p, `${plan.prefix}-${l.n}`)?.status === 'done').length; return <><dt>학습 진도</dt><dd><span className="sel2__bar"><i style={{ width: `${(done / plan.lessons.length) * 100}%` }} /></span>{done} / {plan.lessons.length}차시 이수</dd></>; })()}
           </dl>
           <div className="sel2__cta">
             {d.open
-              ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 합류 →</MagneticButton>
-              : <span className="sel2__soon">준비 중인 Lab입니다</span>}
-            {d.open && plan && (() => { const p = load(), nx = plan.lessons.find((l) => plan.ready.includes(l.n) && (lesson(p, `${plan.prefix}-${l.n}`)?.status === 'open' || (l.n === 1 && !lesson(p, `${plan.prefix}-1`)))); return <span className="hint">{nx ? `다음 학습 · ${nx.n}차시 ${nx.title}` : '만들어진 차시를 모두 마쳤습니다'}</span>; })()}
+              ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onEnter(d.id)}>{d.district} 학습 시작 →</MagneticButton>
+              : <span className="sel2__soon">준비 중인 과정입니다</span>}
+            {d.open && plan && (() => { const p = load(), nx = plan.lessons.find((l) => plan.ready.includes(l.n) && (lesson(p, `${plan.prefix}-${l.n}`)?.status === 'open' || (l.n === 1 && !lesson(p, `${plan.prefix}-1`)))); return <span className="hint">{nx ? `이번 차시 · ${nx.n}차시 ${nx.title}` : '열린 차시를 모두 이수했습니다'}</span>; })()}
           </div>
         </motion.aside>
       </div>

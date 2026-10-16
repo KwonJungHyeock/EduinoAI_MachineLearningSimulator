@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ASSESS, gradeShort, gradeEssay, type Item } from '../data/assess';
 import { update, type AssessRecord } from '../store/progress';
 
-export function Assessment({ lessonId, onDone, label = '차시 평가' }: { lessonId: string; onDone: (r: AssessRecord) => void; label?: string }) {
+export function Assessment({ lessonId, onDone, label = '형성평가' }: { lessonId: string; onDone: (r: AssessRecord) => void; label?: string }) {
   const set = ASSESS[lessonId];
   const [ans, setAns] = useState<(boolean | string | null)[]>(set.items.map(() => null));
   const [result, setResult] = useState<AssessRecord | null>(null);

@@ -129,7 +129,7 @@ export function Found01({ onExit, onHome }: { onExit: () => void; onHome: () => 
   ];
 
   const content: [ContentStep, ContentStep] = [
-    { title: '해보기', ask: '물건이 섞여서 들어옵니다. 어느 쪽이 더 잘 나눌까요? 두 기계로 각각 라인을 돌려 보세요.',
+    { title: '체험하기', ask: '물건이 섞여서 들어옵니다. 어느 쪽이 더 잘 나눌까요? 두 기계로 각각 라인을 돌려 보세요.',
       scene: <LineScene S={S} r={shown} play={play} onEnd={() => setBusy(false)} />,
       panel: <div className="ctrl">
         <button className={`rbtn ${!fm ? 'is-target' : ''}`} disabled={busy} onClick={() => doRun('fixed')}>{busy && shown?.mach === 'fixed' ? '도는 중…' : '① 정해진 대로 기계로 돌리기'}</button>
@@ -137,7 +137,7 @@ export function Found01({ onExit, onHome }: { onExit: () => void; onHome: () => 
         <p className="lead-text">정해진 대로 기계는 순서를 외워 움직이고, 감지 로봇은 센서로 재서 판단합니다.</p></div>,
       result: <Bars rows={[{ label: '정해진 대로 기계', v: fm && !(busy && shown?.mach === 'fixed') ? fm.acc : null, c: '#f97316' }, { label: '감지 로봇', v: rm && !(busy && shown?.mach === 'robot') ? rm.acc : null, c: KEY }]} />,
       ready: !!(fm && rm) && !busy },
-    { title: '알아보기', ask: '감지 로봇은 어떻게 알아봤을까요? 물건을 골라 감지 → 판단 → 행동을 따라가 보세요. 센서를 꺼 보면 어떻게 될까요?',
+    { title: '개념 익히기', ask: '감지 로봇은 어떻게 알아봤을까요? 물건을 골라 감지 → 판단 → 행동을 따라가 보세요. 센서를 꺼 보면 어떻게 될까요?',
       scene: <div className="cflow__probe"><div className="sv-flow sv-flow--dark"><span>감지<small>센서 게이트</small></span><i>→</i><span>판단<small>규칙</small></span><i>→</i><span>행동<small>로봇 팔</small></span></div><SensorProbe light={false} onTry={setTries} /></div>,
       panel: <div className="ctrl"><p className="lead-text"><b>AI 로봇 = 감지 → 판단 → 행동.</b> 정해진 대로 기계에는 '감지'가 없어서, 순서가 바뀌면 틀렸어요({fm ? pct(fm.acc) : '—'}).</p><p className="lead-text">물건 2개 이상을 골라 보세요. {tries >= 2 ? '✓' : `(${tries}/2)`}</p></div>,
       ready: tries >= 2 }

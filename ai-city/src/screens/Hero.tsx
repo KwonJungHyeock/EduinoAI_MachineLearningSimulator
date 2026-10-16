@@ -128,13 +128,13 @@ export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
           <h1 className="h3__h" style={fade(6.7, 7.5)}>AI는 설명이 아니라<br /><em>실험으로 배웁니다.</em></h1>
           <p className="h3__sub" style={fade(7.0, 7.8)}>7개의 Lab에서 데이터를 보고, 모델을 직접 학습시키고, 도시의 문제를 해결합니다.</p>
           <div className="h3__cta" style={{ ...fade(7.2, 8.0), pointerEvents: intro && t < 7.2 ? 'none' : undefined }}>
-            <MagneticButton className="btn btn--primary h3__go" onClick={() => onEnter()}>입장하기 →</MagneticButton>
+            <MagneticButton className="btn btn--primary h3__go" onClick={() => onEnter()}>학습 시작하기 →</MagneticButton>
             <button className="h3__link" onClick={replay}>인트로 다시 보기</button>
           </div>
         </div>
 
         <p className="h3__hint" style={{ opacity: hover === null ? vis(7.6) : 0 }}>궤도의 빛 점 = 7개 Lab · 마우스를 올려 보세요</p>
-        <button className="h3__down" style={{ opacity: vis(7.8) }} onClick={() => more.current?.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' })}>7개 Lab 둘러보기 ↓</button>
+        <button className="h3__down" style={{ opacity: vis(7.8) }} onClick={() => more.current?.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' })}>학습 과정 보기 ↓</button>
         {holding && <>
           <div className="h3__brand" style={{ opacity: Math.max(0, 1 - charge * 1.8) }}><img src="assets/eduino_ai_logo_dark.png" alt="EDUINO AI" /><span>EDUINO AI</span></div>
           <svg className="charge" style={{ left: cur.x, top: cur.y }} viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="24" className="charge__bg" /><circle cx="30" cy="30" r="24" className="charge__fg" style={{ strokeDashoffset: 151 * (1 - charge) }} /></svg>

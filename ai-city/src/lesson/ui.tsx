@@ -4,7 +4,7 @@
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
-export const STEPS = ['미션', '예측', '실험', '개념', '적용', '정리'] as const;
+export const STEPS = ['도입', '예측', '탐구', '개념', '적용', '정리'] as const;
 export type Drawer = 'graph' | 'code' | 'log';
 
 export function LessonShell(props: {
@@ -41,9 +41,9 @@ export function LessonShell(props: {
 export function MissionCard({ place, problem, goals }: { place: string; problem: string; goals: { text: string; done: boolean }[] }) {
   return (
     <div className="mission">
-      <div className="mission__row"><span>장소</span><b>{place}</b></div>
-      <div className="mission__row"><span>문제</span><b>{problem}</b></div>
-      <div className="mission__row mission__row--goal"><span>목표</span>
+      <div className="mission__row"><span>학습 상황</span><b>{place}</b></div>
+      <div className="mission__row"><span>탐구 과제</span><b>{problem}</b></div>
+      <div className="mission__row mission__row--goal"><span>학습 목표</span>
         <ul>{goals.map((g) => <li key={g.text} className={g.done ? 'done' : ''}><i aria-hidden="true">{g.done ? '✓' : ''}</i>{g.text}</li>)}</ul>
       </div>
     </div>
@@ -54,7 +54,7 @@ export function MissionCard({ place, problem, goals }: { place: string; problem:
 export function NowBand({ text }: { text: string }) {
   return (
     <motion.div className="now" key={text} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <span className="now__tag">지금 할 일</span>{text}
+      <span className="now__tag">활동 안내</span>{text}
     </motion.div>
   );
 }
