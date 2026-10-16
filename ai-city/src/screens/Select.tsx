@@ -1,5 +1,5 @@
 // author: eduino
-// Lab 선택 = 학습 로드맵 신경망(components/Roadmap). 왼쪽: Foundation Lab 8차시 → 기초 수료 → 6개 Lab, 가로축 = 난이도.
+// Lab 선택 = 학습 로드맵(components/Roadmap): STEP 1 필수 기초 → STEP 2 기술 Lab(추천 순서 · 난이도) → STEP 3 수료.
 // 오른쪽: 고른 뉴런의 정보(원 안에서 그 기술의 원리 모션이 '활성화'됨) — 상자 없이 글자로만.
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -10,7 +10,6 @@ import { MagneticButton } from '../components/Interactive';
 import { Roadmap } from '../components/Roadmap';
 import { load, lesson } from '../store/progress';
 import { LAB_PLAN } from '../data/districts';
-import { READY } from './Brief';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -41,8 +40,8 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
         <div className="sel2__map">
           <p className="sel2__eye">LEARNING ROADMAP</p>
           <h1 className="sel2__q">기초에서 시작해, <em>원하는 Lab</em>으로.</h1>
-          <div className="sel2__scroll"><Roadmap selected={selected} onSelect={onSelect} onLesson={onLesson} ready={READY} /></div>
-          <p className="sel2__how">오른쪽으로 갈수록 어려워집니다 · 뉴런 = 차시 · 채운 뉴런 = 완료 · 퍼지는 고리 = 다음 학습(누르면 바로 시작)</p>
+          <Roadmap selected={selected} onSelect={onSelect} onLesson={onLesson} />
+          <p className="sel2__how">기초(필수) → 기술 Lab(추천 순서, 난이도 ●) → 수료 · 깜빡이는 정거장 = 다음 학습(누르면 바로 시작)</p>
         </div>
         <motion.aside key={d.id} className="sel2__info" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
           <div className="act">
@@ -56,6 +55,7 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
             <dt>배우는 기술</dt><dd>{d.keywords.join('  ·  ')}</dd>
             <dt>해결할 사건</dt><dd>{d.situations.map((s, i) => <span key={s}><b>CASE {String(i + 1).padStart(2, '0')}</b>{s}</span>)}</dd>
             <dt>현장 · 역할</dt><dd>{d.site} — {d.role}</dd>
+            <dt>난이도 · 분량</dt><dd>{'●'.repeat(d.level)}{'○'.repeat(4 - d.level)} · {d.hours} · 먼저: {d.needs}</dd>
             {plan && (() => { const p = load(), done = plan.lessons.filter((l) => lesson(p, `${plan.prefix}-${l.n}`)?.status === 'done').length; return <><dt>내 진도</dt><dd><span className="sel2__bar"><i style={{ width: `${(done / plan.lessons.length) * 100}%` }} /></span>{done} / {plan.lessons.length}차시 완료 · 화면 {plan.ready.length}차시 제작</dd></>; })()}
           </dl>
           <div className="sel2__cta">
@@ -66,7 +66,7 @@ export function Select({ selected, onSelect, onEnter, onHome, onLesson }: {
           </div>
         </motion.aside>
       </div>
-      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Foundation Lab(1차시) · Vision Lab만 열림 · 신경망 모양은 코드로 그린 학습 지도</p>
+      <p className="src-line sel2__src">임시: Lab · 현장 이름은 가칭, 이번 시안에서는 Foundation Lab(1차시) · Vision Lab만 열림</p>
     </section>
   );
 }

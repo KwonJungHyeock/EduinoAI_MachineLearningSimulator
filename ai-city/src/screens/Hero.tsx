@@ -4,7 +4,7 @@
 // 처음 접속하면 화면이 스스로 조립되는 시네마틱 인트로(약 8초, 건너뛰기 가능). 움직임 줄이기 설정이면 완성된 화면만.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DISTRICTS } from '../data/districts';
-import { NeuralMap } from '../components/NeuralMap';
+import { Roadmap } from '../components/Roadmap';
 import { TopBar } from '../components/TopBar';
 import { MagneticButton } from '../components/Interactive';
 import { useCanvas } from '../motion/useCanvas';
@@ -108,7 +108,6 @@ export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
   const vis = (a: number, b = a + 0.9) => (intro ? clamp((t - a) / (b - a)) : 1);
   const fade = (a: number, b?: number) => ({ opacity: vis(a, b), transform: `translateY(${(1 - vis(a, b)) * 14}px)` });
   const more = useRef<HTMLDivElement>(null);
-  const [mapHover, setMapHover] = useState<string | null>(null), mapD = DISTRICTS.find((x) => x.id === mapHover) ?? null;
   return (
     <section className={`screen h3 ${intro ? 'is-intro' : ''} ${holding ? 'is-hold' : ''}`} style={{ ['--charge' as string]: charge }}
       onPointerDown={(e) => { if (holding && !(e.target as HTMLElement).closest('button')) press(true); }} onPointerUp={() => press(false)} onPointerCancel={() => press(false)}
@@ -149,8 +148,8 @@ export function Hero({ onEnter }: { onEnter: (id?: string) => void }) {
         <h2 className="h3__h2">보고, 만들고, 학습시키고, 해결합니다.</h2>
         <ol className="h3__loop">{LOOP.map(([en, ko], i) => <li key={en}><span>0{i + 1}</span><b>{en}</b><em>{ko}</em></li>)}</ol>
         <div className="h3__net">
-          <NeuralMap active={mapHover} onHover={setMapHover} onPick={(id) => onEnter(id)} />
-          <p className="h3__netcap">{mapD ? <><b style={{ color: mapD.color }}>{mapD.order} · {mapD.district} · {mapD.tech}</b> — {mapD.site}: {mapD.problem} <em>{mapD.open ? `${READY.length}차시 열림 · 눌러서 들어가기` : '준비 중'}</em></> : '뉴런에 마우스를 올려 7개 Lab을 살펴보세요. Foundation Lab(입력)에서 시작해 기술 Lab(은닉)을 지나 도시의 사건(출력)을 해결합니다.'}</p>
+          <Roadmap selected="" onSelect={(id) => onEnter(id)} onLesson={(lab) => onEnter(lab)} />
+          <p className="h3__netcap">기초(필수)부터 시작해, 추천 순서대로 기술 Lab을 이어 갑니다. Lab을 누르면 자세히 볼 수 있어요.</p>
         </div>
         <p className="src-line h3__src">코어 · 궤도 · 지구 모션은 코드로 생성한 추상 모션, 받침대는 직접 렌더</p>
       </div>

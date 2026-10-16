@@ -65,7 +65,11 @@ export function Brief({ id, onBack, onHome, onStart, onFinal }: { id: string; on
         </motion.ol>
 
         <motion.div className="brief__cta" variants={up}>
-          {next !== null && READY.includes(next)
+          {next !== null && READY.includes(next) && d.id === 'academy'
+            ? <>{/* Foundation Lab: 두 모드 중 골라 시작(차시 안에서도 바꿀 수 있음) */}
+                <MagneticButton className="btn btn--primary btn--key" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'content'); } catch { /* */ } onStart(next); }}>{next}차시 · 콘텐츠로 배우기</MagneticButton>
+                <button className="btn btn--ghost" onClick={() => { try { localStorage.setItem('ai_labcity_mode', 'theory'); } catch { /* */ } onStart(next); }}>이론으로 배우기(슬라이드)</button></>
+            : next !== null && READY.includes(next)
             ? <MagneticButton className="btn btn--primary btn--key" onClick={() => onStart(next)}>{next}차시 시작</MagneticButton>
             : allDone && hasFinal
             ? <MagneticButton className="btn btn--primary btn--key" onClick={onFinal}>{finalDone ? '종합 평가 다시 보기' : 'Lab 종합 평가'}</MagneticButton>

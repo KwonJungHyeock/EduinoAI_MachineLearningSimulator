@@ -461,3 +461,61 @@ button { font: inherit; color: inherit; }
 .sel2__info { min-height: 0; max-height: 100%; overflow-y: auto; scrollbar-width: none; }
 @media (min-width: 901px) and (max-height: 820px) { .act { width: 120px; height: 120px; margin-bottom: 14px; } .sel2__dl { margin-top: 14px; } .sel2__dl dt { margin-top: 8px; } .sel2__cta { margin-top: 16px; } .sel2__t { font-size: 32px; } }
 .sel2__info { padding: 16px 16px 4px; margin: 0 -16px; }
+
+/* ── 학습 로드맵(교육 순서) ── */
+.erm { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(200px, 1fr) 28px minmax(300px, 1.55fr) 28px minmax(150px, 0.7fr); align-items: stretch; gap: 0; padding: 14px 0 6px; }
+.erm__step { min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.025); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07); }
+.erm__step.is-sel { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--k) 55%, transparent), 0 0 40px -18px var(--k); }
+.erm__head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; cursor: default; }
+.erm__no { font: 700 10.5px var(--en); letter-spacing: 0.18em; color: #8d9bb8; }
+.erm__head b { font-size: 15px; color: #eef2f8; }
+.erm__head em { font-style: normal; font-size: 11.5px; color: #6f7c93; }
+.erm__lab { display: grid; gap: 2px; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
+.erm__labname { font: 700 12px var(--en); letter-spacing: 0.08em; color: var(--k); text-transform: uppercase; }
+.erm__tech { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+.erm__bar, .erm__mini { display: block; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); overflow: hidden; margin-top: 6px; }
+.erm__bar i, .erm__mini i { display: block; height: 100%; background: var(--k); box-shadow: 0 0 8px var(--k); }
+.erm__line { list-style: none; margin: 4px 0 0; padding: 0 0 0 4px; display: grid; gap: 4px; position: relative; }
+.erm__line::before { content: ""; position: absolute; left: 17px; top: 14px; bottom: 14px; width: 2px; background: linear-gradient(var(--k, #818cf8), rgba(255, 255, 255, 0.1)); opacity: 0.6; }
+.erm__stop button, .erm__stopstatic { position: relative; width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; background: none; border: 0; padding: 6px 6px 6px 0; border-radius: 10px; color: inherit; }
+.erm__stop button { cursor: pointer; }
+.erm__stop button:hover { background: rgba(255, 255, 255, 0.04); }
+.erm__stop i { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--en); font-style: normal; background: #0a0d16; border: 1.5px solid rgba(255, 255, 255, 0.25); color: #cfd8e6; position: relative; z-index: 1; }
+.erm__stop span span, .erm__stopstatic > span { display: grid; gap: 1px; }
+.erm__stop b { font-size: 13.5px; color: #e8edf7; font-weight: 700; }
+.erm__stop em { font-style: normal; font-size: 11px; color: #6f7c93; }
+.erm__stop.st-done i { background: var(--k); border-color: var(--k); color: #04130d; }
+.erm__stop.st-done em { color: var(--k); }
+.erm__stop.st-next i { border-color: var(--k); color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--k) 22%, transparent); animation: nPulse 1.8s ease-in-out infinite; }
+.erm__stop.st-next em { color: #fff; }
+.erm__stop.st-locked, .erm__stop.st-plan { opacity: 0.6; }
+.erm__gate { margin: auto 0 0; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.12); font-size: 11.5px; color: #6f7c93; }
+.erm__gate.on { color: var(--k); font-weight: 700; }
+.erm__flow { position: relative; align-self: center; height: 2px; background: rgba(255, 255, 255, 0.14); }
+.erm__flow span { position: absolute; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #c7d2fe; box-shadow: 0 0 8px #a5b4fc; animation: ermFlow 2.2s linear infinite; }
+@keyframes ermFlow { from { left: 0; opacity: 0; } 20% { opacity: 1; } to { left: calc(100% - 6px); opacity: 0; } }
+.erm__labs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; flex: 1; align-content: start; }
+.erm__row button { width: 100%; display: grid; grid-template-columns: 54px 1fr auto; grid-template-rows: auto auto; gap: 2px 10px; align-items: center; text-align: left; padding: 9px 12px; border-radius: 12px; border: 0; cursor: pointer; color: inherit; background: rgba(255, 255, 255, 0.02); box-shadow: inset 3px 0 0 color-mix(in srgb, var(--k) 70%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.05); transition: background .25s, box-shadow .25s; }
+.erm__row button:hover { background: rgba(255, 255, 255, 0.05); }
+.erm__row.is-sel button { background: color-mix(in srgb, var(--k) 10%, transparent); box-shadow: inset 3px 0 0 var(--k), inset 0 0 0 1px color-mix(in srgb, var(--k) 55%, transparent); }
+.erm__rank { grid-row: 1 / 3; font: 700 10.5px var(--en); letter-spacing: 0.06em; color: var(--k); }
+.erm__rowmain { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.erm__rowmain b { font: 700 13.5px var(--en); color: #fff; white-space: nowrap; }
+.erm__rowmain span { font-size: 12.5px; color: #b7c2d3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.erm__lv { display: flex; gap: 3px; justify-self: end; }
+.erm__lv i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); }
+.erm__lv i.on { background: var(--k); }
+.erm__need { font-size: 11px; color: #6f7c93; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.erm__st { justify-self: end; display: flex; align-items: center; gap: 6px; font: 600 11px var(--kr); color: #6f7c93; white-space: nowrap; }
+.erm__row.open .erm__st { color: var(--k); }
+.erm__st .erm__mini { width: 46px; margin: 0; }
+.erm__step--end { --k: #a5b4fc; }
+@media (max-width: 1250px) { .erm { grid-template-columns: 1fr 22px 1.6fr; } .erm__step--end, .erm__flow:nth-of-type(2) { display: none; } }
+@media (max-width: 900px) {
+  .erm { display: flex; flex-direction: column; gap: 10px; }
+  .erm__flow { display: none; }
+  .erm__step--end { display: flex; }
+}
+.h3__net .erm { min-height: 460px; }
+.erm__stop button > span, .erm__stopstatic > span { display: grid; gap: 2px; }
+.erm__line { gap: 10px; margin-top: 10px; }
